@@ -4,8 +4,13 @@
 </p>
 
 # Firmware do Golgi Bot
-> Repositório para organizar o código usado no Golgi Bot, a Automação Da Farmácia do Hospital Universitário.
-![caminho na IDE do arduino](assets\img\Angulada.png)![caminho na IDE do arduino](assets\img\Frontal.png)
+> Repositório para organizar o código usado no Golgi Bot, a Automação da Farmácia do Hospital Universitário.
+
+<p>
+  <img src="assets\img\Angulada.png" width="600em" height="auto"/>
+  <img src="assets\img\Frontal.png"  width="600em" height="auto"/>
+</p>
+
 ## 💥  Como usar
 
 - Depois de já ter instalado tudo da lista de requerimentos, adicione o o caminho desse repositório na IDE do arduino na aba de "preferências", como na imagem:
