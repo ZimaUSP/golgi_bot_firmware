@@ -7,8 +7,8 @@
 > Repositório para organizar o código usado no Golgi Bot, a Automação da Farmácia do Hospital Universitário.
 
 <p>
-  <img src="assets\img\Angulada.png" width="600em" height="auto"/>
-  <img src="assets\img\Frontal.png"  width="600em" height="auto"/>
+  <img src="assets\img\Angulada.png" width="800em" height="auto"/>
+  <img src="assets\img\Frontal.png"  width="800em" height="auto"/>
 </p>
 
 ## 💥  Como usar
