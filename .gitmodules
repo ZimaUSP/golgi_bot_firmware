@@ -1,0 +1,6 @@
+[submodule "Adafruit_Unified_Sensor"]
+	path = libraries/Adafruit_Unified_Sensor
+	url = https://github.com/adafruit/Adafruit_Sensor.git
+[submodule "Temperature_sensor"]
+	path = libraries/DHT-sensor-library
+	url = https://github.com/adafruit/DHT-sensor-library.git
