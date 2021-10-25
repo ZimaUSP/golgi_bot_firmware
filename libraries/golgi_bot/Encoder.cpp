@@ -22,8 +22,6 @@ Encoder::Encoder(int A_pin,int B_pin, byte which):whichISR_(which) {
     this-> B_pin = B_pin;
     pinMode(this->A_pin,INPUT_PULLUP);
     pinMode(this->B_pin,INPUT_PULLUP);
-    //attachInterrupt(this->A_pin, this->A_trigger, RISING);
-    //attachInterrupt(this->B_pin, this->B_trigger, RISING);
 }
 void Encoder::A_trigger() {
  if (digitalRead(this->B_pin) == LOW) {
@@ -43,20 +41,20 @@ void Encoder::B_trigger() {
 void Encoder::init() {
   switch (whichISR_) {
       case 0: 
-        attachInterrupt (0, isr0A, RISING); 
-        attachInterrupt (0, isr0B, RISING); 
+        attachInterrupt (this-> A_pin, isr0A, RISING); 
+        attachInterrupt (this-> B_pin0, isr0B, RISING); 
         instance0_ = this;
         break;
 
       case 1: 
-        attachInterrupt (1, isr1A, RISING); 
-        attachInterrupt (1, isr1B, RISING); 
+        attachInterrupt (this-> A_pin, isr1A, RISING); 
+        attachInterrupt (this-> B_pin, isr1B, RISING); 
         instance1_ = this;
         break;
 
       case 2:
-        attachInterrupt (2, isr2A, RISING); 
-        attachInterrupt (2, isr2B, RISING); 
+        attachInterrupt (this-> A_pin, isr2A, RISING); 
+        attachInterrupt (this-> B_pin, isr2B, RISING); 
         instance2_ = this;
         break;
     } 
