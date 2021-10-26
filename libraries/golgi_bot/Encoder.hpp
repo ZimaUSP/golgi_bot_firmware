@@ -66,6 +66,13 @@ class Encoder {
          */
         int getPulses();
 
+        /**
+         * @brief set number of pulses
+         * 
+         * @param num number of pulses to be set 
+         */
+        void setPulses(int num);
+
 
 };
 

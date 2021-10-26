@@ -79,6 +79,10 @@ int Encoder::getPulses() {
  return this->pulses;
 }
 
+void Encoder::setPulses(int num) {
+ this->pulses= num;
+}
+
 // for use by ISR glue routines
 Encoder * Encoder::instance0_;
 Encoder * Encoder::instance1_;

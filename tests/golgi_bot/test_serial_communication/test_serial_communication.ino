@@ -12,6 +12,7 @@
 
 #include "serial_communication.hpp"
 #include "config.hpp"
+#include <cstring>
 
 SerialCommunication *comu;
 
@@ -25,5 +26,12 @@ void loop() {
 
     comu->read_data();
     std::cout<<comu->get_received_data()<<std::endl;
-
+    double setPoint=atoi(string_to_char(comu->get_received_data()));
+    std::cout<<setPoint<<std::endl;
+    delay(1);
 };
+char* string_to_char(std::string str) {
+   char* cstr = new char[str.size() + 1];
+   strcpy(cstr, str.c_str());
+   return cstr;
+}
