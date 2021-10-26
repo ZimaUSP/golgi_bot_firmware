@@ -20,7 +20,7 @@ class Encoder {
         int A_pin;
         int B_pin;
         
-        int pulses;
+        int pulses=0;
 
         //nickgammon ideia
         const byte whichISR_;

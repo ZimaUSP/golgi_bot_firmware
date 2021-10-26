@@ -2,7 +2,7 @@
 
 int A_pin=12;
 int B_pin=14;
-encoder *Encoder;
+Encoder *encoder;
 
 void setup() {     
   Serial.begin (9600);
