@@ -14,7 +14,7 @@ int outputL = 0;
 
 //PID constants
 #include "PID.hpp"
-double kp = 0.3;
+double kp = 1;
 double ki = 0;
 double kd = 2;
 PID *pid;
@@ -22,12 +22,9 @@ int input;
 int output;
 double setPoint;
 
-//Potenciometro
-int count;
-int temporary;
-int a;
-int potpin= 34;
-int buff[10];
+//Count MAX
+
+int MAX_PULSES =12543;
 
 // Chave fim de curso
 #include "Chave_fim_de_curso.hpp"
@@ -68,11 +65,20 @@ void setup() {
 
   ledcAttachPin(PWML, 1);
   ledcSetup(1, PWM1_Freq, PWM1_Res);
-  ledcWrite(0, outputR);
-  ledcWrite(1, outputL);
+
   //PID
   pid = new PID(kp,ki,kd);
+  while (digitalRead(chave_R)==HIGH)
+  {
+    outputR = 0;
+    outputL = 250;
+    ledcWrite(0, outputR);
+    ledcWrite(1, outputL);
 
+  }
+  outputR = 0;
+  outputL = 0;
+  encoder->setPulses(0);
 }
 
 void loop() {
@@ -80,9 +86,18 @@ void loop() {
   ledcWrite(1, outputL);
   
   // Set point
+  if(Serial.available()){
+    comu->read_data();
+    setPoint=atoi(string_to_char(comu->get_received_data()));
+    if(setPoint>MAX_PULSES){
+      setPoint=MAX_PULSES;
+    }
+    if(setPoint<0){
+      setPoint=0;
+    }
+  }
   
-  comu->read_data();
-  setPoint=atoi(string_to_char(comu->get_received_data()));
+  
   if(endstop_R->getBatente()||endstop_L->getBatente()){
       if(endstop_R->getBatente()){
       Serial.println("Batente Direita");
@@ -113,11 +128,11 @@ void loop() {
     Serial.print("output: ");
     Serial.println(output);
     Serial.print("counter :");
-    Serial.println(encoder->getPulses());
+    Serial.println((encoder->getPulses()));
     }
 
 float pos(int rev) { //Retorna a posição em centimetros
-  return rev * (41 / 12000);
+  return rev * (42.5 / 12000);
 }
 char* string_to_char(std::string str) {
    char* cstr = new char[str.size() + 1];
