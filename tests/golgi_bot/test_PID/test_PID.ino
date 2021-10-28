@@ -14,33 +14,31 @@ int outputL = 0;
 
 //PID constants
 #include "PID.hpp"
-double kp = 1;
+double kp = 0.2;
 double ki = 0;
 double kd = 2;
-PID *pid;
 int input; 
 int output;
 double setPoint;
+PID *pid; // Objeto PID
 
 //Count MAX
-
 int MAX_PULSES =12543;
 
 // Chave fim de curso
 #include "Chave_fim_de_curso.hpp"
-int chave_L=34;
-int chave_R=27;
-Chave_fim_de_curso *endstop_L;
-Chave_fim_de_curso *endstop_R;
+int chave_L=34; //Pino Chave da esquerda
+int chave_R=27; //Pino Chave da direita
+Chave_fim_de_curso *endstop_L; // Chave da esquerda
+Chave_fim_de_curso *endstop_R; // Chave da direita
 
 //Serial comunication
 #include "serial_communication.hpp"
 #include "config.hpp"
-SerialCommunication *comu;
 #include <string>
 #include <cstring>
+SerialCommunication *comu;
 
-bool entrou= false;
 void setup() {
   // Set point
   setPoint = 0;
@@ -123,7 +121,7 @@ void loop() {
       outputL = 0;
       outputR = output;
     }
-      Serial.print("Setpoint: ");
+    Serial.print("Setpoint: ");
     Serial.println(setPoint);
     Serial.print("output: ");
     Serial.println(output);
