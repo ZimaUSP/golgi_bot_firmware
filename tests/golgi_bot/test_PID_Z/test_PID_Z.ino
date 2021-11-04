@@ -1,10 +1,10 @@
-// Encoder X axis 
+// Encoder Z axis 
 #include "Encoder.hpp"
 int A_pin_Z=12;
 int B_pin_Z=14;
 Encoder *encoder_Z;
 
-// BTS X axis 
+// BTS Z axis 
 #include "H_bridge_controller.hpp"
 int R_pin_Z=32;
 int L_pin_Z=33;
@@ -16,21 +16,20 @@ int PWM_R_Z=0;
 int PWM_L_Z=0;
 H_bridge_controller *BTS_Z;
 
-// Chave fim de curso X axis
+// Chave fim de curso Z axis
 #include "Chave_fim_de_curso.hpp"
 int chave_L_Z=34; 
 int chave_R_Z=27; 
 Chave_fim_de_curso *endstop_L_Z; 
 Chave_fim_de_curso *endstop_R_Z; 
 
-//PID X axis constants
+//PID Z axis constants
 #include "PID.hpp"
 double kp_Z = 0.2;
 double ki_Z = 0;
-double kd_Z= 2;
-int input; 
-int output;
-double setPoint;
+double kd_Z= 2; 
+int output_z;
+double setPoint_z;
 PID *PID_Z; 
 
 //Count MAX
@@ -45,7 +44,7 @@ SerialCommunication *comu;
 
 void setup() {
   // Set point
-  setPoint = 0;
+  setPoint_z = 0;
 
   //Serial Comunication
   Serial.begin (SERIAL_VEL);
@@ -88,34 +87,33 @@ void loop() {
     }}
     
 
-    // PID
-    input = encoder_Z->getPulses();
-    output = PID_Z->computePID(input,setPoint);
+    // PID Z
+    output_z = PID_Z->computePID(encoder_Z->getPulses();,setPoint_z);
 
     // Setting direction of motion acording to output PID
-    if (output > 255) {
-      output = 255;
+    if (output_z > 255) {
+      output_z = 255;
     }
-    if (output < -255) {
-      output = -255;
+    if (output_z < -255) {
+      output_z = -255;
     }
-    if (output < 0) {
+    if (output_z < 0) {
 
       PWM_R_Z = 0;
-      PWM_L_Z = -output;
+      PWM_L_Z = -output_z;
     } else {
       PWM_L_Z = 0;
-      PWM_R_Z = output;
+      PWM_R_Z = output_z;
     }
     //Setting BTS X axis PWM channel
     BTS_Z->SetPWM_R(PWM_R_Z);
     BTS_Z->SetPWM_l(PWM_L_Z);
 
     // Debug print
-    Serial.print("Setpoint: ");
-    Serial.println(setPoint);
+    Serial.print("Setpoint_z: ");
+    Serial.println(setPoint_z);
     Serial.print("output: ");
-    Serial.println(output);
+    Serial.println(output_z);
     Serial.print("counter :");
     Serial.println((encoder_Z->getPulses()));
     }
@@ -146,12 +144,12 @@ void Set_origin(){
 void read_setpoint(){
    if(Serial.available()){
     comu->read_data();
-    setPoint=atoi(string_to_char(comu->get_received_data()));
+    setPoint_z=atoi(string_to_char(comu->get_received_data()));
     if(setPoint>MAX_PULSES){
-      setPoint=MAX_PULSES;
+      setPoint_z=MAX_PULSES;
     }
-    if(setPoint<0){
-      setPoint=0;
+    if(setPoint_z<0){
+      setPoint_z=0;
     }
   }
 }

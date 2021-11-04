@@ -28,9 +28,8 @@ Chave_fim_de_curso *endstop_R_X;
 double kp_x = 0.2;
 double ki_x = 0;
 double kd_x= 2;
-int input; 
-int output;
-double setPoint;
+int output_x;
+double setPoint_x;
 PID *PID_X; 
 
 //Count MAX
@@ -45,11 +44,11 @@ SerialCommunication *comu;
 
 void setup() {
   // Set point
-  setPoint = 0;
+  setPoint_x = 0;
 
   //Serial Comunication
   Serial.begin (SERIAL_VEL);
-  comu = new SerialCommunication("Posição SetPoint:");
+  comu = new SerialCommunication("Posição setPoint_x:");
 
   //Chave fim de curso
   endstop_L_X = new Chave_fim_de_curso(chave_L_X,0);
@@ -62,7 +61,7 @@ void setup() {
   encoder_X->init();
 
   // BTS
-  BTS_X= new H_bridge_controller( R_pin_X, L_pin_X, PWM_frequency, PWM_resolution, R_channel_X, L_channelV);
+  BTS_X= new H_bridge_controller( R_pin_X, L_pin_X, PWM_frequency, PWM_resolution, R_channel_X, L_channel_X);
   BTS_X->init();
   
   //PID
@@ -90,12 +89,12 @@ void loop() {
   
   if(Serial.available()){
     comu->read_data();
-    setPoint=atoi(string_to_char(comu->get_received_data()));
-    if(setPoint>MAX_PULSES){
-      setPoint=MAX_PULSES;
+    setPoint_x=atoi(string_to_char(comu->get_received_data()));
+    if(setPoint_x>MAX_PULSES){
+      setPoint_x=MAX_PULSES;
     }
-    if(setPoint<0){
-      setPoint=0;
+    if(setPoint_x<0){
+      setPoint_x=0;
     }
   }
   
@@ -108,34 +107,33 @@ void loop() {
     }}
     
 
-    // PID
-    input = encoder_X->getPulses();
-    output = PID_X->computePID(input,setPoint);
+    // PID X
+    output_x = PID_X->computePID(encoder_X->getPulses(),setPoint_x);
 
-    // Setting direction of motion acording to output PID
-    if (output > 255) {
-      output = 255;
+    // Setting direction of motion acording to output_x PID
+    if (output_x > 255) {
+      output_x = 255;
     }
-    if (output < -255) {
-      output = -255;
+    if (output_x < -255) {
+      output_x = -255;
     }
-    if (output < 0) {
+    if (output_x < 0) {
 
       PWM_R_X = 0;
-      PWM_L_X = -output;
+      PWM_L_X = -output_x;
     } else {
       PWM_L_X = 0;
-      PWM_R_X = output;
+      PWM_R_X = output_x;
     }
     //Setting BTS X axis PWM channel
     BTS_X->SetPWM_R(PWM_R_X);
     BTS_X->SetPWM_l(PWM_L_X);
 
     // Debug print
-    Serial.print("Setpoint: ");
-    Serial.println(setPoint);
-    Serial.print("output: ");
-    Serial.println(output);
+    Serial.print("setPoint_x: ");
+    Serial.println(setPoint_x);
+    Serial.print("output_x: ");
+    Serial.println(output_x);
     Serial.print("counter :");
     Serial.println((encoder_X->getPulses()));
     }
