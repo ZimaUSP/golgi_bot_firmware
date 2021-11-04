@@ -116,8 +116,10 @@ void Encoder::handleInterrupt(char sel){
   switch (sel){
     case 'A':
       this->A_trigger();
+      break;
 
     case 'B':
       this->B_trigger();
-  }
+      break
+  } 
 }
