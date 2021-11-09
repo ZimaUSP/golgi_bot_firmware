@@ -1,7 +1,7 @@
 // Encoder pins
 #include "Encoder.hpp"
-int A_pin=12;
-int B_pin=14;
+int A_pin=14;
+int B_pin=12;
 Encoder *encoder;
 
 // BTS PINS
@@ -14,9 +14,9 @@ int outputL = 0;
 
 //PID constants
 #include "PID.hpp"
-double kp = 0.2;
+double kp = 0.1;
 double ki = 0;
-double kd = 2;
+double kd = 1;
 int input; 
 int output;
 double setPoint;
@@ -68,14 +68,16 @@ void setup() {
   pid = new PID(kp,ki,kd);
   while (digitalRead(chave_R)==HIGH)
   {
-    outputR = 0;
-    outputL = 250;
+    outputR = 100;
+    outputL = 0;
     ledcWrite(0, outputR);
     ledcWrite(1, outputL);
 
   }
   outputR = 0;
   outputL = 0;
+  ledcWrite(0, outputR);
+  ledcWrite(1, outputL);
   encoder->setPulses(0);
 }
 
@@ -89,9 +91,6 @@ void loop() {
     setPoint=atoi(string_to_char(comu->get_received_data()));
     if(setPoint>MAX_PULSES){
       setPoint=MAX_PULSES;
-    }
-    if(setPoint<0){
-      setPoint=0;
     }
   }
   
@@ -114,17 +113,15 @@ void loop() {
       output = -255;
     }
     if (output < 0) {
-
-      outputR = 0;
       outputL = -output;
+      outputR = 0;
+      
+      
     } else {
-      outputL = 0;
       outputR = output;
+      outputL = 0;
+      
     }
-    Serial.print("Setpoint: ");
-    Serial.println(setPoint);
-    Serial.print("output: ");
-    Serial.println(output);
     Serial.print("counter :");
     Serial.println((encoder->getPulses()));
     }
