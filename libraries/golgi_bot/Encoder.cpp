@@ -120,6 +120,6 @@ void Encoder::handleInterrupt(char sel){
 
     case 'B':
       this->B_trigger();
-      break
+      break;
   } 
 }

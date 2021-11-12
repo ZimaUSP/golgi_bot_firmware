@@ -1,15 +1,15 @@
 // Encoder X axis 
 #include "Encoder.hpp"
-int A_pin_X=12;
-int B_pin_X=14;
+int A_pin_X=22; // Green cable
+int B_pin_X=23; // White cable
 Encoder *encoder_X;
 
 // BTS X axis 
 #include "H_bridge_controller.hpp"
-int R_pin_X=32;
-int L_pin_X=33;
+int R_pin_X=26;
+int L_pin_X=27;
 int PWM_frequency = 40000;
-int PWM_resolution = 10;
+int PWM_resolution = 8;
 int R_channel_X=1;
 int L_channel_X=2;
 int PWM_R_X=0;
@@ -18,8 +18,8 @@ H_bridge_controller *BTS_X;
 
 // Chave fim de curso X axis
 #include "Chave_fim_de_curso.hpp"
-int chave_L_X=34; 
-int chave_R_X=27; 
+int chave_L_X=36; 
+int chave_R_X=39; 
 Chave_fim_de_curso *endstop_L_X; 
 Chave_fim_de_curso *endstop_R_X; 
 
@@ -33,14 +33,14 @@ double setPoint_x;
 PID *PID_X; 
 
 //Count MAX
-int MAX_PULSES =12543;
+int MAX_PULSES_X=12000;
 
 //Serial comunication
 #include "serial_communication.hpp"
 #include "config.hpp"
 #include <string>
 #include <cstring>
-SerialCommunication *comu;
+SerialCommunication *comu_x;
 
 void setup() {
   // Set point
@@ -48,7 +48,7 @@ void setup() {
 
   //Serial Comunication
   Serial.begin (SERIAL_VEL);
-  comu = new SerialCommunication("Posição setPoint_x:");
+  comu_x = new SerialCommunication("Posição setPoint_x:");
 
   //Chave fim de curso
   endstop_L_X = new Chave_fim_de_curso(chave_L_X,0);
@@ -68,35 +68,15 @@ void setup() {
   PID_X = new PID(kp_x,ki_x,kd_x);
 
   //Set origin
-  while (digitalRead(chave_R_X)==HIGH)
-  {
-    PWM_R_X = 0;
-    PWM_L_X = 250;
-    BTS_X->SetPWM_R(PWM_R_X);
-    BTS_X->SetPWM_l(PWM_L_X);
-  }
-  PWM_R_X = 0;
-  PWM_L_X = 0;
-  BTS_X->SetPWM_R(PWM_R_X);
-  BTS_X->SetPWM_l(PWM_L_X);
-  encoder_X->setPulses(0);
+  Set_origin_x();
 
 }
 
 void loop() {
   
-  // Set point
+  // Recive Set point
+  read_setpoint_x();
   
-  if(Serial.available()){
-    comu->read_data();
-    setPoint_x=atoi(string_to_char(comu->get_received_data()));
-    if(setPoint_x>MAX_PULSES){
-      setPoint_x=MAX_PULSES;
-    }
-    if(setPoint_x<0){
-      setPoint_x=0;
-    }
-  }
   
   //Batente
   if(endstop_R_X->getBatente()||endstop_L_X->getBatente()){
@@ -111,23 +91,22 @@ void loop() {
     output_x = PID_X->computePID(encoder_X->getPulses(),setPoint_x);
 
     // Setting direction of motion acording to output_x PID
-    if (output_x > 255) {
-      output_x = 255;
+    if (output_x > 155) {
+      output_x = 155;
     }
-    if (output_x < -255) {
-      output_x = -255;
+    if (output_x < -155) {
+      output_x = -155;
     }
     if (output_x < 0) {
-
-      PWM_R_X = 0;
-      PWM_L_X = -output_x;
-    } else {
       PWM_L_X = 0;
-      PWM_R_X = output_x;
+      PWM_R_X = -output_x;
+    } else {
+      PWM_R_X = 0;
+      PWM_L_X = output_x;
     }
     //Setting BTS X axis PWM channel
     BTS_X->SetPWM_R(PWM_R_X);
-    BTS_X->SetPWM_l(PWM_L_X);
+    BTS_X->SetPWM_L(PWM_L_X);
 
     // Debug print
     Serial.print("setPoint_x: ");
@@ -135,7 +114,7 @@ void loop() {
     Serial.print("output_x: ");
     Serial.println(output_x);
     Serial.print("counter :");
-    Serial.println((encoder_X->getPulses()));
+    Serial.println(encoder_X->getPulses());
     }
 
 float pos(int rev) { //Retorna a posição em centimetros
@@ -146,4 +125,35 @@ char* string_to_char(std::string str) {
    char* cstr = new char[str.size() + 1];
    strcpy(cstr, str.c_str());
    return cstr;
+}
+
+void Set_origin_x(){
+  while (digitalRead(chave_R_X)==HIGH)
+  {
+    PWM_R_X = 100;
+    PWM_L_X = 0;
+    BTS_X->SetPWM_R(PWM_R_X);
+    BTS_X->SetPWM_L(PWM_L_X);
+  }
+  
+  encoder_X->setPulses(0);
+  
+  PWM_R_X = 0;
+  PWM_L_X = 0;
+  BTS_X->SetPWM_R(PWM_R_X);
+  BTS_X->SetPWM_L(PWM_L_X);
+}
+
+void read_setpoint_x(){
+
+   if(Serial.available()){
+
+      comu_x->read_data();
+
+      setPoint_x=atoi(string_to_char(comu_x->get_received_data()));
+
+      if(setPoint_x>MAX_PULSES_X){
+        setPoint_x=MAX_PULSES_X;
+      }
+    }
 }
