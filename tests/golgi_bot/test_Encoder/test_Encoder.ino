@@ -1,7 +1,7 @@
 #include "Encoder.hpp"
 
-int A_pin=14;
-int B_pin=12;
+int A_pin=22;
+int B_pin=23;
 Encoder *encoder;
 
 void setup() {     
