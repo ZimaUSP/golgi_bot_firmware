@@ -1,4 +1,4 @@
-S// atuador axis 
+// atuador axis 
 #include "Atuador.hpp"
 int Extend_pin=13;
 int Contract_pin=12;
@@ -18,7 +18,7 @@ void setup() {
   Serial.begin (SERIAL_VEL);
   comu = new SerialCommunication("Posição setPoint_x:");
 
-  // BTS
+  // Atuador
   Atuador_Y= new Atuador( Extend_pin,Contract_pin);
   Atuador_Y->init();
   

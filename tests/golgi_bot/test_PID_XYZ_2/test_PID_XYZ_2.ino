@@ -3,10 +3,11 @@
 int A_pin_X=22; // Green cable
 int B_pin_X=23; // White cable
 Encoder *encoder_X;
+int last_x_count;
 
 // BTS X axis 
 #include "H_bridge_controller.hpp"
-int R_pin_X=26;
+int R_pin_X=27;
 int L_pin_X=27;
 int PWM_frequency = 40000;
 int PWM_resolution = 8;
@@ -43,6 +44,7 @@ int MAX_PULSES_X=12000;
 int A_pin_Z=19; // green cable
 int B_pin_Z=21; // white cable
 Encoder *encoder_Z;
+int last_z_count;
 
 // BTS Z axis 
 #include "H_bridge_controller.hpp"
@@ -74,6 +76,20 @@ PID *PID_Z;
 int MAX_PULSES_Z =12000;
 
 
+// EIXO Y 
+
+
+// Bomba axis 
+#include "Bomba.hpp"
+int bomba_pin=26;
+Bomba *Bomba_Y;
+
+// atuador axis 
+#include "Atuador.hpp"
+int Extend_pin=13;
+int Contract_pin=12;
+Atuador *Atuador_Y;
+
 //Serial comunication
 #include "serial_communication.hpp"
 #include "config.hpp"
@@ -81,13 +97,16 @@ int MAX_PULSES_Z =12000;
 #include <cstring>
 SerialCommunication *comu;
 
+// Estados
+char STATE = 'A' ; // 0 -> Stand by 1-> To Goal   2 -> In_Goal  3 ->To origin  
+
+
 void setup() {
   // Set point
   setPoint_x = 0;
 
   setPoint_z = 0;
   
-
   //Serial Comunication
   Serial.begin (SERIAL_VEL);
   comu = new SerialCommunication("Posição SetPoint:");
@@ -127,71 +146,67 @@ void setup() {
   
   PID_Z = new PID(kp_Z,ki_Z,kd_Z);
 
+  // Atuador
+  Atuador_Y= new Atuador( Extend_pin,Contract_pin);
+  Atuador_Y->init();
+  
+   // Bomba
+  Bomba_Y= new Bomba(bomba_pin);
+  Bomba_Y->init();
+
 }
 
 void loop() {
-    // Recive Set point
-    read_setpoint();
+  switch(STATE) {
+      case 'A' :
+        // Recive Set point
+        read_setpoint();
+         break;
+      case 'B' :
+        // PID X
+        output_x = PID_X->computePID(encoder_X->getPulses(),setPoint_x);
 
-    // PID X
-    output_x = PID_X->computePID(encoder_X->getPulses(),setPoint_x);
+        // PID Z
+        output_z = PID_Z->computePID(encoder_Z->getPulses(),setPoint_z);
 
-    // PID Z
-    output_z = PID_Z->computePID(encoder_Z->getPulses(),setPoint_z);
+        // Setting direction of motion acording to output_x PID
+        move_X();
 
+        // Setting direction of motion acording to output_z PID
+        move_Z();
 
-    // Setting direction of motion acording to output_x PID
-    if (output_x > 255) {
-        output_x = 255;
-    }
-    if (output_x < -255) {
-        output_x = -255;
-    }
-    if (output_x < 0) {
-        PWM_L_X = 0;
-        PWM_R_X = -output_x;
-    } else {
-        PWM_R_X = 0;
-        PWM_L_X = output_x;
-    }
-    //Setting BTS X axis PWM channel
-    BTS_X->SetPWM_R(PWM_R_X);
-    BTS_X->SetPWM_L(PWM_L_X);
+        Serial.print("counter X :");
+        Serial.println(encoder_X->getPulses());
+        Serial.print("    counter Z :");
+        Serial.println(encoder_Z->getPulses());
 
-    // Setting direction of motion acording to output_z PID
-    if (output_z > 255) {
-        output_z = 255;
-    }
-    if (output_z < -255) {
-        output_z = -255;
-    }
-    if (output_z < 0) {
-        PWM_L_Z = 0;
-        PWM_R_Z = -output_z;
-    } else {
-        PWM_R_Z = 0;
-        PWM_L_Z = output_z;
-    }
-    //Setting BTS Z axis PWM channel
-    BTS_Z->SetPWM_R(PWM_R_Z);
-    BTS_Z->SetPWM_L(PWM_L_Z);
-
+        check_goal();
+        break;
+      case 'C' :
+         Get_medicine();
+         break;
+      case 'D' :
+         Set_origin_x();
+         Set_origin_z();
+         Drop_medicine();
+         break;
+   }
+    
     // Debug print X
     //Serial.print("setPoint_x: ");
     //Serial.println(setPoint_x);
     //Serial.print("output_x: ");
     //Serial.println(output_x);
-    Serial.print("counter X :");
-    Serial.println(encoder_X->getPulses());
+    
 
     // Debug print Z
     //Serial.print("Setpoint_z: ");
     //Serial.println(setPoint_z);
     //Serial.print("output: ");
     //Serial.println(output_z);
-    Serial.print("    counter Z :");
-    Serial.println(encoder_Z->getPulses());
+    
 }
+
 char* string_to_char(std::string str) {
    char* cstr = new char[str.size() + 1];
    strcpy(cstr, str.c_str());
@@ -199,46 +214,84 @@ char* string_to_char(std::string str) {
 }
 
 void Set_origin_x(){
-  while (digitalRead(chave_R_X)==HIGH)
-  {
-    PWM_R_X = 100;
-    PWM_L_X = 0;
-    BTS_X->SetPWM_R(PWM_R_X);
-    BTS_X->SetPWM_L(PWM_L_X);
+  while (digitalRead(chave_R_X)==HIGH){
+    BTS_X->Set_R(100);
   }
   encoder_X->setPulses(0);
-  PWM_R_X = 0;
-  PWM_L_X = 0;
-  BTS_X->SetPWM_R(PWM_R_X);
-  BTS_X->SetPWM_L(PWM_L_X);
+  BTS_X->SetPWM_R(0);
 }
 
 void Set_origin_z(){
-  while (digitalRead(chave_R_Z)==HIGH)
-  {
-    PWM_R_Z = 100;
-    PWM_L_Z = 0;
-    BTS_Z->SetPWM_R(PWM_R_Z);
-    BTS_Z->SetPWM_L(PWM_L_Z);
+  while (digitalRead(chave_R_Z)==HIGH){
+    BTS_Z->Set_R(100);
   }
   encoder_Z->setPulses(0);
-  PWM_R_Z = 0;
-  PWM_L_Z = 0;
-  BTS_Z->SetPWM_R(PWM_R_Z);
-  BTS_Z->SetPWM_L(PWM_L_Z);
-  
+  BTS_Z->SetPWM_R(0);
 }
-void read_setpoint(){
-    char *ptr;
-    
-   if(Serial.available()){
 
+void read_setpoint(){
+    if(Serial.available()){
+      STATE='B';
+      char *ptr;
       comu->read_data();
       char* recived=string_to_char(comu->get_received_data());
       ptr = strtok(recived, "-");
       setPoint_x=atoi(string_to_char(ptr)); 
       ptr = strtok (NULL, "-");
-      setPoint_z=atoi(string_to_char(ptr));  
+      setPoint_z=atoi(string_to_char(ptr));
+    }
+}
       
+  
+
+void move_X(){     
+    if (output_x < 0) {
+      if (output_x < -255) {
+        output_x = -255;
+      }
+      BTS_X->Set_R(-output_x);
+    } else {
+      if (output_x > 255) {
+        output_x = 255;
+      }
+      BTS_X->Set_L(output_x);
     }
+}
+
+void move_Z(){   
+    if (output_z < 0) {
+      if (output_z < -255) {
+        output_z = -255;
+      }
+      BTS_Z->Set_R(-output_x);
+    } else {
+        if (output_z > 255) {
+        output_z = 255;
+        }
+        BTS_Z->Set_L(output_x);
     }
+}
+    
+void Get_medicine(){
+  Bomba_Y->turn_on();
+  Atuador_Y->Extend();
+  delay(1000);
+  Atuador_Y->Contract();
+  delay(1000);
+  Atuador_Y->Stop();
+  STATE='D';
+}
+
+void Drop_medicine(){
+  Bomba_Y->turn_off();
+  STATE='A';
+}
+
+void check_goal(){
+  if((encoder_X->getPulses()==last_x_count) || (encoder_Z->getPulses()==last_z_count )){
+    STATE='C';
+  }
+  last_x_count=encoder_X->getPulses();
+  last_z_count=encoder_Z->getPulses();
+
+}
