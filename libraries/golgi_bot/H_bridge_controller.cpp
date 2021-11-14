@@ -42,4 +42,15 @@ void H_bridge_controller::SetPWM_L(int PWM) {
   ledcWrite(this->L_channel, PWM);
 }
 
+void H_bridge_controller::Set_R(int PWM) {
+  ledcWrite(this->L_channel, 0);
+  ledcWrite(this->R_channel, PWM);
+}
+
+void H_bridge_controller::Set_L(int PWM) {
+  ledcWrite(this->R_channel, 0);
+  ledcWrite(this->L_channel, PWM);
+}
+
+
 

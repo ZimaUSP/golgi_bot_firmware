@@ -97,16 +97,11 @@ void loop() {
     if (output_x < -155) {
       output_x = -155;
     }
-    if (output_x < 0) {
-      PWM_L_X = 0;
-      PWM_R_X = -output_x;
+    if (output_x < 0) { 
+       BTS_X->Set_R(-output_x);
     } else {
-      PWM_R_X = 0;
-      PWM_L_X = output_x;
+       BTS_X->Set_L(output_x);
     }
-    //Setting BTS X axis PWM channel
-    BTS_X->SetPWM_R(PWM_R_X);
-    BTS_X->SetPWM_L(PWM_L_X);
 
     // Debug print
     Serial.print("setPoint_x: ");
@@ -130,18 +125,13 @@ char* string_to_char(std::string str) {
 void Set_origin_x(){
   while (digitalRead(chave_R_X)==HIGH)
   {
-    PWM_R_X = 100;
-    PWM_L_X = 0;
-    BTS_X->SetPWM_R(PWM_R_X);
-    BTS_X->SetPWM_L(PWM_L_X);
+    BTS_X->Set_R(100);
   }
   
   encoder_X->setPulses(0);
-  
-  PWM_R_X = 0;
-  PWM_L_X = 0;
-  BTS_X->SetPWM_R(PWM_R_X);
-  BTS_X->SetPWM_L(PWM_L_X);
+ 
+  BTS_X->SetPWM_R(0);
+  BTS_X->SetPWM_L(0);
 }
 
 void read_setpoint_x(){
