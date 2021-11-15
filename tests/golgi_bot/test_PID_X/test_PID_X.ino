@@ -6,8 +6,8 @@ Encoder *encoder_X;
 
 // BTS X axis 
 #include "H_bridge_controller.hpp"
-int R_pin_X=26;
-int L_pin_X=27;
+int R_pin_X=26; // L Bts
+int L_pin_X=27; // R Bts
 int PWM_frequency = 40000;
 int PWM_resolution = 8;
 int R_channel_X=1;

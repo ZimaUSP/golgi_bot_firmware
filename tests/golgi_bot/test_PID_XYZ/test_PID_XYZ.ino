@@ -6,8 +6,8 @@ Encoder *encoder_X;
 
 // BTS X axis 
 #include "H_bridge_controller.hpp"
-int R_pin_X=27;
-int L_pin_X=27;
+int R_pin_X=26; // L Bts
+int L_pin_X=27; // R Bts
 int PWM_frequency = 40000;
 int PWM_resolution = 8;
 int R_channel_X=1;
@@ -46,8 +46,8 @@ Encoder *encoder_Z;
 
 // BTS Z axis 
 #include "H_bridge_controller.hpp"
-int R_pin_Z=17;
-int L_pin_Z=18;
+int R_pin_Z=17; // R bts
+int L_pin_Z=18; // L bts
 int R_channel_Z=3;
 int L_channel_Z=4;
 int PWM_R_Z=0;
@@ -79,13 +79,13 @@ int MAX_PULSES_Z =12000;
 
 // Bomba axis 
 #include "Bomba.hpp"
-int bomba_pin=26;
+int bomba_pin=32;//IN2
 Bomba *Bomba_Y;
 
 // atuador axis 
 #include "Atuador.hpp"
-int Extend_pin=13;
-int Contract_pin=12;
+int Extend_pin=33; //IN4
+int Contract_pin=25; //IN3
 Atuador *Atuador_Y;
 
 //Serial comunication
@@ -166,7 +166,9 @@ void loop() {
     // Setting direction of motion acording to output_z PID
     move_Z();
 
+    if
     
+    check_goal();
     // Debug print X
     //Serial.print("setPoint_x: ");
     //Serial.println(setPoint_x);
@@ -191,35 +193,21 @@ char* string_to_char(std::string str) {
 }
 
 void Set_origin_x(){
-  while (digitalRead(chave_R_X)==HIGH)
-  {
-    PWM_R_X = 100;
-    PWM_L_X = 0;
-    BTS_X->SetPWM_R(PWM_R_X);
-    BTS_X->SetPWM_L(PWM_L_X);
+  while (digitalRead(chave_R_X)==HIGH){
+    BTS_X->Set_R(100);
   }
   encoder_X->setPulses(0);
-  PWM_R_X = 0;
-  PWM_L_X = 0;
-  BTS_X->SetPWM_R(PWM_R_X);
-  BTS_X->SetPWM_L(PWM_L_X);
+  BTS_X->SetPWM_R(0);
 }
 
 void Set_origin_z(){
-  while (digitalRead(chave_R_Z)==HIGH)
-  {
-    PWM_R_Z = 100;
-    PWM_L_Z = 0;
-    BTS_Z->SetPWM_R(PWM_R_Z);
-    BTS_Z->SetPWM_L(PWM_L_Z);
+  while (digitalRead(chave_R_Z)==HIGH){
+    BTS_Z->Set_R(100);
   }
   encoder_Z->setPulses(0);
-  PWM_R_Z = 0;
-  PWM_L_Z = 0;
-  BTS_Z->SetPWM_R(PWM_R_Z);
-  BTS_Z->SetPWM_L(PWM_L_Z);
-  
+  BTS_Z->SetPWM_R(0);
 }
+
 void read_setpoint(){
     char *ptr;
    if(Serial.available()){
@@ -231,6 +219,7 @@ void read_setpoint(){
       setPoint_z=atoi(string_to_char(ptr));
       ptr = strtok (NULL, "-");
       if(atoi(string_to_char(ptr))==1){
+        Serial.println("oi");
         get_medicine();
       }
       }
@@ -264,7 +253,6 @@ void move_Z(){
         BTS_Z->Set_L(output_x);
     }
 }
-    
 void get_medicine(){
   Bomba_Y->turn_on();
   Atuador_Y->Extend();
@@ -273,4 +261,21 @@ void get_medicine(){
   delay(1000);
   Atuador_Y->Stop();
   Bomba_Y->turn_off();
+}
+void check_goal(){
+  if((encoder_X->getPulses()==last_x_count) || (encoder_Z->getPulses()==last_z_count )){
+    PEGO=false;
+  }
+  last_x_count=encoder_X->getPulses();
+  last_z_count=encoder_Z->getPulses();
+
+}
+void Get_medicine(){
+  Bomba_Y->turn_on();
+  Atuador_Y->Extend();
+  delay(1000);
+  Atuador_Y->Contract();
+  delay(1000);
+  Atuador_Y->Stop();
+  PEGO=true;
 }

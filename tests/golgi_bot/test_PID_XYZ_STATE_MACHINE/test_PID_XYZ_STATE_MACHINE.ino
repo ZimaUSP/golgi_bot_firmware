@@ -7,8 +7,8 @@ int last_x_count;
 
 // BTS X axis 
 #include "H_bridge_controller.hpp"
-int R_pin_X=27;
-int L_pin_X=27;
+int R_pin_X=26; // L Bts
+int L_pin_X=27; // R Bts
 int PWM_frequency = 40000;
 int PWM_resolution = 8;
 int R_channel_X=1;
@@ -48,8 +48,8 @@ int last_z_count;
 
 // BTS Z axis 
 #include "H_bridge_controller.hpp"
-int R_pin_Z=17;
-int L_pin_Z=18;
+int R_pin_Z=17; // R bts
+int L_pin_Z=18; // L bts
 int R_channel_Z=3;
 int L_channel_Z=4;
 int PWM_R_Z=0;
@@ -81,13 +81,13 @@ int MAX_PULSES_Z =12000;
 
 // Bomba axis 
 #include "Bomba.hpp"
-int bomba_pin=26;
+int bomba_pin=32;//IN2
 Bomba *Bomba_Y;
 
 // atuador axis 
 #include "Atuador.hpp"
-int Extend_pin=13;
-int Contract_pin=12;
+int Extend_pin=33; //IN4
+int Contract_pin=25; //IN3
 Atuador *Atuador_Y;
 
 //Serial comunication
@@ -137,6 +137,8 @@ void setup() {
   encoder_Z->init();
 
   //Set origin
+  
+
   Set_origin_x();
   
   Set_origin_z();
@@ -149,6 +151,9 @@ void setup() {
   // Atuador
   Atuador_Y= new Atuador( Extend_pin,Contract_pin);
   Atuador_Y->init();
+  Atuador_Y->Contract();
+  delay(1000);
+  Atuador_Y->Stop();
   
    // Bomba
   Bomba_Y= new Bomba(bomba_pin);
@@ -159,10 +164,12 @@ void setup() {
 void loop() {
   switch(STATE) {
       case 'A' :
+        Serial.println("STAND-BY");
         // Recive Set point
         read_setpoint();
-         break;
+        break;
       case 'B' :
+        
         // PID X
         output_x = PID_X->computePID(encoder_X->getPulses(),setPoint_x);
 
@@ -175,21 +182,27 @@ void loop() {
         // Setting direction of motion acording to output_z PID
         move_Z();
 
-        Serial.print("counter X :");
-        Serial.println(encoder_X->getPulses());
-        Serial.print("    counter Z :");
-        Serial.println(encoder_Z->getPulses());
-
-        check_goal();
+        Serial.println("GOING");
+        if((encoder_X->getPulses()==last_x_count) && (encoder_Z->getPulses()==last_z_count )){
+          STATE='C';
+          Serial.print("counter X :");
+          Serial.println(encoder_X->getPulses());
+          Serial.print("    counter Z :");
+          Serial.println(encoder_Z->getPulses());
+        }
+        last_x_count=encoder_X->getPulses();
+        last_z_count=encoder_Z->getPulses();
         break;
       case 'C' :
-         Get_medicine();
-         break;
+        Serial.println("GET-MEDIICNE");
+        Get_medicine();
+        break;
       case 'D' :
-         Set_origin_x();
-         Set_origin_z();
-         Drop_medicine();
-         break;
+        Serial.println("GET-MEDIICNE");
+        Set_origin_x();
+        Set_origin_z();
+        Drop_medicine();
+        break;
    }
     
     // Debug print X
@@ -239,6 +252,9 @@ void read_setpoint(){
       setPoint_x=atoi(string_to_char(ptr)); 
       ptr = strtok (NULL, "-");
       setPoint_z=atoi(string_to_char(ptr));
+      last_x_count=-5000;
+      F14000-4300
+      last_z_count=-5000;
     }
 }
       
@@ -275,7 +291,7 @@ void move_Z(){
 void Get_medicine(){
   Bomba_Y->turn_on();
   Atuador_Y->Extend();
-  delay(1000);
+  delay(2500);
   Atuador_Y->Contract();
   delay(1000);
   Atuador_Y->Stop();
@@ -287,11 +303,3 @@ void Drop_medicine(){
   STATE='A';
 }
 
-void check_goal(){
-  if((encoder_X->getPulses()==last_x_count) || (encoder_Z->getPulses()==last_z_count )){
-    STATE='C';
-  }
-  last_x_count=encoder_X->getPulses();
-  last_z_count=encoder_Z->getPulses();
-
-}

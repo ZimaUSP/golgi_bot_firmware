@@ -6,8 +6,8 @@ Encoder *encoder_Z;
 
 // BTS Z axis 
 #include "H_bridge_controller.hpp"
-int R_pin_Z=17;
-int L_pin_Z=18;
+int R_pin_Z=17; // R bts
+int L_pin_Z=18; // L bts
 int PWM_frequency = 40000;
 int PWM_resolution = 8;
 int R_channel_Z=1;
@@ -100,9 +100,9 @@ void loop() {
       output_z = -255;
     }
     if (output_z < 0) {
-      BTS_Z->Set_R(-output_x);
+      BTS_Z->Set_R(-output_z);
     } else {
-      BTS_Z->Set_L(output_x);
+      BTS_Z->Set_L(output_z);
     }
 
     // Debug print
