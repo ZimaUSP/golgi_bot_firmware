@@ -198,7 +198,7 @@ void loop() {
         Get_medicine();
         break;
       case 'D' :
-        Serial.println("GET-MEDIICNE");
+        Serial.println("DROP-MEDICNE");
         Set_origin_x();
         Set_origin_z();
         Drop_medicine();
