@@ -1,7 +1,7 @@
-S// atuador axis 
+// atuador axis 
 #include "Atuador.hpp"
-int Extend_pin=13;
-int Contract_pin=12;
+int Extend_pin=33; //IN4
+int Contract_pin=25; //IN3
 Atuador *Atuador_Y;
 int comand;
 
@@ -18,7 +18,7 @@ void setup() {
   Serial.begin (SERIAL_VEL);
   comu = new SerialCommunication("Posição setPoint_x:");
 
-  // BTS
+  // Atuador
   Atuador_Y= new Atuador( Extend_pin,Contract_pin);
   Atuador_Y->init();
   
@@ -35,6 +35,7 @@ char* string_to_char(std::string str) {
    return cstr;
 }
 void read_command(){
+    Serial.println("oi");
    if(Serial.available()){
      comu->read_data();
 

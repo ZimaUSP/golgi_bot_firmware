@@ -18,14 +18,12 @@ void setup() {
 
 void loop() {
   for(int i=0;i<1024;i++){
-      BTS_X->SetPWM_R(i);
+      BTS_X->Set_R(i);
       delay(10);
   }
-    BTS_X->SetPWM_R(0);
 
   for(int i=0; i<1024;i++){
-      BTS_X->SetPWM_L(i);
+      BTS_X->Set_L(i);
       delay(10);
   }
-    BTS_X->SetPWM_L(0);
 }

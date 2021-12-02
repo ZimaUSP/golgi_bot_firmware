@@ -6,8 +6,8 @@ Encoder *encoder_X;
 
 // BTS X axis 
 #include "H_bridge_controller.hpp"
-int R_pin_X=26;
-int L_pin_X=27;
+int R_pin_X=26; // L Bts
+int L_pin_X=27; // R Bts
 int PWM_frequency = 40000;
 int PWM_resolution = 8;
 int R_channel_X=1;
@@ -46,8 +46,8 @@ Encoder *encoder_Z;
 
 // BTS Z axis 
 #include "H_bridge_controller.hpp"
-int R_pin_Z=17;
-int L_pin_Z=18;
+int R_pin_Z=17; // R bts
+int L_pin_Z=18; // L bts
 int R_channel_Z=3;
 int L_channel_Z=4;
 int PWM_R_Z=0;
@@ -74,6 +74,20 @@ PID *PID_Z;
 int MAX_PULSES_Z =12000;
 
 
+// EIXO Y 
+
+
+// Bomba axis 
+#include "Bomba.hpp"
+int bomba_pin=32;//IN2
+Bomba *Bomba_Y;
+
+// atuador axis 
+#include "Atuador.hpp"
+int Extend_pin=33; //IN4
+int Contract_pin=25; //IN3
+Atuador *Atuador_Y;
+
 //Serial comunication
 #include "serial_communication.hpp"
 #include "config.hpp"
@@ -87,7 +101,6 @@ void setup() {
 
   setPoint_z = 0;
   
-
   //Serial Comunication
   Serial.begin (SERIAL_VEL);
   comu = new SerialCommunication("Posição SetPoint:");
@@ -127,6 +140,14 @@ void setup() {
   
   PID_Z = new PID(kp_Z,ki_Z,kd_Z);
 
+  // Atuador
+  Atuador_Y= new Atuador( Extend_pin,Contract_pin);
+  Atuador_Y->init();
+  
+   // Bomba
+  Bomba_Y= new Bomba(bomba_pin);
+  Bomba_Y->init();
+
 }
 
 void loop() {
@@ -139,43 +160,15 @@ void loop() {
     // PID Z
     output_z = PID_Z->computePID(encoder_Z->getPulses(),setPoint_z);
 
-
     // Setting direction of motion acording to output_x PID
-    if (output_x > 255) {
-        output_x = 255;
-    }
-    if (output_x < -255) {
-        output_x = -255;
-    }
-    if (output_x < 0) {
-        PWM_L_X = 0;
-        PWM_R_X = -output_x;
-    } else {
-        PWM_R_X = 0;
-        PWM_L_X = output_x;
-    }
-    //Setting BTS X axis PWM channel
-    BTS_X->SetPWM_R(PWM_R_X);
-    BTS_X->SetPWM_L(PWM_L_X);
+    move_X();
 
     // Setting direction of motion acording to output_z PID
-    if (output_z > 255) {
-        output_z = 255;
-    }
-    if (output_z < -255) {
-        output_z = -255;
-    }
-    if (output_z < 0) {
-        PWM_L_Z = 0;
-        PWM_R_Z = -output_z;
-    } else {
-        PWM_R_Z = 0;
-        PWM_L_Z = output_z;
-    }
-    //Setting BTS Z axis PWM channel
-    BTS_Z->SetPWM_R(PWM_R_Z);
-    BTS_Z->SetPWM_L(PWM_L_Z);
+    move_Z();
 
+    if
+    
+    check_goal();
     // Debug print X
     //Serial.print("setPoint_x: ");
     //Serial.println(setPoint_x);
@@ -192,6 +185,7 @@ void loop() {
     Serial.print("    counter Z :");
     Serial.println(encoder_Z->getPulses());
 }
+
 char* string_to_char(std::string str) {
    char* cstr = new char[str.size() + 1];
    strcpy(cstr, str.c_str());
@@ -199,46 +193,89 @@ char* string_to_char(std::string str) {
 }
 
 void Set_origin_x(){
-  while (digitalRead(chave_R_X)==HIGH)
-  {
-    PWM_R_X = 100;
-    PWM_L_X = 0;
-    BTS_X->SetPWM_R(PWM_R_X);
-    BTS_X->SetPWM_L(PWM_L_X);
+  while (digitalRead(chave_R_X)==HIGH){
+    BTS_X->Set_R(100);
   }
   encoder_X->setPulses(0);
-  PWM_R_X = 0;
-  PWM_L_X = 0;
-  BTS_X->SetPWM_R(PWM_R_X);
-  BTS_X->SetPWM_L(PWM_L_X);
+  BTS_X->SetPWM_R(0);
 }
 
 void Set_origin_z(){
-  while (digitalRead(chave_R_Z)==HIGH)
-  {
-    PWM_R_Z = 100;
-    PWM_L_Z = 0;
-    BTS_Z->SetPWM_R(PWM_R_Z);
-    BTS_Z->SetPWM_L(PWM_L_Z);
+  while (digitalRead(chave_R_Z)==HIGH){
+    BTS_Z->Set_R(100);
   }
   encoder_Z->setPulses(0);
-  PWM_R_Z = 0;
-  PWM_L_Z = 0;
-  BTS_Z->SetPWM_R(PWM_R_Z);
-  BTS_Z->SetPWM_L(PWM_L_Z);
-  
+  BTS_Z->SetPWM_R(0);
 }
+
 void read_setpoint(){
     char *ptr;
-    
    if(Serial.available()){
-
       comu->read_data();
       char* recived=string_to_char(comu->get_received_data());
       ptr = strtok(recived, "-");
       setPoint_x=atoi(string_to_char(ptr)); 
       ptr = strtok (NULL, "-");
-      setPoint_z=atoi(string_to_char(ptr));  
+      setPoint_z=atoi(string_to_char(ptr));
+      ptr = strtok (NULL, "-");
+      if(atoi(string_to_char(ptr))==1){
+        Serial.println("oi");
+        get_medicine();
+      }
+      }
       
     }
+
+void move_X(){     
+    if (output_x < 0) {
+      if (output_x < -255) {
+        output_x = -255;
+      }
+      BTS_X->Set_R(-output_x);
+    } else {
+      if (output_x > 255) {
+        output_x = 255;
+      }
+      BTS_X->Set_L(output_x);
     }
+}
+
+void move_Z(){   
+    if (output_z < 0) {
+      if (output_z < -255) {
+        output_z = -255;
+      }
+      BTS_Z->Set_R(-output_x);
+    } else {
+        if (output_z > 255) {
+        output_z = 255;
+        }
+        BTS_Z->Set_L(output_x);
+    }
+}
+void get_medicine(){
+  Bomba_Y->turn_on();
+  Atuador_Y->Extend();
+  delay(1000);
+  Atuador_Y->Contract();
+  delay(1000);
+  Atuador_Y->Stop();
+  Bomba_Y->turn_off();
+}
+void check_goal(){
+  if((encoder_X->getPulses()==last_x_count) || (encoder_Z->getPulses()==last_z_count )){
+    PEGO=false;
+  }
+  last_x_count=encoder_X->getPulses();
+  last_z_count=encoder_Z->getPulses();
+
+}
+void Get_medicine(){
+  Bomba_Y->turn_on();
+  Atuador_Y->Extend();
+  delay(1000);
+  Atuador_Y->Contract();
+  delay(1000);
+  Atuador_Y->Stop();
+  PEGO=true;
+}

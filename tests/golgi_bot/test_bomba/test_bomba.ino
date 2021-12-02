@@ -2,9 +2,10 @@
 
 // Bomba axis 
 #include "Bomba.hpp"
-int bomba_pin=13;
+int bomba_pin=32;//IN2
 Bomba *Bomba_Y;
 int comand;
+
 
 //Serial comunication
 #include "serial_communication.hpp"
@@ -19,7 +20,7 @@ void setup() {
   Serial.begin (SERIAL_VEL);
   comu = new SerialCommunication("Posição setPoint_x:");
 
-  // BTS
+  // Bomba
   Bomba_Y= new Bomba( bomba_pin);
   Bomba_Y->init();
   Bomba_Y->turn_on();
@@ -37,9 +38,10 @@ char* string_to_char(std::string str) {
    return cstr;
 }
 void read_command(){
+
+    Serial.println("oi");
    if(Serial.available()){
      comu->read_data();
-
     comand=atoi(string_to_char(comu->get_received_data()));
     if(comand==1){
     Bomba_Y->turn_on();

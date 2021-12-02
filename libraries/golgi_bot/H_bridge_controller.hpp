@@ -57,6 +57,16 @@ class H_bridge_controller {
          */
         void SetPWM_L(int PWM);
 
+        /**
+         * @brief Set right PWM
+         */
+        void Set_R(int PWM);
+
+        /**
+         * @brief Set left PWM
+         */
+        void Set_L(int PWM);
+
 };
 
 #endif  // __H_bridge_controller_HPP__

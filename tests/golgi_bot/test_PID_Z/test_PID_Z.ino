@@ -6,8 +6,8 @@ Encoder *encoder_Z;
 
 // BTS Z axis 
 #include "H_bridge_controller.hpp"
-int R_pin_Z=17;
-int L_pin_Z=18;
+int R_pin_Z=17; // R bts
+int L_pin_Z=18; // L bts
 int PWM_frequency = 40000;
 int PWM_resolution = 8;
 int R_channel_Z=1;
@@ -100,15 +100,10 @@ void loop() {
       output_z = -255;
     }
     if (output_z < 0) {
-      PWM_L_Z = 0;
-      PWM_R_Z = -output_z;
+      BTS_Z->Set_R(-output_z);
     } else {
-      PWM_R_Z = 0;
-      PWM_L_Z = output_z;
+      BTS_Z->Set_L(output_z);
     }
-    //Setting BTS X axis PWM channel
-    BTS_Z->SetPWM_R(PWM_R_Z);
-    BTS_Z->SetPWM_L(PWM_L_Z);
 
     // Debug print
     Serial.print("Setpoint_z: ");
@@ -131,16 +126,12 @@ char* string_to_char(std::string str) {
 void Set_origin_z(){
   while (digitalRead(chave_R_Z)==HIGH)
   {
-    PWM_R_Z = 100;
-    PWM_L_Z = 0;
-    BTS_Z->SetPWM_R(PWM_R_Z);
-    BTS_Z->SetPWM_L(PWM_L_Z);
+    BTS_Z->Set_R(100);
   }
   encoder_Z->setPulses(0);
-  PWM_R_Z = 0;
-  PWM_L_Z = 0;
-  BTS_Z->SetPWM_R(PWM_R_Z);
-  BTS_Z->SetPWM_L(PWM_L_Z);
+  
+  BTS_Z->SetPWM_R(0);
+  BTS_Z->SetPWM_L(0);
   
 }
 void read_setpoint_z(){
