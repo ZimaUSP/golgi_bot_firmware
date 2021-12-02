@@ -253,7 +253,6 @@ void read_setpoint(){
       ptr = strtok (NULL, "-");
       setPoint_z=atoi(string_to_char(ptr));
       last_x_count=-5000;
-      F14000-4300
       last_z_count=-5000;
     }
 }
@@ -303,3 +302,16 @@ void Drop_medicine(){
   STATE='A';
 }
 
+
+void check_position(){
+  if((encoder_X->getPulses()==last_x_count) && (encoder_Z->getPulses()==last_z_count )){
+          BTS_X->SetPWM_R(0);
+          BTS_Z->SetPWM_R(0);
+          STATE='C';
+          Serial.print("counter X :");
+          Serial.println(encoder_X->getPulses());
+          Serial.print("    counter Z :");
+          Serial.println(encoder_Z->getPulses());
+          return;
+        }
+}

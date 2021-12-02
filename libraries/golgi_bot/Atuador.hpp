@@ -17,7 +17,7 @@
 
 class Atuador {
     private:
-
+    
         int Extend_pin;
         int Contract_pin;
 

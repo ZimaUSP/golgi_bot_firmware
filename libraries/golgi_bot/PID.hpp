@@ -51,6 +51,12 @@ class PID {
          */
         double computePID(double input,float setpoint); 
 
+        /**
+         * @brief Reset PID values
+         * 
+         */
+        void reset();
+
 
 };
 

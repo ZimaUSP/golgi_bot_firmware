@@ -38,3 +38,10 @@ double PID::computePID(double input,float setpoint) {
 
   return out;                                                 //have function return the PID output
 }
+
+void PID::reset() {
+    this->error = 0;
+    this->i_error = 0;
+    this->d_error = 0;
+    this->previus_time = millis();
+}

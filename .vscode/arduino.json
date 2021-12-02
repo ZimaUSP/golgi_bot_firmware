@@ -2,5 +2,5 @@
     "board": "esp32:esp32:esp32",
     "port": "COM5",
     "output": "../build",
-    "sketch": "tests\\golgi_bot\\test_PID_XYZ_2\\test_PID_XYZ_2.ino"
+    "sketch": "tests\\golgi_bot\\teste_ultrassonic\\teste_ultrassonic.ino"
 }
