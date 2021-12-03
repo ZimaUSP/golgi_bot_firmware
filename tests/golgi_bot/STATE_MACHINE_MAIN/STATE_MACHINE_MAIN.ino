@@ -283,8 +283,7 @@ void read_setpoint(){
     if(Serial.available()){
       
       STATE=GOING;
-
-      char *ptr;
+git 
       comu->read_data();
       char* recived=string_to_char(comu->get_received_data());
 
@@ -344,11 +343,12 @@ void Get_medicine(){
   Atuador_Y->Contract();
   delay(1000);
   Atuador_Y->Stop();
-  if(Ultrasonico_Y->get_distance()<10){
+  STATE=DROPING_MEDICINE;
+  /*if(Ultrasonico_Y->get_distance()<10){
     Serial.println(Ultrasonico_Y->get_distance());
     STATE=DROPING_MEDICINE;
 
-    }
+    }*/
 
 }
 
