@@ -26,7 +26,7 @@ Chave_fim_de_curso *endstop_R_X;
 
 //PID X axis constants
 #include "PID.hpp"
-double kp_x = 0.2;
+double kp_x = 0.3;
 double ki_x = 0;
 double kd_x= 2.5;
 int output_x;
@@ -66,9 +66,9 @@ Chave_fim_de_curso *endstop_R_Z;
 
 //PID Z axis constants
 #include "PID.hpp"
-double kp_Z = 0.1;
-double ki_Z = 0.000007;
-double kd_Z= 5; 
+double kp_z = 0.1;
+double ki_z = 0.000007;
+double kd_z= 5; 
 int output_z;
 double setPoint_z;
 PID *PID_Z; 
@@ -78,26 +78,6 @@ int MAX_PULSES_Z =12000;
 float MAX_CM_Z = 27.5;
 
 
-
-// EIXO Y 
-
-
-// Bomba axis 
-#include "Bomba.hpp"
-int bomba_pin=32;//IN2
-Bomba *Bomba_Y;
-
-// atuador axis 
-#include "Atuador.hpp"
-int Extend_pin=33; //IN4
-int Contract_pin=25; //IN3
-Atuador *Atuador_Y;
-
-// Ultrassonico
-#include "Ultrasonico.hpp"
-const int trigPin = 13;
-const int echoPin = 14;
-Ultrasonico *Ultrasonico_Y;
 
 //Serial comunication
 #include "serial_communication.hpp"
@@ -110,10 +90,12 @@ SerialCommunication *comu;
 char STATE = 0 ; // 
 #define STAND_BY 0
 #define GOING 1
-#define GETING_MEDICINE 2
-#define DROPING_MEDICINE 3
 
-
+// Time handling
+unsigned long current_time;
+unsigned long previus_time = 0;
+double delta_time;
+int SAMPLE_TME = 10;
 void setup() {
   // Set point
   setPoint_x = 0;
@@ -149,21 +131,6 @@ void setup() {
   encoder_Z = new Encoder(A_pin_Z,B_pin_Z,1);
   encoder_Z->init();
 
-   // Atuador
-  Atuador_Y= new Atuador( Extend_pin,Contract_pin);
-  Atuador_Y->init();
-  Atuador_Y->Contract();
-  delay(1000);
-  Atuador_Y->Stop();
-  
-   // Bomba
-  Bomba_Y= new Bomba(bomba_pin);
-  Bomba_Y->init();
-
-  // Ultrassonico
-  Ultrasonico_Y= new Ultrasonico(trigPin,echoPin);
-  Ultrasonico_Y->init();
-
   //Set origin
   
 
@@ -182,7 +149,7 @@ void setup() {
   //PID
   PID_X = new PID(kp_x,ki_x,kd_x);
   
-  PID_Z = new PID(kp_Z,ki_Z,kd_Z);
+  PID_Z = new PID(kp_z,ki_z,kd_z);
 
  
 
@@ -191,7 +158,6 @@ void setup() {
 void loop() {
   switch(STATE) {
       case STAND_BY :
-        Serial.println("STAND-BY");
         // Recive Set point
         read_setpoint();
         return;
@@ -213,34 +179,7 @@ void loop() {
         check_position();
         
         return;
-
-      case GETING_MEDICINE :
-
-        Serial.println("GETING_MEDICINE");
-        Get_medicine();
-        return;
-
-      case DROPING_MEDICINE :
-        Serial.println("DROPING_MEDICINE");
-        Set_origin_x();
-        Set_max_z();
-        Drop_medicine();
-        return;
-   }
-    
-    // Debug print X
-    //Serial.print("setPoint_x: ");
-    //Serial.println(setPoint_x);
-    //Serial.print("output_x: ");
-    //Serial.println(output_x);
-    
-
-    // Debug print Z
-    //Serial.print("Setpoint_z: ");
-    //Serial.println(setPoint_z);
-    //Serial.print("output: ");
-    //Serial.println(output_z);
-    
+  }
 }
 
 char* string_to_char(std::string str) {
@@ -289,7 +228,7 @@ void Set_max_z(){
 }
 
 
-void read_setpoint(){
+void read_constants(){
     if(Serial.available()){
       
       STATE=GOING;
@@ -299,19 +238,16 @@ void read_setpoint(){
       char* recived=string_to_char(comu->get_received_data());
 
       ptr = strtok(recived, "-");
-      if (atof(string_to_char(ptr))>MAX_CM_X){
-       setPoint_x=cmToPulses(MAX_CM_X)  ;
-      }else{
-      setPoint_x=cmToPulses(atof(string_to_char(ptr))); 
-      }
+      kp_x=atof(string_to_char(ptr)); 
+
       ptr = strtok (NULL, "-");
-      if (atof(string_to_char(ptr))>MAX_CM_Z){
-       setPoint_z=cmToPulses(MAX_CM_Z);
-      }else{
-      setPoint_z=cmToPulses(atof(string_to_char(ptr)));
-      }
-      PID_X->reset();
-      PID_Z->reset();
+      ki_x=atof(string_to_char(ptr));
+
+      ptr = strtok (NULL, "-");
+      kd_x=atof(string_to_char(ptr));
+
+      PID_X->reset(kp_x,ki_x,kd_x);
+      PID_Z->reset(kp_Z,ki_Z,kd_Z);
       last_x_count=-5000;
       last_z_count=-5000;
     }
@@ -346,31 +282,16 @@ void move_Z(){
         BTS_Z->Set_L(output_x);
     }
 }
-    
-void Get_medicine(){
-  Bomba_Y->turn_on();
-  Atuador_Y->Extend();
-  delay(2500);
-  Atuador_Y->Contract();
-  delay(1000);
-  Atuador_Y->Stop();
-  if(Ultrasonico_Y->get_distance()<=10){
-    Serial.println(Ultrasonico_Y->get_distance());
-    STATE=DROPING_MEDICINE;
-
-    }
-}
-void Drop_medicine(){
-  Bomba_Y->turn_off();
-  STATE=STAND_BY;
-}
-
-
+  
 void check_position(){
-  if((encoder_X->getPulses()==last_x_count) && (encoder_Z->getPulses()==last_z_count )){
+  current_time=millis();
+  delta_time = (double)(current_time - previus_time);
+  if (delta_time>SAMPLE_TIME)
+  {
+   if((encoder_X->getPulses()==last_x_count) && (encoder_Z->getPulses()==last_z_count )){
           BTS_X->SetPWM_R(0);
           BTS_Z->SetPWM_R(0);
-          STATE=GETING_MEDICINE;
+          STATE=STAND_BY;
           Serial.print("counter X :");
           Serial.println(encoder_X->getPulses());
           Serial.print("    counter Z :");
@@ -382,6 +303,8 @@ void check_position(){
           
           return;
         }
+    previus_time =  current_time; 
+  }
   last_x_count=encoder_X->getPulses();
   last_z_count=encoder_Z->getPulses();
 }

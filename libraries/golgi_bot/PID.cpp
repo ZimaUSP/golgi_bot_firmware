@@ -39,7 +39,10 @@ double PID::computePID(double input,float setpoint) {
   return out;                                                 //have function return the PID output
 }
 
-void PID::reset() {
+void PID::reset(double k_p,double k_i,double k_d) {
+    this->k_p = k_p;
+    this->k_i = k_i;
+    this->k_d = k_d; 
     this->error = 0;
     this->i_error = 0;
     this->d_error = 0;
