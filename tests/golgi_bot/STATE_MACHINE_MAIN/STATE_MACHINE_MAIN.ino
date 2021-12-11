@@ -283,10 +283,9 @@ void read_setpoint(){
     if(Serial.available()){
       
       STATE=GOING;
-git 
       comu->read_data();
       char* recived=string_to_char(comu->get_received_data());
-
+      char *ptr;
       ptr = strtok(recived, "-");
       if (atoi(string_to_char(ptr))>MAX_PULSES_X){
        setPoint_x=MAX_PULSES_X ;
