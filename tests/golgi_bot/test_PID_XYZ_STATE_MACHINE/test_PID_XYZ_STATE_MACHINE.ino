@@ -100,6 +100,11 @@ SerialCommunication *comu;
 // Estados
 char STATE = 'A' ; // 0 -> Stand by 1-> To Goal   2 -> In_Goal  3 ->To origin  
 
+//Tempo
+int sample_time=10;
+unsigned long current_time;
+unsigned long previus_time = 0;
+double delta_time;
 
 void setup() {
   // Set point
@@ -183,15 +188,9 @@ void loop() {
         move_Z();
 
         Serial.println("GOING");
-        if((encoder_X->getPulses()==last_x_count) && (encoder_Z->getPulses()==last_z_count )){
-          STATE='C';
-          Serial.print("counter X :");
-          Serial.println(encoder_X->getPulses());
-          Serial.print("    counter Z :");
-          Serial.println(encoder_Z->getPulses());
-        }
-        last_x_count=encoder_X->getPulses();
-        last_z_count=encoder_Z->getPulses();
+
+        check_position();
+        
         break;
       case 'C' :
         Serial.println("GET-MEDIICNE");
@@ -303,3 +302,19 @@ void Drop_medicine(){
   STATE='A';
 }
 
+bool check_position(){
+  current_time=millis();
+  delta_time=current_time-previus_time;
+  if(delta_time>sample_time){
+    if((encoder_X->getPulses()==last_x_count) && (encoder_Z->getPulses()==last_z_count )){
+          STATE='C';
+          Serial.print("counter X :");
+          Serial.println(encoder_X->getPulses());
+          Serial.print("    counter Z :");
+          Serial.println(encoder_Z->getPulses());
+        }
+    last_x_count=encoder_X->getPulses();
+    last_z_count=encoder_Z->getPulses();
+  }
+  previus_time=current_time;
+}
