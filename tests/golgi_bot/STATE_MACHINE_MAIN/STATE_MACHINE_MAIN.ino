@@ -26,9 +26,9 @@ Chave_fim_de_curso *endstop_R_X;
 
 //PID X axis constants
 #include "PID.hpp"
-double kp_x = 0.2;
-double ki_x = 0;
-double kd_x= 2.5;
+double kp_x = 0.04;
+double ki_x = 0.00001;
+double kd_x= 5;
 int output_x;
 double setPoint_x;
 PID *PID_X; 
@@ -65,9 +65,9 @@ Chave_fim_de_curso *endstop_R_Z;
 
 //PID Z axis constants
 #include "PID.hpp"
-double kp_Z = 0.1;
-double ki_Z = 0.000007;
-double kd_Z= 5; 
+double kp_Z = 0.04;
+double ki_Z = 0.00003;
+double kd_Z= 2; 
 int output_z;
 double setPoint_z;
 PID *PID_Z; 
@@ -111,6 +111,17 @@ char STATE = 0 ; //
 #define GETING_MEDICINE 2
 #define DROPING_MEDICINE 3
 
+//Tempo
+int sample_time=500;
+unsigned long current_time;
+unsigned long previus_time = 0;
+double delta_time;
+
+//Cabides
+int pos_x[3]={22000,13900,5700};
+int pos_z[2]={1250,12000};
+int TOLERANCE = 200;
+#define MAX_PWM 150
 
 void setup() {
   // Set point
@@ -169,13 +180,6 @@ void setup() {
   
   Set_origin_z();
 
-  Set_max_x();
-  
-  Set_max_z();
-
-  Set_origin_x();
-  
-  Set_origin_z();
 
   //PID
   PID_X = new PID(kp_x,ki_x,kd_x);
@@ -195,25 +199,25 @@ void loop() {
         return;
       case GOING :
         
-        // PID X
-        output_x = PID_X->computePID(encoder_X->getPulses(),setPoint_x);
-        // Setting direction of motion acording to output_x PID
-        move_X(); 
+        
         // PID Z
         output_z = PID_Z->computePID(encoder_Z->getPulses(),setPoint_z);
         // Setting direction of motion acording to output_z PID
         move_Z();
+         
+
+        // PID X
+        output_x = PID_X->computePID(encoder_X->getPulses(),setPoint_x);
+        // Setting direction of motion acording to output_x PID
+        move_X(); 
 
         //Code does not work without this delay (?)
         delay(2);
         
         check_position();
-        
-        last_x_count=encoder_X->getPulses();
-        last_z_count=encoder_Z->getPulses();
+
         return;
       case GETING_MEDICINE :
-
         Serial.println("GETING_MEDICINE");
         Get_medicine();
         return;
@@ -248,7 +252,7 @@ char* string_to_char(std::string str) {
 
 void Set_origin_x(){
   while (digitalRead(chave_R_X)==HIGH){
-    BTS_X->Set_R(100);
+    BTS_X->Set_R(150);
   }
   encoder_X->setPulses(0);
   BTS_X->SetPWM_R(0);
@@ -264,7 +268,7 @@ void Set_origin_z(){
 
 void Set_max_x(){
   while (digitalRead(chave_L_X)==HIGH){
-    BTS_X->Set_L(100);
+    BTS_X->Set_L(150);
   }
   MAX_PULSES_X = encoder_X->getPulses();
   BTS_X->SetPWM_L(0);
@@ -283,20 +287,23 @@ void read_setpoint(){
     if(Serial.available()){
       
       STATE=GOING;
+      Serial.println("GOING");
       comu->read_data();
       char* recived=string_to_char(comu->get_received_data());
       char *ptr;
       ptr = strtok(recived, "-");
-      if (atoi(string_to_char(ptr))>MAX_PULSES_X){
-       setPoint_x=MAX_PULSES_X ;
+      if (atoi(string_to_char(ptr))==1){
+       setPoint_z=pos_z[0] ;
       }else{
-      setPoint_x=atoi(string_to_char(ptr)); 
+      setPoint_z=pos_z[1] ;
       }
       ptr = strtok (NULL, "-");
-      if (atoi(string_to_char(ptr))>MAX_PULSES_Z){
-       setPoint_z=MAX_PULSES_Z;
-      }else{
-      setPoint_z=atoi(string_to_char(ptr));
+      if (atoi(string_to_char(ptr))==1){
+       setPoint_x=pos_x[0];
+      }else if(atoi(string_to_char(ptr))==2){
+      setPoint_x=pos_x[1];
+      }else if(atoi(string_to_char(ptr))==3){
+        setPoint_x=pos_x[2];
       }
       PID_X->reset();
       PID_Z->reset();
@@ -309,29 +316,33 @@ void read_setpoint(){
 
 void move_X(){     
     if (output_x < 0) {
-      if (output_x < -255) {
-        output_x = -255;
+      if (output_x < -MAX_PWM) {
+        output_x = -MAX_PWM;
       }
       BTS_X->Set_R(-output_x);
+      return;
     } else {
-      if (output_x > 255) {
-        output_x = 255;
+      if (output_x > MAX_PWM) {
+        output_x = MAX_PWM;
       }
       BTS_X->Set_L(output_x);
+      return;
     }
 }
 
 void move_Z(){   
     if (output_z < 0) {
-      if (output_z < -255) {
-        output_z = -255;
+      if (output_z < -MAX_PWM) {
+        output_z = -MAX_PWM;
       }
-      BTS_Z->Set_R(-output_x);
+      BTS_Z->Set_R(-output_z);
+      return;
     } else {
-        if (output_z > 255) {
-        output_z = 255;
+        if (output_z > MAX_PWM) {
+        output_z = MAX_PWM;
         }
-        BTS_Z->Set_L(output_x);
+        BTS_Z->Set_L(output_z);
+        return;
     }
 }
     
@@ -342,12 +353,12 @@ void Get_medicine(){
   Atuador_Y->Contract();
   delay(1000);
   Atuador_Y->Stop();
-  STATE=DROPING_MEDICINE;
-  /*if(Ultrasonico_Y->get_distance()<10){
+  //STATE=DROPING_MEDICINE;
+  if(Ultrasonico_Y->get_distance()<10){
     Serial.println(Ultrasonico_Y->get_distance());
     STATE=DROPING_MEDICINE;
 
-    }*/
+    }
 
 }
 
@@ -358,15 +369,25 @@ void Drop_medicine(){
 
 
 void check_position(){
-  if((encoder_X->getPulses()==last_x_count) && (encoder_Z->getPulses()==last_z_count )){
-          BTS_X->SetPWM_R(0);
-          BTS_Z->SetPWM_R(0);
+  current_time=millis();
+  delta_time=current_time-previus_time;
+  if(delta_time>sample_time){
+    
+      if((encoder_Z->getPulses()>setPoint_z - TOLERANCE) && (encoder_Z->getPulses()<setPoint_z + TOLERANCE)){
+        if((encoder_X->getPulses()>setPoint_x - TOLERANCE) && (encoder_X->getPulses()<setPoint_x + TOLERANCE)){
           STATE=GETING_MEDICINE;
+          BTS_X->Set_R(0);
+          BTS_Z->Set_R(0);
           Serial.print("counter X :");
           Serial.println(encoder_X->getPulses());
           Serial.print("    counter Z :");
           Serial.println(encoder_Z->getPulses());
           return;
-        }
+      }
+      return;
+      }
+    return;
+  }
+  previus_time=current_time;
+  return;
 }
-
