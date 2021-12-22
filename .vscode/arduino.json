@@ -1,6 +1,0 @@
-{
-    "board": "esp32:esp32:esp32",
-    "port": "COM5",
-    "output": "../build",
-    "sketch": "tests\\golgi_bot\\teste_ultrassonic\\teste_ultrassonic.ino"
-}

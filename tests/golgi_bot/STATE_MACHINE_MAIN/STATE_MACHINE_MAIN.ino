@@ -4,6 +4,8 @@ int A_pin_X=22; // Green cable
 int B_pin_X=23; // White cable
 Encoder *encoder_X;
 int last_x_count;
+int pulses=600;
+int pitch==40;
 
 // BTS X axis 
 #include "H_bridge_controller.hpp"
