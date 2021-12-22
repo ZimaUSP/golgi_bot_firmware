@@ -12,16 +12,23 @@
 
 
 #include "Encoder.hpp"
-#define A 14
 /*****************************************
  * Class Methods Bodies Definitions
  *****************************************/
 
-Encoder::Encoder(int A_pin,int B_pin, byte which,int PulsesPerRev,int PitchPerRev):whichISR_(which) {
+Encoder::Encoder(int A_pin,int B_pin, byte which,int PulsesPerRev,int PitchPerRev,int mode):whichISR_(which) {
     this-> A_pin = A_pin;
     this-> B_pin = B_pin;
     this->PitchPerRev=PitchPerRev;
-    this->PulsesPerRev=4*PulsesPerRev;
+    this->mode=mode;
+    if(mode==1){
+      this->PulsesPerRev=PulsesPerRev;
+    }else if(mode==2){
+      this->PulsesPerRev=2*PulsesPerRev;
+    }else if(mode==4){
+      this->PulsesPerRev=4*PulsesPerRev;
+    }
+    
     pinMode(this->A_pin,INPUT_PULLUP);
     pinMode(this->B_pin,INPUT_PULLUP);
 }
@@ -58,20 +65,40 @@ void Encoder::B_trigger() {
 void Encoder::init() {
   switch (whichISR_) {
       case 0: 
-        attachInterrupt (this-> A_pin, isr0A, CHANGE); 
-        attachInterrupt (this-> B_pin, isr0B, CHANGE); 
+        if(this->mode==1){
+          attachInterrupt (this-> A_pin, isr0A, RISING); 
+        }else if(this->mode==2){
+          attachInterrupt (this-> A_pin, isr0A, CHANGE); 
+        }else if(this->mode==4){
+          attachInterrupt (this-> A_pin, isr0A, CHANGE); 
+          attachInterrupt (this-> B_pin, isr0B, CHANGE); 
+        }
+        
         instance0_ = this;
         break;
 
       case 1: 
-        attachInterrupt (this-> A_pin, isr1A, CHANGE); 
-        attachInterrupt (this-> B_pin, isr1B, CHANGE); 
+        if(this->mode==1){
+          attachInterrupt (this-> A_pin, isr1A, RISING); 
+        }else if(this->mode==2){
+          attachInterrupt (this-> A_pin, isr1A, CHANGE); 
+        }else if(this->mode==4){
+          attachInterrupt (this-> A_pin, isr1A, CHANGE); 
+          attachInterrupt (this-> B_pin, isr1B, CHANGE); 
+        }
+        
         instance1_ = this;
         break;
 
       case 2:
-        attachInterrupt (this-> A_pin, isr2A, CHANGE); 
-        attachInterrupt (this-> B_pin, isr2B, CHANGE); 
+        if(this->mode==1){
+          attachInterrupt (this-> A_pin, isr2A, RISING); 
+        }else if(this->mode==2){
+          attachInterrupt (this-> A_pin, isr1A, CHANGE); 
+        }else if(this->mode==4){
+          attachInterrupt (this-> A_pin, isr2A, CHANGE); 
+          attachInterrupt (this-> B_pin, isr2B, CHANGE); 
+        }
         instance2_ = this;
         break;
     } 
