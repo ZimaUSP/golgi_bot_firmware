@@ -1,10 +1,9 @@
 // Header file which contain Pin, constanst, states and etc...
 #include "config.hpp"
 
-//Controller lib
+//Axis lib
 
-#include "Controller.hpp"
-Controller *Golgi_BOT;
+#include "Axis.hpp"
 
 // EIXO X
 
@@ -42,21 +41,18 @@ Chave_fim_de_curso *endstop_R_Z;
 PID *PID_Z; 
 
 
-// EIXO Y 
+//Serial comunication/
+#include "serial_communication.hpp"
 
-
-// Bomba axis 
-Bomba *Bomba_Y;
-
-// atuador axis 
-Atuador *Atuador_Y;
-
-
-//Serial comunication
-SerialCommunication *comu;
+SerialCommunication* comu;
+#include <string>
+#include <cstring>
 double X_pos;
 double Z_pos;
 
+// Position array in milimeters
+int pos_x[3]={97,229,370};
+int pos_z[2]={70,201};
 //STATE
 char STATE = 0 ; 
 
@@ -97,14 +93,6 @@ void setup() {
   encoder_Z = new Encoder(A_pin_Z,B_pin_Z,1,Nominal_pulses,pitch_pulley,Mode);
   encoder_Z->init();
 
-   // Atuador
-  Atuador_Y= new Atuador( Extend_pin,Contract_pin);
-  Atuador_Y->init();
-  
-   // Bomba
-  Bomba_Y= new Bomba(bomba_pin);
-  Bomba_Y->init();
-
 
   //PID
   PID_X = new PID(kp_x,ki_x,kd_x);
@@ -116,11 +104,8 @@ void setup() {
   
   Axis_z= new Axis(encoder_Z, BTS_Z, endstop_R_Z, endstop_R_Z, PID_Z, Z_MAX_VEL, PWM_resolution_channel, Z_size, Z_tolerance);
 
-  Golgi_BOT = new Controller(Axis_x, Axis_z, Bomba_Y, Atuador_Y);
-
-  Golgi_BOT->reset_Y();
-
-  Golgi_BOT->go_origin();
+  Axis_x->go_origin();
+  Axis_z->go_origin();
 
   Serial.println("STAND-BY");
 
@@ -132,20 +117,19 @@ void loop() {
         // Recive Set point
         read_setpoint();
         return;
+
       case GOING :
         //Moves Controller
-        Golgi_BOT->move();
+        Axis_x->move();
+        Axis_z->move();
         //Code does not work without this delay (?)
         delay(2);
         check_position();
         return;
-      case GETING_MEDICINE :
-        Golgi_BOT->get_medicine();
-        STATE=DROPING_MEDICINE;
-        Serial.println("DROPING_MEDICINE");
-        return;
+      
       case DROPING_MEDICINE :
-        Golgi_BOT->drop_medicine();
+        Axis_x->go_origin();
+        Axis_z->go_max();
         STATE=STAND_BY;
         Serial.println("STAND-BY");
         return;
@@ -161,27 +145,32 @@ char* string_to_char(std::string str) {
 void read_setpoint(){
     if(Serial.available()){
       STATE=GOING;
-      Serial.println("GOING");
-
-      comu->read_data();
-      char* recived=string_to_char(comu->get_received_data());
-      char *ptr;
-
-      ptr = strtok(recived, "-");
-      X_pos=atoi(string_to_char(ptr);
-     
-      ptr = strtok (NULL, "-");
-      Z_pos=atoi(string_to_char(ptr);
-      
-      Golgi_BOT->setGoal(X_pos,Z_pos);
+      Serial.println("GOING"); 
+      int index = Serial.read();
+      int counter=0;
+      for(int j =0; j < 2;j++){
+        for(int i =0; i < 3;i++){
+          counter=counter+1;
+          if (counter==(index, DEC)){
+            
+          }
+        }
+      }
+      X_pos=100;
+      Z_pos=100;
+      Serial.println(X_pos);
+      Serial.println(Z_pos);
+      Axis_x->setGoal(X_pos);
+      Axis_z->setGoal(Z_pos);
     }
 }
 
 void check_position(){
-  if(Golgi_BOT->onGoal){
-    STATE=GETING_MEDICINE;
-    Serial.println("GETING_MEDICINE");
-    Serial.println(Golgi_BOT->positionPoint());
+  if(Axis_z->onGoal() && Axis_x->onGoal()){
+    STATE=DROPING_MEDICINE;
+    Serial.println("DROPING_MEDICINE");
+    Serial.println(Axis_x->position());
+    Serial.println(Axis_z->position());
   }
 }     
   
