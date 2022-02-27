@@ -17,28 +17,28 @@
  * Class Methods Bodies Definitions
  *****************************************/
 
-Atuador::Atuador(int Extend_pin,int Contract_pin) {
-    this->Extend_pin = Extend_pin;
-    this->Contract_pin = Contract_pin;
+Atuador::Atuador(int extend_pin,int contract_pin) {
+    this->extend_pin = extend_pin;
+    this->contract_pin = contract_pin;
 }
 void Atuador::init(){
-    pinMode(this->Extend_pin,OUTPUT);
-    pinMode(this->Contract_pin,OUTPUT);
+    pinMode(this->extend_pin,OUTPUT);
+    pinMode(this->contract_pin,OUTPUT);
 
 }
 
 void Atuador::Extend() {
-  digitalWrite(this->Contract_pin, LOW);
-  digitalWrite(this->Extend_pin, HIGH);
+  digitalWrite(this->contract_pin, LOW);
+  digitalWrite(this->extend_pin, HIGH);
 }
 
 void Atuador::Contract() {
-  digitalWrite(this->Extend_pin, LOW);
-  digitalWrite(this->Contract_pin, HIGH);
+  digitalWrite(this->extend_pin, LOW);
+  digitalWrite(this->contract_pin, HIGH);
 }
 
 void Atuador::Stop() {
-  digitalWrite(this->Extend_pin, LOW);
-  digitalWrite(this->Contract_pin, LOW);
+  digitalWrite(this->extend_pin, LOW);
+  digitalWrite(this->contract_pin, LOW);
 }
 

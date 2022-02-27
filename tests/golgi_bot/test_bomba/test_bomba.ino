@@ -28,8 +28,11 @@ void setup() {
 }
 
 void loop() {
-  read_command();
-    }
+  Bomba_Y->turn_on();
+  delay(1000);
+  Bomba_Y->turn_off();
+  delay(1000);
+  }
 
 
 char* string_to_char(std::string str) {
@@ -39,12 +42,13 @@ char* string_to_char(std::string str) {
 }
 void read_command(){
 
-    Serial.println("oi");
+    
    if(Serial.available()){
      comu->read_data();
     comand=atoi(string_to_char(comu->get_received_data()));
     if(comand==1){
     Bomba_Y->turn_on();
+    Serial.println("on");
     }
     else{
     Bomba_Y->turn_off();

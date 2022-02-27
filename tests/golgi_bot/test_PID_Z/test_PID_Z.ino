@@ -1,9 +1,10 @@
+
 // EIXO Z 
 
 // Encoder Z axis 
 #include "Encoder.hpp"
-int A_pin_Z=19; // Green cable
-int B_pin_Z=21; // white cable
+int A_pin_Z=21; // Green cable
+int B_pin_Z=19; // white cable
 Encoder *encoder_Z;
 int last_z_count;
 

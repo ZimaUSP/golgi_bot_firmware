@@ -25,7 +25,11 @@ void setup() {
 }
 
 void loop() {
-  read_command();
+  Atuador_Y->Extend();
+  delay(1000);
+  Atuador_Y->Contract();
+  delay(1000);
+  Serial.println(".");
     }
 
 
@@ -35,19 +39,25 @@ char* string_to_char(std::string str) {
    return cstr;
 }
 void read_command(){
-    Serial.println("oi");
+  Serial.println(".");
    if(Serial.available()){
      comu->read_data();
 
     comand=atoi(string_to_char(comu->get_received_data()));
     if(comand==1){
     Atuador_Y->Extend();
+    
+    Serial.println("extend");
     }
     if(comand==2){
     Atuador_Y->Contract();
+    
+    Serial.println("contrac");
     }
     if(comand==3){
     Atuador_Y->Stop();
+    
+    Serial.println("stop");
     }
     
   }

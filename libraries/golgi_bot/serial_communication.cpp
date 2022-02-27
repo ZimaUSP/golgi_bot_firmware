@@ -72,13 +72,13 @@ bool SerialCommunication::send_data(std::string data){
     return true;
 };
 
-#ifdef ACTIVE_DRIVER_COMMUNICATION
+#ifdef ACTIVE_RASPBERRY_COMMUNICATION
 bool SerialCommunication::send_byte(byte byte,serial_ports serial_port) {
     switch(serial_port){
         case MAIN_SERIAL:
             Serial.write(byte);
             break;
-        case DRIVER_SERIAL:
+        case RASPBERRY_SERIAL:
             Serial2.write(byte);
             break;
         default:
@@ -110,7 +110,7 @@ char SerialCommunication::read_char(serial_ports serial_port){
                 while(!Serial.available());
                 return Serial.read();
                 break;
-            case DRIVER_SERIAL:
+            case RASPBERRY_SERIAL:
                 while(!Serial2.available());
                 return Serial2.read();
                 break;
@@ -133,7 +133,7 @@ void SerialCommunication::read_data(serial_ports serial_port){
         case MAIN_SERIAL:
             serialAvaiable = Serial.available();
             break;
-        case DRIVER_SERIAL:
+        case RASPBERRY_SERIAL:
             serialAvaiable = Serial2.available();
             break;
         default:

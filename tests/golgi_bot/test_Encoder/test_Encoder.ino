@@ -1,6 +1,6 @@
 #include "Encoder.hpp"
-int A_pin=22; // green cable
-int B_pin=23; // white cable
+int A_pin=19; // green cable
+int B_pin=21; // white cable
 
 Encoder *encoder;
 

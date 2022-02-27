@@ -24,8 +24,8 @@
 
 // SERIAL COMMUNICATION
 #define MAIN_SERIAL_BAUDRATE 115200
-#define DRIVER_SERIAL_BAUDRATE 115200
-#define ACTIVE_DRIVER_COMMUNICATION
+#define RASPBERRY_SERIAL_BAUDRATE 115200
+#define ACTIVE_RASPBERRY_COMMUNICATION
 
 
 // serial data config
@@ -71,37 +71,23 @@
     // until a whole packet is read
 #define max_i2c_slave_response 32
 
-// velocity meter
-#define HALL_POSN_PER_REV 90 
-#define DEFAULT_WHEEL_DIAMETER_INCHES 6.5
-#define DEFAULT_WHEEL_DIAMETER_METERS DEFAULT_WHEEL_DIAMETER_INCHES*0.0254
-#define ENCODER_DT 100 //0.1s
-#define ENCODER_AMOUNT 2
-
-// driver communication
-#define DATA_DELIMITER " "
-#define VEL_ERROR_THRESHOLD 10000
-
-
-
-
-
 /// X axis ///
 
 #define X_MAX_VEL 0.5
 #define X_size 414
 #define X_tolerance 10
+#define X_max_index 3
 
 //  X Encoder
-#define A_pin_X 22 // Green cable
-#define B_pin_X 23 // White cable
+#define A_pin_X 23 // Green cable
+#define B_pin_X 22 // White cable
 
 
 // X BTS
-#define R_pin_X 26 // L Bts
-#define L_pin_X 27 // R Bts
-#define R_channel_X 1
-#define L_channel_X 2
+#define R_pin_X 27 // L Bts
+#define L_pin_X 26 // R Bts
+#define R_channel_X 0
+#define L_channel_X 1
 
 // X CHAVE
 #define chave_L_X 36 
@@ -118,17 +104,18 @@
 
 #define Z_MAX_VEL 0.5
 #define Z_size 270
-#define Z_tolerance 40
+#define Z_tolerance 4
+#define Z_max_index 2
 
 // Z Encoder 
-#define A_pin_Z 19 // Green cable
-#define B_pin_Z 21 // white cable
+#define A_pin_Z 21 // Green cable
+#define B_pin_Z 19 // white cable
 
 // Z BTS 
 #define R_pin_Z 17 // R bts
 #define L_pin_Z 18 // L bts
-#define R_channel_Z 3
-#define L_channel_Z 4
+#define R_channel_Z 2
+#define L_channel_Z 3
 
 // Z Chave
 #define chave_L_Z 34 
@@ -150,8 +137,8 @@
 #define bomba_pin 32//IN2
 
 // Y Atuador
-#define Extend_pin 33 //IN4
-#define Contract_pin 25 //IN3
+#define Extend_pin 25 //IN4
+#define Contract_pin 33 //IN3
 
 #endif  // __CONFIG_HPP__
 

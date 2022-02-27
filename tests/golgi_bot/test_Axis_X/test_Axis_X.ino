@@ -51,8 +51,10 @@ double X_pos;
 double Z_pos;
 
 // Position array in milimeters
-int pos_x[3]={97,229,370};
-int pos_z[2]={70,201};
+int pos_x[X_max_index]={97,229,370};
+int pos_z[Z_max_index]={70,201};
+int counter;
+int index_medicine;
 //STATE
 char STATE = 0 ; 
 
@@ -66,7 +68,7 @@ void setup() {
    
   //Serial Comunication
   Serial.begin (SERIAL_VEL);
-  comu = new SerialCommunication("Posição SetPoint:");
+  comu = new SerialCommunication("DEBUG");
 
   //Chave fim de curso
   endstop_L_X = new Chave_fim_de_curso(chave_L_X,0);
@@ -74,38 +76,24 @@ void setup() {
   endstop_R_X = new Chave_fim_de_curso(chave_R_X,1);
   endstop_R_X->init();
 
-  endstop_L_Z = new Chave_fim_de_curso(chave_L_Z,2);
-  endstop_L_Z->init();
-  endstop_R_Z = new Chave_fim_de_curso(chave_R_Z,3);
-  endstop_R_Z->init();
 
   // BTS
   BTS_X= new H_bridge_controller( R_pin_X, L_pin_X, PWM_frequency_channel, PWM_resolution_channel, R_channel_X, L_channel_X);
   BTS_X->init();
 
-  BTS_Z= new H_bridge_controller( R_pin_Z, L_pin_Z, PWM_frequency_channel, PWM_resolution_channel, R_channel_Z, L_channel_Z);
-  BTS_Z->init();
-
   // Encoder
   encoder_X = new Encoder(A_pin_X,B_pin_X,0,Nominal_pulses,pitch_pulley,Mode);
   encoder_X->init();
 
-  encoder_Z = new Encoder(A_pin_Z,B_pin_Z,1,Nominal_pulses,pitch_pulley,Mode);
-  encoder_Z->init();
-
-
   //PID
   PID_X = new PID(kp_x,ki_x,kd_x);
   
-  PID_Z = new PID(kp_z,ki_z,kd_z);
 
   //Creating Axis
   Axis_x= new Axis(encoder_X, BTS_X, endstop_R_X, endstop_R_X, PID_X, X_MAX_VEL, PWM_resolution_channel, X_size, X_tolerance);
   
-  Axis_z= new Axis(encoder_Z, BTS_Z, endstop_R_Z, endstop_R_Z, PID_Z, Z_MAX_VEL, PWM_resolution_channel, Z_size, Z_tolerance);
 
   Axis_x->go_origin();
-  Axis_z->go_origin();
 
   Serial.println("STAND-BY");
 
@@ -121,7 +109,6 @@ void loop() {
       case GOING :
         //Moves Controller
         Axis_x->move();
-        Axis_z->move();
         //Code does not work without this delay (?)
         delay(2);
         check_position();
@@ -129,7 +116,6 @@ void loop() {
       
       case DROPING_MEDICINE :
         Axis_x->go_origin();
-        Axis_z->go_max();
         STATE=STAND_BY;
         Serial.println("STAND-BY");
         return;
@@ -146,31 +132,27 @@ void read_setpoint(){
     if(Serial.available()){
       STATE=GOING;
       Serial.println("GOING"); 
-      int index = Serial.read();
-      int counter=0;
-      for(int j =0; j < 2;j++){
-        for(int i =0; i < 3;i++){
+      comu->read_data(MAIN_SERIAL);
+      char* recived=string_to_char(comu->get_received_data());
+      int index_medicine=atoi(recived);
+      counter=0;
+        for(int i =0; i < X_max_index; i++){
           counter=counter+1;
-          if (counter==(index, DEC)){
-            
+          if (counter==index_medicine){
+            X_pos=pos_x[i];
           }
         }
-      }
-      X_pos=100;
-      Z_pos=100;
+      
       Serial.println(X_pos);
-      Serial.println(Z_pos);
       Axis_x->setGoal(X_pos);
-      Axis_z->setGoal(Z_pos);
     }
 }
 
 void check_position(){
-  if(Axis_z->onGoal() && Axis_x->onGoal()){
+  if(Axis_x->onGoal()){
     STATE=DROPING_MEDICINE;
     Serial.println("DROPING_MEDICINE");
     Serial.println(Axis_x->position());
-    Serial.println(Axis_z->position());
   }
 }     
   

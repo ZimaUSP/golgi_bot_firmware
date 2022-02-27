@@ -18,8 +18,8 @@
 class Atuador {
     private:
     
-        int Extend_pin;
-        int Contract_pin;
+        int extend_pin;
+        int contract_pin;
 
     public:
 
@@ -30,7 +30,7 @@ class Atuador {
          * @param Contract_pin If pin HIGH, atuador Contract stroke
          *
          */
-        Atuador(int Extend_pin,int Contract_pin);
+        Atuador(int extend_pin,int contract_pin);
 
         /**
          * @brief Init digitial pins

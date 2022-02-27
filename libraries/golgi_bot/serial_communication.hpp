@@ -22,10 +22,10 @@
 #include <Arduino.h>
 #include <stdlib.h>
 
-#ifdef ACTIVE_DRIVER_COMMUNICATION
+#ifdef ACTIVE_RASPBERRY_COMMUNICATION
 enum serial_ports{
     MAIN_SERIAL,
-    DRIVER_SERIAL,
+    RASPBERRY_SERIAL,
 
     SERIAL_AMOUNT
 };
@@ -74,7 +74,7 @@ class SerialCommunication: public Communication {
          */
         void read_data();
 
-        #ifdef ACTIVE_DRIVER_COMMUNICATION
+        #ifdef ACTIVE_RASPBERRY_COMMUNICATION
             /**
              * @brief send just one byte
              * 

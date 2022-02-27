@@ -48,7 +48,7 @@ class Controller {
          * @brief moves axis with PID control, input position from enconder(mm)
          * 
          */
-        void get_medicine(int DELAY_EXTEND, int DELAY_CONTRACT);
+        void get_medicine(int DELAY_EX, int DELAY_CON);
 
         /**
          * @brief moves axis with PID control, input position from enconder(mm)
@@ -72,7 +72,7 @@ class Controller {
          * @brief moves axis with PID control, input position from enconder(mm)
          * 
          */
-        void reset_Y(int DELAY_CONTRACT);
+        void reset_Y(int DELAY_CON);
 
 
         /**
