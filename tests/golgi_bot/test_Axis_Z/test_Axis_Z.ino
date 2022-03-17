@@ -3,7 +3,7 @@
 
 //Axis lib
 
-#include "Axis.hpp"
+#include "Controller.hpp"
 
 
 // EIXO Z
@@ -93,7 +93,7 @@ void loop() {
         //Moves Controller
         Axis_z->move();
         //Code does not work without this delay (?)
-        delay(2);
+        delay(5);
         check_position();
         return;
       
@@ -139,4 +139,3 @@ void check_position(){
   }
 }     
   
-

@@ -4,8 +4,6 @@
 //Controller lib
 
 #include "Controller.hpp"
-Controller *Golgi_BOT;
-
 // EIXO X
 
 Axis *Axis_x;
@@ -66,11 +64,6 @@ int counter;
 //STATE
 char STATE = 0 ; 
 
-//Tempo
-int sample_time=500;
-unsigned long current_time;
-unsigned long previus_time = 0;
-double delta_time;
 
 void setup() {
    
@@ -93,7 +86,7 @@ void setup() {
   BTS_X= new H_bridge_controller( R_pin_X, L_pin_X, PWM_frequency_channel, PWM_resolution_channel, R_channel_X, L_channel_X);
   BTS_X->init();
 
-  BTS_Z= new H_bridge_controller( R_pin_Z, L_pin_Z, PWM_frequency_channel, PWM_resolution_channel, R_channel_Z, L_channel_Z);
+  BTS_Z= new H_bridge_controller( R_pin_Z, L_pin_Z, PWM_frequency_channel, PWM_resolution_channel, 2, 3);
   BTS_Z->init();
 
   // Encoder
@@ -106,7 +99,10 @@ void setup() {
    // Atuador
   Atuador_Y= new Atuador(Extend_pin,Contract_pin);
   Atuador_Y->init();
-  
+  Atuador_Y->Contract();
+  delay(DELAY_EXTEND);
+  Atuador_Y->Stop();
+
    // Bomba
   Bomba_Y= new Bomba(bomba_pin);
   Bomba_Y->init();
@@ -118,15 +114,14 @@ void setup() {
   PID_Z = new PID(kp_z,ki_z,kd_z);
 
   //Creating Axis
-  Axis_x= new Axis(encoder_X, BTS_X, endstop_R_X, endstop_R_X, PID_X, X_MAX_VEL, PWM_resolution_channel, X_size, X_tolerance);
+  Axis_x= new Axis(encoder_X, BTS_X, endstop_R_X, endstop_L_X, PID_X, X_MAX_VEL, PWM_resolution_channel, X_size, X_tolerance);
   
-  Axis_z= new Axis(encoder_Z, BTS_Z, endstop_R_Z, endstop_R_Z, PID_Z, Z_MAX_VEL, PWM_resolution_channel, Z_size, Z_tolerance);
+  Axis_z= new Axis(encoder_Z, BTS_Z, endstop_R_Z, endstop_L_Z, PID_Z, Z_MAX_VEL, PWM_resolution_channel, Z_size, Z_tolerance);
 
-  Golgi_BOT = new Controller(Axis_x, Axis_z, Bomba_Y, Atuador_Y);
+  Axis_z->go_origin();
+  
+  Axis_x->go_origin();
 
-  Golgi_BOT->reset_Y(DELAY_CONTRACT);
-
-  Golgi_BOT->go_origin(true,true);
 
   Serial.println("STAND-BY");
 
@@ -140,18 +135,28 @@ void loop() {
         return;
       case GOING :
         //Moves Controller
-        Golgi_BOT->move();
-        delay(2);
+        //Axis_x->move();
+        Axis_z->move();
         //Code does not work without this delay (?)
+        delay(5);
         check_position();
         return;
       case GETING_MEDICINE :
-        Golgi_BOT->get_medicine(DELAY_EXTEND,DELAY_CONTRACT);
+        Bomba_Y->turn_on();
+        Atuador_Y->Extend();
+        delay(DELAY_EXTEND);
+        Atuador_Y->Contract();
+        delay(DELAY_CONTRACT);
+        Atuador_Y->Stop();
+
         STATE=DROPING_MEDICINE;
         Serial.println("DROPING_MEDICINE");
         return;
       case DROPING_MEDICINE :
-        Golgi_BOT->drop_medicine();
+        Axis_x->go_origin();
+        Axis_z->go_max();
+        Bomba_Y->turn_off();
+
         STATE=STAND_BY;
         Serial.println("STAND-BY");
         return;
@@ -182,22 +187,24 @@ void read_setpoint(){
         }
       }
         
-      
-      Serial.println(X_pos);
-      Serial.println(Z_pos);   
-      Golgi_BOT->setGoal(X_pos,Z_pos);
+      Serial.print("X goal:");
+      Serial.println(X_pos);      
+      Serial.print("Z goal:");
+      Serial.println(Z_pos);
+
+      Axis_x->setGoal(X_pos);
+      Axis_z->setGoal(Z_pos);
   }
 
 }
 
 void check_position(){
-  if(Golgi_BOT->onGoal()){
+  if(Axis_x->onGoal() && Axis_z->onGoal()){
     STATE=GETING_MEDICINE;
     Serial.println("GETING_MEDICINE");
-    Serial.print(Golgi_BOT->positionPoint()[0]);
+    Serial.println(Axis_x->position());
     Serial.print(",");
-    Serial.print(Golgi_BOT->positionPoint()[1]);
+    Serial.println(Axis_z->position());
   }
 }     
   
-

@@ -93,7 +93,6 @@ void setup() {
   Axis_x= new Axis(encoder_X, BTS_X, endstop_R_X, endstop_R_X, PID_X, X_MAX_VEL, PWM_resolution_channel, X_size, X_tolerance);
   
 
-  Axis_x->go_origin();
 
   Serial.println("STAND-BY");
 
@@ -110,7 +109,7 @@ void loop() {
         //Moves Controller
         Axis_x->move();
         //Code does not work without this delay (?)
-        delay(2);
+        delay(5);
         check_position();
         return;
       
