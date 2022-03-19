@@ -49,13 +49,13 @@ void Axis::move(){
         if (output < -this->MAX_PWM) {
           output = -this->MAX_PWM;
         }
-        this->BTS->Set_L(-output);
+        this->BTS->Set_R(-output);
         return;
       } else {
         if (output > this->MAX_PWM) {
           output = this->MAX_PWM;
         }
-        this->BTS->Set_R(output);
+        this->BTS->Set_L(output);
         return;
       }
 }
@@ -92,6 +92,7 @@ void Axis::setEnvelope(float tolerance){
 }
 
 bool Axis::onGoal(){
+  
   if((this->position()>this->setpoint - this->tolerance) && (this->position()<this->setpoint + this->tolerance)){
     return true;
   }else{

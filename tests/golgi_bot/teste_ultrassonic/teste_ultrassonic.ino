@@ -2,8 +2,8 @@
 
 // Ultrassonico
 #include "Ultrasonico.hpp"
-const int trigPin = 13;
-const int echoPin = 14;
+const int trigPin = 3;
+const int echoPin = 1;
 Ultrasonico *Ultrasonico_Y;
 
 

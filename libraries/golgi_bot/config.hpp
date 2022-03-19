@@ -75,7 +75,7 @@
 
 #define X_MAX_VEL 0.5
 #define X_size 414
-#define X_tolerance 10
+#define X_tolerance 20
 #define X_max_index 3
 
 //  X Encoder
@@ -94,9 +94,9 @@
 #define chave_R_X 39
 
 // X PID
-#define kp_x  0.4
-#define ki_x  0.0001
-#define kd_x  10
+#define kp_x  3.2
+#define ki_x  0.01
+#define kd_x  30
 
 
 /// Z axis ///
@@ -104,7 +104,7 @@
 
 #define Z_MAX_VEL 0.5
 #define Z_size 270
-#define Z_tolerance 4
+#define Z_tolerance 8
 #define Z_max_index 2
 
 // Z Encoder 
@@ -122,9 +122,9 @@
 #define chave_R_Z 35 
 
 // Z PID 
-#define kp_z 0.4
-#define ki_z 0.0003
-#define kd_z 2 
+#define kp_z 3.2
+#define ki_z 0.01
+#define kd_z 8 
 
 
 /// Y axis ///

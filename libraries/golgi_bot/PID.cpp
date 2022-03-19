@@ -29,6 +29,9 @@ double PID::computePID(double input,float setpoint) {
 
   this->error = setpoint - input;                                      // determine error
   this->i_error +=  this->error *  this->delta_time;                           // compute integral
+  if(this->i_error>1000){
+    this->i_error=1000;
+  }
   this->d_error = (this->error - this->previus_error) / this->delta_time;             // compute derivative
 
   double out = this->k_p * this->error + this->k_i * this->i_error + this->k_d * this->d_error;  //PID output

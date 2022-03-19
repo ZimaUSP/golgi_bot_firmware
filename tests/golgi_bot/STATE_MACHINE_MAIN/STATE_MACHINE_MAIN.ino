@@ -107,7 +107,6 @@ void setup() {
   Bomba_Y= new Bomba(bomba_pin);
   Bomba_Y->init();
 
-
   //PID
   PID_X = new PID(kp_x,ki_x,kd_x);
   
@@ -135,10 +134,10 @@ void loop() {
         return;
       case GOING :
         //Moves Controller
-        //Axis_x->move();
+        Axis_x->move();
         Axis_z->move();
         //Code does not work without this delay (?)
-        delay(5);
+        delay(2);
         check_position();
         return;
       case GETING_MEDICINE :
@@ -154,7 +153,7 @@ void loop() {
         return;
       case DROPING_MEDICINE :
         Axis_x->go_origin();
-        Axis_z->go_max();
+        Axis_z->go_origin();
         Bomba_Y->turn_off();
 
         STATE=STAND_BY;
@@ -205,6 +204,8 @@ void check_position(){
     Serial.println(Axis_x->position());
     Serial.print(",");
     Serial.println(Axis_z->position());
+    Axis_x->stop();
+    Axis_z->stop();
   }
 }     
   
