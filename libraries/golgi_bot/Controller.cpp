@@ -101,7 +101,7 @@ void Controller::setEnvelope(float tolerance1,float tolerance2){
 }
 
 bool Controller::onGoal(){
-  if(this->Axis_2->onGoal() && this->Axis_2->onGoal()){
+  if(this->Axis_1->onGoal() && this->Axis_2->onGoal()){
     return true;
   }else{
     return false;

@@ -50,6 +50,11 @@ Bomba *Bomba_Y;
 Atuador *Atuador_Y;
 
 
+// CONTROLLER
+
+Controller *Golgi_bot
+
+
 //Serial comunication
 #include "serial_communication.hpp"
 SerialCommunication* comu;
@@ -117,9 +122,13 @@ void setup() {
   
   Axis_z= new Axis(encoder_Z, BTS_Z, endstop_R_Z, endstop_L_Z, PID_Z, Z_MAX_VEL, PWM_resolution_channel, Z_size, Z_tolerance);
 
-  Axis_z->go_origin();
-  
-  Axis_x->go_origin();
+  //Creating Controller
+  Golgi_bot = new Controller(Axis_x, Axis_z, Bomba_Y, Atuador_Y);
+
+  //Setting up the right inicital state
+  Golgi_BOT->reset_Y();
+
+  Golgi_BOT->go_origin(true,true);
 
 
   Serial.println("STAND-BY");
@@ -134,28 +143,19 @@ void loop() {
         return;
       case GOING :
         //Moves Controller
-        Axis_x->move();
-        Axis_z->move();
+        Golgi_bot->move();
         //Code does not work without this delay (?)
         delay(2);
         check_position();
         return;
       case GETING_MEDICINE :
-        Bomba_Y->turn_on();
-        Atuador_Y->Extend();
-        delay(DELAY_EXTEND);
-        Atuador_Y->Contract();
-        delay(DELAY_CONTRACT);
-        Atuador_Y->Stop();
-
+        Golgi_BOT->get_medicine();
+        Golgi_BOT->get_medicine(DELAY_EXTEND,DELAY_CONTRACT);
         STATE=DROPING_MEDICINE;
         Serial.println("DROPING_MEDICINE");
         return;
       case DROPING_MEDICINE :
-        Axis_x->go_origin();
-        Axis_z->go_origin();
-        Bomba_Y->turn_off();
-
+        Golgi_BOT->drop_medicine();
         STATE=STAND_BY;
         Serial.println("STAND-BY");
         return;
@@ -190,22 +190,19 @@ void read_setpoint(){
       Serial.println(X_pos);      
       Serial.print("Z goal:");
       Serial.println(Z_pos);
-
-      Axis_x->setGoal(X_pos);
-      Axis_z->setGoal(Z_pos);
+      Golgi_BOT->setGoal(X_pos,Z_pos);
   }
 
 }
 
 void check_position(){
-  if(Axis_x->onGoal() && Axis_z->onGoal()){
+  if(Golgi_bot->onGoal()){
     STATE=GETING_MEDICINE;
     Serial.println("GETING_MEDICINE");
-    Serial.println(Axis_x->position());
+    Serial.println(Golgi_BOT->positionPoint()[0]);
     Serial.print(",");
-    Serial.println(Axis_z->position());
-    Axis_x->stop();
-    Axis_z->stop();
+    Serial.println(Golgi_BOT->positionPoint()[1]);
+    Golgi_bot->stop();
   }
 }     
   
