@@ -149,7 +149,6 @@ void loop() {
         check_position();
         return;
       case GETING_MEDICINE :
-        Golgi_BOT->get_medicine();
         Golgi_BOT->get_medicine(DELAY_EXTEND,DELAY_CONTRACT);
         STATE=DROPING_MEDICINE;
         Serial.println("DROPING_MEDICINE");
