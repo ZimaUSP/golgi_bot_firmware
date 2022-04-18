@@ -113,9 +113,9 @@ void setup() {
   Bomba_Y->init();
 
   //PID
-  PID_X = new PID(kp_x,ki_x,kd_x);
+  PID_X = new PID(kp_x,ki_x,kd_x,i_saturation_x);
   
-  PID_Z = new PID(kp_z,ki_z,kd_z);
+  PID_Z = new PID(kp_z,ki_z,kd_z,i_saturation_z);
 
   //Creating Axis
   Axis_x= new Axis(encoder_X, BTS_X, endstop_R_X, endstop_L_X, PID_X, X_MAX_VEL, PWM_resolution_channel, X_size, X_tolerance);

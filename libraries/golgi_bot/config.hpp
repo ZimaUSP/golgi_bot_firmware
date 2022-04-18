@@ -75,7 +75,7 @@
 
 #define X_MAX_VEL 0.5
 #define X_size 414
-#define X_tolerance 20
+#define X_tolerance 4
 #define X_max_index 3
 
 //  X Encoder
@@ -97,6 +97,7 @@
 #define kp_x  3.2
 #define ki_x  0.01
 #define kd_x  30
+#define i_saturation_x 1000
 
 
 /// Z axis ///
@@ -124,7 +125,8 @@
 // Z PID 
 #define kp_z 3.2
 #define ki_z 0.01
-#define kd_z 8 
+#define kd_z 8
+#define i_saturation_z 1000
 
 
 /// Y axis ///

@@ -44,7 +44,7 @@ void Axis::setGoal(double setpoint){
   } 
 }
 void Axis::move(){
-  output=this->Pid->computePID(this->encoder->getPosition(),this->setpoint);
+  output=this->Pid->computePID(this->encoder->getPosition(),this->setpoint,this->tolerance*5);
   if (output < 0) {
         if (output < -this->MAX_PWM) {
           output = -this->MAX_PWM;
