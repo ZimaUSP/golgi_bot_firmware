@@ -31,6 +31,8 @@ double PID::computePID(double input,float setpoint) {
   this->i_error +=  this->error *  this->delta_time;                           // compute integral
   if(this->i_error>1000){
     this->i_error=1000;
+  }else if(this->i_error>-1000){
+    this->i_error=-1000;
   }
   this->d_error = (this->error - this->previus_error) / this->delta_time;             // compute derivative
 
