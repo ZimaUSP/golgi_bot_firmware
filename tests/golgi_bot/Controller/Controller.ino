@@ -52,7 +52,7 @@ Atuador *Atuador_Y;
 
 // CONTROLLER
 
-Controller *Golgi_bot
+Controller *Golgi_bot;
 
 
 //Serial comunication
@@ -60,8 +60,8 @@ Controller *Golgi_bot
 SerialCommunication* comu;
 #include <string>
 #include <cstring>
-int pos_x[X_max_index]={97,229,370};
-int pos_z[Z_max_index]={70,201};
+int pos_x[X_max_index]={85,225,364};
+int pos_z[Z_max_index]={55,190};
 double X_pos;
 double Z_pos;
 int counter;
@@ -91,7 +91,7 @@ void setup() {
   BTS_X= new H_bridge_controller( R_pin_X, L_pin_X, PWM_frequency_channel, PWM_resolution_channel, R_channel_X, L_channel_X);
   BTS_X->init();
 
-  BTS_Z= new H_bridge_controller( R_pin_Z, L_pin_Z, PWM_frequency_channel, PWM_resolution_channel, 2, 3);
+  BTS_Z= new H_bridge_controller( R_pin_Z, L_pin_Z, PWM_frequency_channel, PWM_resolution_channel, R_channel_Z, L_channel_Z);
   BTS_Z->init();
 
   // Encoder
@@ -126,9 +126,9 @@ void setup() {
   Golgi_bot = new Controller(Axis_x, Axis_z, Bomba_Y, Atuador_Y);
 
   //Setting up the right inicital state
-  Golgi_BOT->reset_Y();
+  Golgi_bot->reset_Y(DELAY_CONTRACT);
 
-  Golgi_BOT->go_origin(true,true);
+  Golgi_bot->go_origin(true,true);
 
 
   Serial.println("STAND-BY");
@@ -149,12 +149,12 @@ void loop() {
         check_position();
         return;
       case GETING_MEDICINE :
-        Golgi_BOT->get_medicine(DELAY_EXTEND,DELAY_CONTRACT);
+        Golgi_bot->get_medicine(DELAY_EXTEND,DELAY_CONTRACT);
         STATE=DROPING_MEDICINE;
         Serial.println("DROPING_MEDICINE");
         return;
       case DROPING_MEDICINE :
-        Golgi_BOT->drop_medicine();
+        Golgi_bot->drop_medicine();
         STATE=STAND_BY;
         Serial.println("STAND-BY");
         return;
@@ -189,7 +189,7 @@ void read_setpoint(){
       Serial.println(X_pos);      
       Serial.print("Z goal:");
       Serial.println(Z_pos);
-      Golgi_BOT->setGoal(X_pos,Z_pos);
+      Golgi_bot->setGoal(X_pos,Z_pos);
   }
 
 }
@@ -198,10 +198,10 @@ void check_position(){
   if(Golgi_bot->onGoal()){
     STATE=GETING_MEDICINE;
     Serial.println("GETING_MEDICINE");
-    Serial.println(Golgi_BOT->positionPoint()[0]);
+    Serial.print(Golgi_bot->positionPoint()[0]);
     Serial.print(",");
-    Serial.println(Golgi_BOT->positionPoint()[1]);
-    Golgi_bot->stop();
+    Serial.println(Golgi_bot->positionPoint()[1]);
+    Golgi_bot->stop(true,true);
   }
 }     
   

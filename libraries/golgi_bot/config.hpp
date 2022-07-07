@@ -75,7 +75,7 @@
 
 #define X_MAX_VEL 0.5
 #define X_size 414
-#define X_tolerance 4
+#define X_tolerance 2
 #define X_max_index 3
 
 //  X Encoder
@@ -105,7 +105,7 @@
 
 #define Z_MAX_VEL 0.5
 #define Z_size 270
-#define Z_tolerance 8
+#define Z_tolerance 4
 #define Z_max_index 2
 
 // Z Encoder 

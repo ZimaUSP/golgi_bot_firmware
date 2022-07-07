@@ -33,6 +33,7 @@ class PID {
         double error;
         double previus_error;
 
+        int i_saturation;
     public:
         /**
          * @brief Default constructor of a PID base class

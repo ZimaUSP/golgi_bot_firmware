@@ -44,8 +44,7 @@ void Controller::get_medicine(int DELAY_EX, int DELAY_CON){
 }
 
 void Controller::drop_medicine(){
-  this->go_origin(true,false);
-  this->go_max(false,true);
+  this->go_origin(true,true);
   this->Bomba_Y->turn_off();
   this->reset_PID();
 }
