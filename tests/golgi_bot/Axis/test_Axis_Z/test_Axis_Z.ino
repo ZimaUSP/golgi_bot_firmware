@@ -69,7 +69,7 @@ void setup() {
   encoder_Z->init();
 
   //PID
-  PID_Z = new PID(kp_z,ki_z,kd_z);
+  PID_Z = new PID(kp_z,ki_z,kd_z,i_saturation_z);
   
 
   //Creating Axis
