@@ -55,8 +55,9 @@ int pos_x[X_max_index]={97,229,370};
 int pos_z[Z_max_index]={70,201};
 int counter;
 int index_medicine;
+
 //STATE
-char STATE = 0 ; 
+char STATE = 0; 
 
 //Tempo
 int sample_time=500;
@@ -86,7 +87,7 @@ void setup() {
   encoder_X->init();
 
   //PID
-  PID_X = new PID(kp_x,ki_x,kd_x);
+  PID_X = new PID(kp_x,ki_x,kd_x,i_saturation_x);
   
 
   //Creating Axis
@@ -129,6 +130,7 @@ char* string_to_char(std::string str) {
 
 void read_setpoint(){
     if(Serial.available()){
+      int xpos = atoi(string_to_char(comu->get_received_data()));
       STATE=GOING;
       Serial.println("GOING"); 
       comu->read_data(MAIN_SERIAL);
