@@ -28,10 +28,7 @@ void setup() {
 }
 
 void loop() {
-  Bomba_Y->turn_on();
-  delay(1000);
-  Bomba_Y->turn_off();
-  delay(1000);
+  read_command();
   }
 
 
