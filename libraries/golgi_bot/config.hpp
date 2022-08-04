@@ -34,36 +34,6 @@
 #define max_string_length 100
 #define end_char '\n'
 
-// driver controller configuration
-#define FREQUENCY 10e6
-#define BIT_RESOLUTION 12
-
-#define MIN_VEL -1
-#define MAX_VEL 1
-#define MIN_VEL_BITS 0
-#define MAX_VEL_BITS pow(2,BIT_RESOLUTION)-1
-
-#define MIN_ROT -1
-#define MAX_ROT 1
-#define MIN_ROT_BITS 0
-#define MAX_ROT_BITS pow(2,BIT_RESOLUTION)-1
-
-#define STOP_VALUE 0
-
-//spi config
-#define SPI_MODE SPI_MODE0 //SPI_MODE0 or SPI_MODE1 or SPI_MODE2 or SPI_MODE3
-#define SPI_MASTER_FREQ SPI_MASTER_FREQ_8M
-#define DMA_CHANNEL 1
-#define QUEUE_SIZE 1
-#define SPI_TYPE HSPI //HSPI or VSPI 
-#define TARGET_SIZE 16
-#define HEADER_SIZE 2
-#define BUFFER_SIZE TARGET_SIZE + 4
-#define FOOTER_SIZE HEADER_SIZE
-
-// rosserial configuration
-#define VEL_TOPIC "/cmd_vel"
-
 //i2c configuration
     // set the max number of bytes the slave will send.
     // if the slave send more bytes, they will still be read
