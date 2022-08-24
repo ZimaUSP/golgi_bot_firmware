@@ -1,12 +1,13 @@
 #include "Encoder.hpp"
-int A_pin=21; // green cable
-int B_pin=19; // white cable
+#include "config.hpp"
+
 
 Encoder *encoder;
 
 void setup() {     
   Serial.begin (9600);
-  encoder = new Encoder(A_pin,B_pin,0,600,40,4);
+  encoder = new Encoder(A_pin_X,B_pin_X,0,Nominal_pulses,pitch_pulley,4); 
+  //encoder = new Encoder(A_pin_Z,B_pin_Z,0,600,40,4);
   encoder->init();
   }
    
