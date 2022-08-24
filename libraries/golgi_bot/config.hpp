@@ -1,5 +1,6 @@
 #ifndef __CONFIG_HPP__
 #define __CONFIG_HPP__
+
 // Comum used
 #define Nominal_pulses 600
 #define pitch_pulley 40
@@ -49,8 +50,8 @@
 #define X_max_index 3
 
 //  X Encoder
-#define A_pin_X 23 // Green cable
-#define B_pin_X 22 // White cable
+#define A_pin_X 29 //23 antigo // Green cable
+#define B_pin_X 30 //22 antigo // White cable
 
 
 // X BTS
@@ -79,8 +80,8 @@
 #define Z_max_index 2
 
 // Z Encoder 
-#define A_pin_Z 21 // Green cable
-#define B_pin_Z 19 // white cable
+#define A_pin_Z 25 //21 // Green cable
+#define B_pin_Z 26 //19 // white cable
 
 // Z BTS 
 #define R_pin_Z 17 // R bts
