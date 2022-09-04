@@ -3,18 +3,16 @@
 
 // Encoder Z axis 
 #include "Encoder.hpp"
-int A_pin_Z=21; // Green cable
-int B_pin_Z=19; // white cable
+#include "config.hpp"
+
 Encoder *encoder_Z;
 int last_z_count;
 
 // BTS Z axis 
 #include "H_bridge_controller.hpp"
-int R_pin_Z=17; // R bts
-int L_pin_Z=18; // L bts
-int PWM_frequency = 40000;
-int PWM_resolution = 8;
-int R_channel_Z=3;
+
+
+int R_channel_Z=3; //conferir na hora dos teste pq está diferente no config
 int L_channel_Z=4;
 int PWM_R_Z=0;
 int PWM_L_Z=0;
@@ -22,8 +20,7 @@ H_bridge_controller *BTS_Z;
 
 // Chave fim de curso Z axis
 #include "Chave_fim_de_curso.hpp"
-int chave_L_Z=34; 
-int chave_R_Z=35; 
+
 Chave_fim_de_curso *endstop_L_Z; 
 Chave_fim_de_curso *endstop_R_Z; 
 
@@ -69,7 +66,7 @@ void setup() {
   endstop_R_Z->init();
 
 
-  BTS_Z= new H_bridge_controller( R_pin_Z, L_pin_Z, PWM_frequency, PWM_resolution, R_channel_Z, L_channel_Z);
+  BTS_Z= new H_bridge_controller( R_pin_Z, L_pin_Z, PWM_frequency_channel, PWM_resolution_channel, R_channel_Z, L_channel_Z);
   BTS_Z->init();
 
 
