@@ -16,6 +16,7 @@
 
 #include "PID.hpp"
 #include "Encoder.hpp"
+#include "config.hpp"
 #include "H_bridge_controller.hpp"
 #include "Chave_fim_de_curso.hpp"
 #include <math.h> 
@@ -24,6 +25,7 @@ class Axis {
     protected:
         Encoder *encoder;
         H_bridge_controller *BTS;
+        H_bridge_controller *PWM_constant;
         Chave_fim_de_curso *Chave_R;
         Chave_fim_de_curso *Chave_L;
         PID *Pid;

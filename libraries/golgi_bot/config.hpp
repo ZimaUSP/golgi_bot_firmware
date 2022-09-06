@@ -48,6 +48,7 @@
 #define X_size 414
 #define X_tolerance 2
 #define X_max_index 3
+#define X_PWM_cte 0.5 // fraction of pwm velocity
 
 //  X Encoder
 #define A_pin_X 29 //23 antigo // Green cable
@@ -73,11 +74,11 @@
 
 /// Z axis ///
 
-
 #define Z_MAX_VEL 0.5
-#define Z_size 270
+#define Z_size 670
 #define Z_tolerance 4
 #define Z_max_index 2
+#define Z_PWM_cte 0.5 // fraction of pwm velocity
 
 // Z Encoder 
 #define A_pin_Z 25 //21 // Green cable
@@ -86,17 +87,17 @@
 // Z BTS 
 #define R_pin_Z 17 // R bts
 #define L_pin_Z 18 // L bts
-#define R_channel_Z 2
-#define L_channel_Z 3
+#define R_channel_Z 3 // 2estava no código antigo
+#define L_channel_Z 4 //3 estava no código antigo
 
 // Z Chave
 #define chave_L_Z 34 
 #define chave_R_Z 35 
 
 // Z PID 
-#define kp_z 3.2
-#define ki_z 0.01
-#define kd_z 8
+#define kp_z 0.1// 3.2
+#define ki_z 0.000007// 0.01
+#define kd_z 5 // 8
 #define i_saturation_z 1000
 
 

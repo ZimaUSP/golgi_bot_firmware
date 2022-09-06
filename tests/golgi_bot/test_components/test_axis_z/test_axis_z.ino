@@ -1,13 +1,25 @@
 
 // EIXO Z 
 #include "config.hpp"
+#include "Axis.hpp"
+Axis *Axis_z;
+int pos_z[Z_max_index]={80, 690};
+
+//PID Z axis constants
+PID *PID_Z; 
+
+// Encoder Z axis 
+Encoder *encoder_Z;
+
+
+// PWM_constante = Axis*PWM_constante
+
 
 // BTS Z axis 
 #include "H_bridge_controller.hpp"
 
 
-int R_channel_Z=3; //conferir na hora dos teste pq está diferente no config
-int L_channel_Z=4;
+
 H_bridge_controller *BTS_Z;
 
 // Chave fim de curso Z axis
@@ -27,132 +39,17 @@ void setup() {
   endstop_R_Z->init();
 
   // Setup H_bridge
-  BTS_Z= new H_bridge_controller( R_pin_Z, L_pin_Z, PWM_frequency_channel, PWM_resolution_channel, R_channel_Z, L_channel_Z);
+  BTS_Z = new H_bridge_controller(R_pin_Z, L_pin_Z, PWM_frequency_channel, PWM_resolution_channel, R_channel_Z, L_channel_Z);
   BTS_Z->init();
   
-  // Start at origin
-  go_origin_z();
-
+  // Creating Axis
+  Axis_z= new Axis(encoder_Z, BTS_Z, endstop_R_Z, endstop_L_Z, PID_Z, Z_MAX_VEL, PWM_resolution_channel, Z_size, Z_tolerance);
+  
+  Axis_z->go_max(); //Se colocar pra começar na origem da erro
 }
 
 void loop(){
-    go_max_z();
-
-    delay(5000);
-    
-    go_origin_z();
-}
-
-
-void go_origin_z(){   
-  while (digitalRead(chave_L_Z)!=HIGH){
-    BTS_Z->Set_R(100);
-    return;
-  }   
-  BTS_Z->SetPWM_R(0);
-  Serial.println("Origin");
-}
-
-void go_max_z(){   
-  while (digitalRead(chave_L_Z)!=HIGH){
-    BTS_Z->Set_L(100);
-    return;
-  }   
-  BTS_Z->SetPWM_L(0);
-  Serial.println("Max Position");
-}
-
-
-/*/
-
-Códigos do test_PID_Z para recolocar caso algo de errado
-
-void loop() {
-  switch(STATE) {
-      case STAND_BY :
-        Serial.println("STAND-BY");
-        // Recive Set point
-        read_setpoint();
-        return;
-      case GOING :
-        // PID Z
-        output_z = PID_Z->computePID(encoder_Z->getPulses(),setPoint_z);
-        // Setting direction of motion acording to output_z PID
-        move_Z();
-
-        //Code does not work without this delay (?)
-        delay(2);
-        
-        check_position();
-        
-        last_z_count=encoder_Z->getPulses();
-        return;
-   }
-    
-}
-
-char* string_to_char(std::string str) {
-   char* cstr = new char[str.size() + 1];
-   strcpy(cstr, str.c_str());
-   return cstr;
-}
-
-void Set_origin_z(){
-  while (digitalRead(chave_R_Z)==HIGH){
-    BTS_Z->Set_R(100);
-  }
-  encoder_Z->setPulses(0);
-  BTS_Z->SetPWM_R(0);
-}
-
-void Set_max_z(){
-  while (digitalRead(chave_L_Z)==HIGH){
-    BTS_Z->Set_L(100);
-  }
-  MAX_PULSES_Z = encoder_Z->getPulses();
-  BTS_Z->SetPWM_L(0);
-}
-
-void move_Z(){   
-    if (output_z < 0) {
-      if (output_z < -255) {
-        output_z = -255;
-      }
-      BTS_Z->Set_R(-output_z);
-    } else {
-        if (output_z > 255) {
-        output_z = 255;
-        }
-        BTS_Z->Set_L(output_z);
-    }
-}
-
- void read_setpoint(){
-    if(Serial.available()){
+    Axis_z->go_origin();
       
-      STATE=GOING;
-
-      char *ptr;
-      comu->read_data();
-      char* recived=string_to_char(comu->get_received_data());
-
-      if (atoi((recived))>MAX_PULSES_Z){
-       setPoint_z=MAX_PULSES_Z;
-      }else{
-      setPoint_z=atoi(string_to_char(ptr));
-      }
-      PID_Z->reset();
-      last_z_count=-5000;
-    }
+    Axis_z->go_max();
 }
-
-void check_position(){
-  if((encoder_Z->getPulses()==last_z_count )){
-          BTS_Z->SetPWM_R(0);
-          STATE=STAND_BY;
-          Serial.print("counter Z :");
-          Serial.println(encoder_Z->getPulses());
-          return;
-        }
-}
-/*/

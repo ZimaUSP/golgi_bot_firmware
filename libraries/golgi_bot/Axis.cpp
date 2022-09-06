@@ -61,16 +61,21 @@ void Axis::move(){
 }
 
 void Axis::go_origin(){
-  while (digitalRead(this->Chave_R->getPin())==HIGH){
-    this->BTS->Set_R((this->MAX_PWM)*0.5);
+  while (digitalRead(Chave_R->getPin())==HIGH){ 
+    this->BTS->Set_R((this->MAX_PWM)*Z_PWM_cte);
+    Serial.println("go origin");
   }
+  Serial.println("oringin");
   this->encoder->setPulses(0);
   this->stop();
 }
+
 void Axis::go_max(){
-  while (digitalRead(this->Chave_L->getPin())==HIGH){
-    this->BTS->Set_L((this->MAX_PWM)*0.5);
+  while (digitalRead(Chave_L->getPin())==HIGH){ /*/Próxima vez que for testar o robozão ver se desse jeito ele busca o pino certo/*/
+    this->BTS->Set_L((this->MAX_PWM)*Z_PWM_cte);
+    Serial.println("go max");
   }
+  Serial.println("max");
   this->stop();
 }
 

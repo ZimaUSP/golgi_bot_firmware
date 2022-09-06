@@ -1,19 +1,18 @@
 
 // EIXO Z 
+#include "config.hpp"
+#include "Axis.hpp"
+Axis *Axis_z;
+int pos_z[Z_max_index]={80, 690};
 
 // Encoder Z axis 
 #include "Encoder.hpp"
-#include "config.hpp"
-
 Encoder *encoder_Z;
+
 int last_z_count;
 
 // BTS Z axis 
 #include "H_bridge_controller.hpp"
-
-
-int R_channel_Z=3; //conferir na hora dos teste pq está diferente no config
-int L_channel_Z=4;
 int PWM_R_Z=0;
 int PWM_L_Z=0;
 H_bridge_controller *BTS_Z;
@@ -26,9 +25,6 @@ Chave_fim_de_curso *endstop_R_Z;
 
 //PID Z axis constants
 #include "PID.hpp"
-double kp_Z = 0.1;
-double ki_Z = 0.000007;
-double kd_Z= 5; 
 int output_z;
 double setPoint_z;
 PID *PID_Z; 
@@ -39,17 +35,19 @@ int MAX_PULSES_Z =0;
 
 //Serial comunication
 #include "serial_communication.hpp"
-#include "config.hpp"
+SerialCommunication* comu;
 #include <string>
 #include <cstring>
-SerialCommunication *comu;
+int pos_z[Z_max_index]={80,680};
+double Z_pos;
+int counter;
 
 // Estados
 char STATE = 0 ; // 
 #define STAND_BY 0
 #define GOING 1
 #define GETING_MEDICINE 2
-#define DROPING_MEDICINE 3
+#define DROPING_MEDICINE 3 
 
 
 void setup() {
@@ -65,31 +63,21 @@ void setup() {
   endstop_R_Z = new Chave_fim_de_curso(chave_R_Z,3);
   endstop_R_Z->init();
 
-
-  BTS_Z= new H_bridge_controller( R_pin_Z, L_pin_Z, PWM_frequency_channel, PWM_resolution_channel, R_channel_Z, L_channel_Z);
+  BTS_Z= new H_bridge_controller(R_pin_Z, L_pin_Z, PWM_frequency_channel, PWM_resolution_channel, R_channel_Z, L_channel_Z);
   BTS_Z->init();
 
-
-  encoder_Z = new Encoder(A_pin_Z,B_pin_Z,1);
+  encoder_Z = new Encoder(A_pin_Z,B_pin_Z,1,Nominal_pulses,pitch_pulley,Mode);
   encoder_Z->init();
 
+  // Creating Axis
+  Axis_z= new Axis(encoder_Z, BTS_Z, endstop_R_Z, endstop_L_Z, PID_Z, Z_MAX_VEL, PWM_resolution_channel, Z_size, Z_tolerance);
 
-  //Set origin
-  
-
-  
+  //Set origin 
   Set_origin_z();
-  
   Set_max_z();
 
-  Set_origin_z();
-
   //PID
-  
-  PID_Z = new PID(kp_Z,ki_Z,kd_Z);
-
- 
-
+  PID_Z = new PID(kp_z,ki_z,kd_z,i_saturation_z);
 }
 
 void loop() {
@@ -101,10 +89,7 @@ void loop() {
         return;
       case GOING :
         // PID Z
-        output_z = PID_Z->computePID(encoder_Z->getPulses(),setPoint_z);
-        // Setting direction of motion acording to output_z PID
-        move_Z();
-
+        Axis_z->move();
         //Code does not work without this delay (?)
         delay(2);
         
@@ -113,7 +98,6 @@ void loop() {
         last_z_count=encoder_Z->getPulses();
         return;
    }
-    
 }
 
 char* string_to_char(std::string str) {
@@ -122,9 +106,41 @@ char* string_to_char(std::string str) {
    return cstr;
 }
 
+
+void read_setpoint(){
+  if(Serial.available()){
+      STATE=GOING;
+      Serial.println("GOING"); 
+      comu->read_data(MAIN_SERIAL);
+      char* recived=string_to_char(comu->get_received_data());
+      int index_medicine=atoi(recived);
+      counter=0;
+      for(int j=0; j< Z_max_index; j++){
+        counter=counter+1;
+        if (counter==index_medicine){
+          Z_pos=pos_z[j];
+        }
+        }
+      }    
+      Serial.print("Z goal:");
+      Serial.println(Z_pos);
+  }
+      
+void check_position(){
+  if((encoder_Z->getPulses()==last_z_count )){
+          BTS_Z->SetPWM_R(0);
+          STATE=STAND_BY;
+          Serial.print("counter Z :");
+          Serial.println(encoder_Z->getPulses());
+          return;
+        }
+}
+
+
+/*/
 void Set_origin_z(){
   while (digitalRead(chave_R_Z)==HIGH){
-    BTS_Z->Set_R(100);
+    BTS_Z->Set_R(50);
   }
   encoder_Z->setPulses(0);
   BTS_Z->SetPWM_R(0);
@@ -132,52 +148,9 @@ void Set_origin_z(){
 
 void Set_max_z(){
   while (digitalRead(chave_L_Z)==HIGH){
-    BTS_Z->Set_L(100);
+    BTS_Z->Set_L(50);
   }
   MAX_PULSES_Z = encoder_Z->getPulses();
   BTS_Z->SetPWM_L(0);
 }
-
-
-void read_setpoint(){
-    if(Serial.available()){
-      
-      STATE=GOING;
-
-      char *ptr;
-      comu->read_data();
-      char* recived=string_to_char(comu->get_received_data());
-
-      if (atoi((recived))>MAX_PULSES_Z){
-       setPoint_z=MAX_PULSES_Z;
-      }else{
-      setPoint_z=atoi(string_to_char(ptr));
-      }
-      PID_Z->reset();
-      last_z_count=-5000;
-    }
-}
-      
-void move_Z(){   
-    if (output_z < 0) {
-      if (output_z < -255) {
-        output_z = -255;
-      }
-      BTS_Z->Set_R(-output_z);
-    } else {
-        if (output_z > 255) {
-        output_z = 255;
-        }
-        BTS_Z->Set_L(output_z);
-    }
-}
-void check_position(){
-  if((encoder_Z->getPulses()==last_z_count )){
-          BTS_Z->SetPWM_R(0);
-          STATE=STAND_BY;
-          Serial.print("    counter Z :");
-          Serial.println(encoder_Z->getPulses());
-          return;
-        }
-}
-
+/*/
