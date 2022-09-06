@@ -1,12 +1,6 @@
 
 // EIXO Z 
-
-// Encoder Z axis 
-#include "Encoder.hpp"
 #include "config.hpp"
-
-Encoder *encoder_Z;
-int last_z_count;
 
 // BTS Z axis 
 #include "H_bridge_controller.hpp"
@@ -14,8 +8,6 @@ int last_z_count;
 
 int R_channel_Z=3; //conferir na hora dos teste pq está diferente no config
 int L_channel_Z=4;
-int PWM_R_Z=0;
-int PWM_L_Z=0;
 H_bridge_controller *BTS_Z;
 
 // Chave fim de curso Z axis
@@ -24,103 +16,57 @@ H_bridge_controller *BTS_Z;
 Chave_fim_de_curso *endstop_L_Z; 
 Chave_fim_de_curso *endstop_R_Z; 
 
-//PID Z axis constants
-#include "PID.hpp"
-double kp_Z = 0.1;
-double ki_Z = 0.000007;
-double kd_Z= 5; 
-int output_z;
-double setPoint_z;
-PID *PID_Z; 
-
-//Count MAX
-int MAX_PULSES_Z =0;
-
-
-//Serial comunication
-#include "serial_communication.hpp"
-#include "config.hpp"
-#include <string>
-#include <cstring>
-SerialCommunication *comu;
-
-// Estados
-char STATE = 0 ; // 
-#define STAND_BY 0
-#define GOING 1
-#define GETING_MEDICINE 2
-#define DROPING_MEDICINE 3
-
-
 void setup() {
-  // Set point
-  setPoint_z = 0;
-  
   //Serial Comunication
   Serial.begin (SERIAL_VEL);
-  comu = new SerialCommunication("Posição SetPoint:");
 
+  // Setup Batentes
   endstop_L_Z = new Chave_fim_de_curso(chave_L_Z,2);
   endstop_L_Z->init();
   endstop_R_Z = new Chave_fim_de_curso(chave_R_Z,3);
   endstop_R_Z->init();
 
-
+  // Setup H_bridge
   BTS_Z= new H_bridge_controller( R_pin_Z, L_pin_Z, PWM_frequency_channel, PWM_resolution_channel, R_channel_Z, L_channel_Z);
   BTS_Z->init();
-
-
-  encoder_Z = new Encoder(A_pin_Z,B_pin_Z,1);
-  encoder_Z->init();
-
-
-  //Set origin
   
-
-  
-  Set_origin_z();
-  Set_max_z();
-
-  Set_origin_z();
-
-  //PID
-  
-  PID_Z = new PID(kp_Z,ki_Z,kd_Z);
-
- 
+  // Start at origin
+  go_origin_z();
 
 }
 
 void loop(){
-    while (digitalRead(chave_R_Z)!=HIGH)
-    {
-        output_z = PID_Z->computePID(encoder_Z->getPulses(),setPoint_z);
-        // Setting direction of motion acording to output_z PID
-        move_Z();
-
-        //Code does not work without this delay (?)
-        delay(2);       
-        last_z_count=encoder_Z->getPulses();
-        return;
-    }
+    go_max_z();
 
     delay(5000);
     
-    while (digitalRead(chave_L_Z)!=HIGH)
-    {
-        output_z = PID_Z->computePID(encoder_Z->getPulses(),setPoint_z);
-        // Setting direction of motion acording to output_z PID
-        move_Z();
-
-        //Code does not work without this delay (?)
-        delay(2);       
-        last_z_count=encoder_Z->getPulses();
-        return;
-    }
-
+    go_origin_z();
 }
 
+
+void go_origin_z(){   
+  while (digitalRead(chave_L_Z)!=HIGH){
+    BTS_Z->Set_R(100);
+    return;
+  }   
+  BTS_Z->SetPWM_R(0);
+  Serial.println("Origin");
+}
+
+void go_max_z(){   
+  while (digitalRead(chave_L_Z)!=HIGH){
+    BTS_Z->Set_L(100);
+    return;
+  }   
+  BTS_Z->SetPWM_L(0);
+  Serial.println("Max Position");
+}
+
+
 /*/
+
+Códigos do test_PID_Z para recolocar caso algo de errado
+
 void loop() {
   switch(STATE) {
       case STAND_BY :
@@ -144,7 +90,6 @@ void loop() {
    }
     
 }
-/*/
 
 char* string_to_char(std::string str) {
    char* cstr = new char[str.size() + 1];
@@ -168,8 +113,21 @@ void Set_max_z(){
   BTS_Z->SetPWM_L(0);
 }
 
+void move_Z(){   
+    if (output_z < 0) {
+      if (output_z < -255) {
+        output_z = -255;
+      }
+      BTS_Z->Set_R(-output_z);
+    } else {
+        if (output_z > 255) {
+        output_z = 255;
+        }
+        BTS_Z->Set_L(output_z);
+    }
+}
 
-void read_setpoint(){
+ void read_setpoint(){
     if(Serial.available()){
       
       STATE=GOING;
@@ -187,20 +145,7 @@ void read_setpoint(){
       last_z_count=-5000;
     }
 }
-      
-void move_Z(){   
-    if (output_z < 0) {
-      if (output_z < -255) {
-        output_z = -255;
-      }
-      BTS_Z->Set_R(-output_z);
-    } else {
-        if (output_z > 255) {
-        output_z = 255;
-        }
-        BTS_Z->Set_L(output_z);
-    }
-}
+
 void check_position(){
   if((encoder_Z->getPulses()==last_z_count )){
           BTS_Z->SetPWM_R(0);
@@ -210,4 +155,4 @@ void check_position(){
           return;
         }
 }
-
+/*/
