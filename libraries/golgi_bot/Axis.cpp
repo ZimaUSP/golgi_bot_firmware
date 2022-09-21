@@ -46,14 +46,16 @@ void Axis::setGoal(double setpoint){
 void Axis::move(){
   output=this->Pid->computePID(this->encoder->getPosition(),this->setpoint,this->tolerance*5);
   if (output < 0) {
-        if (output < -this->MAX_PWM) {
-          output = -this->MAX_PWM;
+        if (output < -(this->MAX_PWM)*Z_PWM_cte) {
+          output = -(this->MAX_PWM)*Z_PWM_cte;
+          Serial.println(this->MAX_PWM);
         }
         this->BTS->Set_R(-output);
         return;
       } else {
-        if (output > this->MAX_PWM) {
-          output = this->MAX_PWM;
+        if (output > (this->MAX_PWM)*Z_PWM_cte) {
+          output = (this->MAX_PWM)*Z_PWM_cte;
+          Serial.println(this->MAX_PWM);
         }
         this->BTS->Set_L(output);
         return;
@@ -65,7 +67,7 @@ void Axis::go_origin(){
     this->BTS->Set_R((this->MAX_PWM)*Z_PWM_cte);
     Serial.println("go origin");
   }
-  Serial.println("oringin");
+  Serial.println("origin");
   this->encoder->setPulses(0);
   this->stop();
 }
