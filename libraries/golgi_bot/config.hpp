@@ -81,13 +81,13 @@
 #define Z_PWM_cte 0.5 // fraction of pwm velocity
 
 // Z Encoder 
-#define A_pin_Z 25 //21 // Green cable
-#define B_pin_Z 26 //19 // white cable
+#define A_pin_Z 19 // Green cable
+#define B_pin_Z 21 // white cable
 
 // Z BTS 
 #define R_pin_Z 17 // R bts
 #define L_pin_Z 18 // L bts
-#define R_channel_Z 3 // 2estava no código antigo
+#define R_channel_Z 3 // 2 estava no código antigo
 #define L_channel_Z 4 //3 estava no código antigo
 
 // Z Chave
