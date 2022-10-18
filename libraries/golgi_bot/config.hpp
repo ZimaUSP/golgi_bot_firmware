@@ -50,29 +50,32 @@
 #define X_master_tolerance 2
 #define X_slave_tolerance 2
 #define X_max_index 3
-#define X_PWM_cte 0.5 // fraction of pwm velocity
 
 //  X Encoder
-#define A_pin_master_X 22 // Green cable
-#define B_pin_master_X 23  // White cable
+#define A_pin_master_X 00 // Green cable
+#define B_pin_master_X 00 // White cable
 
-#define A_pin_slave_X 00// pin // cor do cabo
-#define B_pin_slave_X 00// pin // cor do cabo
+#define A_pin_slave_X 22 // pin // cor do cabo
+#define B_pin_slave_X 23 // pin // cor do cabo
 
 // X BTS
-#define R_pin_master_X 27 // L Bts
-#define L_pin_master_X 26 // R Bts
+#define R_pin_master_X 26 // L Bts  //mano ver a brisa do lado pq tava invertido antes eu acho que eu inverti pq ele tava andando pra tras
+#define L_pin_master_X 27 // R Bts
 #define R_channel_master_X 0
 #define L_channel_master_X 1
+#define pwm_master_cte 0.5 // fraction of pwm velocity
 
 #define R_pin_slave_X 00// pin
 #define L_pin_slave_X 00// pin
 #define R_channel_slave_X 0
 #define L_channel_slave_X 1
+#define pwm_slave_cte 0.5
 
 // X CHAVE
-#define chave_L_X 36 
-#define chave_R_X 39
+#define chave_master_R_X 39
+#define chave_master_L_X 36 
+#define chave_slave_R_X 00
+#define chave_slave_L_X 00  
 
 // X PID Master
 #define kp_master_x  3.2
@@ -80,12 +83,13 @@
 #define kd_master_x  30
 #define i_saturation_master_x 1000
 
+
 // X PID Slave 
 // aumentar kp para diminuir o tempo de resposta
 #define kp_slave_x  3.2
 #define ki_slave_x  0.01
 #define kd_slave_x  30
-#define i_saturation_slave_x 1000 // Diminuir saturação para ser mais sensivel ao erro
+#define i_saturation_slave_x 500 // Diminuir saturação para ser mais sensivel ao erro
 
 
 /// Z axis ///
@@ -95,7 +99,6 @@
 #define Z_size 963
 #define Z_tolerance 4
 #define Z_max_index 2
-#define Z_PWM_cte 0.5 // fraction of pwm velocity
 
 // Z Encoder 
 #define A_pin_Z 19 // Green cable
@@ -106,6 +109,7 @@
 #define L_pin_Z 18 // L bts
 #define R_channel_Z  2 
 #define L_channel_Z 3 
+#define pwm_cte_Z 0.5 // fraction of pwm velocity
 
 // Z Chave
 #define chave_L_Z 34 
