@@ -130,10 +130,11 @@ void read_setpoint(){
 }
 
 void check_position(){
-  if(Axis_z->onGoal()){
+  if(Axis_master_X->onGoal()){
     STATE=STAND_BY;
     Serial.println("STANDY-BY");
     Serial.println(Axis_master_X->position());
+    Serial.println(Axis_slave_X->position());
     Axis_master_X->stop();
     Axis_slave_X->stop();
   }

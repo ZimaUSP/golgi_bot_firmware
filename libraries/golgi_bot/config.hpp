@@ -67,8 +67,8 @@
 
 #define R_pin_slave_X 00// pin
 #define L_pin_slave_X 00// pin
-#define R_channel_slave_X 0
-#define L_channel_slave_X 1
+#define R_channel_slave_X 4
+#define L_channel_slave_X 5
 #define pwm_slave_cte 0.5
 
 // X CHAVE
@@ -107,7 +107,7 @@
 // Z BTS 
 #define R_pin_Z 17 // R bts
 #define L_pin_Z 18 // L bts
-#define R_channel_Z  2 
+#define R_channel_Z  2
 #define L_channel_Z 3 
 #define pwm_cte_Z 0.5 // fraction of pwm velocity
 
