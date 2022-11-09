@@ -13,13 +13,13 @@ Chave_fim_de_curso *endstop_R_Z;
 
 void setup() {     
   Serial.begin (9600);
-  endstop = new Chave_fim_de_curso(chave_pin,0);
-  endstop->init();
+  endstop_R_X = new Chave_fim_de_curso(chave_master_R_X,0);
+  endstop_R_X->init();
 
   //Chave fim de curso
-  endstop_L_X = new Chave_fim_de_curso(chave_L_X,0);
+  endstop_L_X = new Chave_fim_de_curso(chave_master_L_X,0);
   endstop_L_X->init();
-  endstop_R_X = new Chave_fim_de_curso(chave_R_X,1);
+  endstop_R_X = new Chave_fim_de_curso(chave_master_R_X,1);
   endstop_R_X->init();
 
   endstop_L_Z = new Chave_fim_de_curso(chave_L_Z,2);

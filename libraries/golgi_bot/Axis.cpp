@@ -27,7 +27,7 @@ Axis::Axis(Encoder *encoder, H_bridge_controller *BTS, Chave_fim_de_curso *Chave
       MAX_PWM=MAX_PWM*2;
     }
     this->MAX_PWM = (MAX_PWM-1);
-    this->pwm_cte = pwm_cte
+    this->pwm_cte = pwm_cte;
     this->size = size;
     this->tolerance = tolerance;
     this->Max_pos = size;

@@ -52,8 +52,8 @@
 #define X_max_index 3
 
 //  X Encoder
-#define A_pin_master_X 00 // Green cable
-#define B_pin_master_X 00 // White cable
+#define A_pin_master_X 2 // Green cable
+#define B_pin_master_X 15 // White cable
 
 #define A_pin_slave_X 22 // pin // cor do cabo
 #define B_pin_slave_X 23 // pin // cor do cabo
@@ -65,8 +65,8 @@
 #define L_channel_master_X 1
 #define pwm_master_cte 0.5 // fraction of pwm velocity
 
-#define R_pin_slave_X 00// pin
-#define L_pin_slave_X 00// pin
+#define R_pin_slave_X 16 // pin
+#define L_pin_slave_X 13 // pin
 #define R_channel_slave_X 4
 #define L_channel_slave_X 5
 #define pwm_slave_cte 0.5
@@ -74,8 +74,8 @@
 // X CHAVE
 #define chave_master_R_X 39
 #define chave_master_L_X 36 
-#define chave_slave_R_X 00
-#define chave_slave_L_X 00  
+#define chave_slave_R_X 5
+#define chave_slave_L_X  4 
 
 // X PID Master
 #define kp_master_x  3.2
