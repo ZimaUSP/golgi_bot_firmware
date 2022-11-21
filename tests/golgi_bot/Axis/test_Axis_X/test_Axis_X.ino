@@ -1,3 +1,5 @@
+
+
 // EIXO X
 #include "config.hpp"
 #include "Axis.hpp"
@@ -6,14 +8,18 @@ Axis *Axis_slave_X;
 
 // Encoder X axis 
 Encoder *encoder_master_X;
-Encoder *encoder_slave_X
+Encoder *encoder_slave_X;
 // PWM_constante = Axis*PWM_constante
 
 // BTS X axis 
 #include "H_bridge_controller.hpp"
-H_bridge_controller *BTS_master_z;
 H_bridge_controller *BTS_master_X; // Primeira chamada não é reconhecida 
 H_bridge_controller *BTS_slave_X;
+
+//PID Z axis constants
+#include "PID.hpp"
+PID *PID_master_X; 
+PID *PID_slave_X; 
 
 // Chave fim de curso X axis
 #include "Chave_fim_de_curso.hpp"
@@ -26,17 +32,26 @@ void setup() {
   //Serial Comunication
   Serial.begin (SERIAL_VEL);
 
-  // Setup Batentes // tem só um batente por eixo
+  // Setup Batentes 
 
-
-  endstop_master_L_X = new Chave_fim_de_curso(chave_L_X,2);
+  // Batente master
+  endstop_master_L_X = new Chave_fim_de_curso(chave_master_L_X,2);
   endstop_master_L_X->init();
-  endstop_master_R_X = new Chave_fim_de_curso(chave_R_X,2);
+
+  endstop_master_R_X = new Chave_fim_de_curso(chave_master_R_X,2);
   endstop_master_R_X->init();
-  endstop_slave_L_X = new Chave_fim_de_curso(chave_L_X,2);
+  
+  // Batente slave
+
+  endstop_slave_L_X = new Chave_fim_de_curso(chave_slave_L_X,2);
   endstop_slave_L_X->init();
-  endstop_slave_R_X = new Chave_fim_de_curso(chave_R_X,2);
+  
+  endstop_slave_R_X = new Chave_fim_de_curso(chave_slave_R_X,2);
   endstop_slave_R_X->init();
+
+    //PID
+  PID_master_X = new PID(kp_master_x,ki_master_x,kd_master_x,i_saturation_master_x);
+  PID_slave_X = new PID(kp_slave_x,ki_slave_x,kd_slave_x,i_saturation_slave_x);
 
 
   // Setup H_bridge
@@ -46,16 +61,16 @@ void setup() {
   BTS_slave_X->init();
 
   // Creating Axis
-  Axis_master_X = new Axis(encoder_master_X, BTS_master_X, endstop_master_R_X, endstop_master_L_X, PID_master_X, X_master_MAX_VEL, PWM_resolution_channel, Z_size, Z_tolerance);
-  Axis_slave_X = new Axis(encoder_slave_X, BTS_slave_X, endstop_slave_R_X, endstop_slave_L_X, PID_slave_X, X_slave_MAX_VEL, PWM_resolution_channel, Z_size, Z_tolerance);
+  Axis_master_X = new Axis(encoder_master_X, BTS_master_X, endstop_master_R_X, endstop_master_L_X, PID_master_X, X_master_MAX_VEL, PWM_resolution_channel, Z_size, Z_tolerance, pwm_master_cte);
+  Axis_slave_X = new Axis(encoder_slave_X, BTS_slave_X, endstop_slave_R_X, endstop_slave_L_X, PID_slave_X, X_slave_MAX_VEL, PWM_resolution_channel, Z_size, Z_tolerance, pwm_slave_cte);
   
-  Axis_master_z->go_max(); 
-  Axis_slave_z->go_max();
+  Axis_master_X->go_max(); 
+  //Axis_slave_X->go_max();
 }
 
 void loop(){
-    Axis_master_z->go_origin();
-    Axis_master_z->go_max();
-    Axis_slave_z->go_origin();
-    Axis_slave_z->go_max();
+   Axis_master_X->go_origin();
+   Axis_master_X->go_max();
+   //Axis_slave_X->go_origin();
+   //Axis_slave_X->go_max();
 }

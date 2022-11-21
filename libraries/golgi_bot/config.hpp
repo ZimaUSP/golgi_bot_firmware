@@ -52,24 +52,24 @@
 #define X_max_index 3
 
 //  X Encoder
-#define A_pin_master_X 2 // Green cable
-#define B_pin_master_X 15 // White cable
+#define A_pin_master_X 22 // Green cable
+#define B_pin_master_X 23 // White cable
 
-#define A_pin_slave_X 22 // pin // cor do cabo
-#define B_pin_slave_X 23 // pin // cor do cabo
+#define A_pin_slave_X 2 // Green cable
+#define B_pin_slave_X 15 // White cable
 
 // X BTS
-#define R_pin_master_X 26 // L Bts  //mano ver a brisa do lado pq tava invertido antes eu acho que eu inverti pq ele tava andando pra tras
-#define L_pin_master_X 27 // R Bts
+#define R_pin_master_X 27 // L Bts  
+#define L_pin_master_X 26 // R Bts
 #define R_channel_master_X 0
 #define L_channel_master_X 1
-#define pwm_master_cte 0.5 // fraction of pwm velocity
+#define pwm_master_cte 0.45 // fraction of pwm velocity
 
 #define R_pin_slave_X 16 // pin
 #define L_pin_slave_X 13 // pin
 #define R_channel_slave_X 4
 #define L_channel_slave_X 5
-#define pwm_slave_cte 0.5
+#define pwm_slave_cte 0.7
 
 // X CHAVE
 #define chave_master_R_X 39

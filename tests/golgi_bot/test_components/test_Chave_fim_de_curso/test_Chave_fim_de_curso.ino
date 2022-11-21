@@ -2,46 +2,47 @@
 #include "config.hpp"
 
 // Chave fim de curso X axis
-Chave_fim_de_curso *endstop_L_X; 
-Chave_fim_de_curso *endstop_R_X; 
+Chave_fim_de_curso *endstop_R_master_X; 
+Chave_fim_de_curso *endstop_L_master_X; 
 
 // Chave fim de curso Z axis
-Chave_fim_de_curso *endstop_L_Z; 
-Chave_fim_de_curso *endstop_R_Z; 
+Chave_fim_de_curso *endstop_R_slave_X; 
+Chave_fim_de_curso *endstop_L_slave_X; 
 
 
 
 void setup() {     
   Serial.begin (9600);
-  endstop_R_X = new Chave_fim_de_curso(chave_master_R_X,0);
-  endstop_R_X->init();
 
-  //Chave fim de curso
-  endstop_L_X = new Chave_fim_de_curso(chave_master_L_X,0);
-  endstop_L_X->init();
-  endstop_R_X = new Chave_fim_de_curso(chave_master_R_X,1);
-  endstop_R_X->init();
+  // batente master
+  endstop_R_master_X = new Chave_fim_de_curso(chave_master_R_X,0);
+  endstop_R_master_X->init();
 
-  endstop_L_Z = new Chave_fim_de_curso(chave_L_Z,2);
-  endstop_L_Z->init();
-  endstop_R_Z = new Chave_fim_de_curso(chave_R_Z,3);
-  endstop_R_Z->init();
+  endstop_L_master_X = new Chave_fim_de_curso(chave_master_L_X,0);
+  endstop_L_master_X->init();
+
+  // Batente slave
+  endstop_R_slave_X = new Chave_fim_de_curso(chave_slave_R_X,0);
+  endstop_R_slave_X->init();
+
+  endstop_L_slave_X = new Chave_fim_de_curso(chave_slave_L_X,0);
+  endstop_L_slave_X->init();
 
   }
    
 void loop() {
-  if (endstop_L_X->getBatente())
+  /*/if (endstop_L_slave_X->getBatente())
   {
-    Serial.println("Batente L X");
-  }else if (endstop_R_X->getBatente())
+    Serial.println("Batente L slave X");
+  }/*/ if (endstop_R_slave_X->getBatente())
   {
-    Serial.println("Batente R X");
-  }else if (endstop_L_Z->getBatente())
+    Serial.println("Batente R slave X");
+  }else if (endstop_L_master_X->getBatente())
   {
-    Serial.println("Batente L Z");
-  }else if (endstop_R_Z->getBatente())
+    Serial.println("Batente L master Z");
+  }else if (endstop_R_master_X->getBatente())
   {
-    Serial.println("Batente R Z");
+    Serial.println("Batente R master Z");
   }else{
     Serial.println("sem batente");
   }
