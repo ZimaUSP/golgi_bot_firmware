@@ -27,14 +27,15 @@ void setup() {
 
   endstop_L_slave_X = new Chave_fim_de_curso(chave_slave_L_X,0);
   endstop_L_slave_X->init();
+  
 
   }
    
 void loop() {
-  /*/if (endstop_L_slave_X->getBatente())
+  if (endstop_L_slave_X->getBatente())
   {
     Serial.println("Batente L slave X");
-  }/*/ if (endstop_R_slave_X->getBatente())
+  } if (endstop_R_slave_X->getBatente())
   {
     Serial.println("Batente R slave X");
   }else if (endstop_L_master_X->getBatente())
@@ -45,5 +46,5 @@ void loop() {
     Serial.println("Batente R master Z");
   }else{
     Serial.println("sem batente");
-  }
+  }  
   }
