@@ -46,30 +46,32 @@ void setup() {
   // Set point
   setPoint_z = 0;
   
-  //Serial Comunication
+  // Serial Comunication
   Serial.begin (SERIAL_VEL);
   comu = new SerialCommunication("Posição SetPoint:");
 
+  // Endstop
   endstop_L_Z = new Chave_fim_de_curso(chave_L_Z,2);
   endstop_L_Z->init();
   endstop_R_Z = new Chave_fim_de_curso(chave_R_Z,3);
   endstop_R_Z->init();
 
+  // Ponte H
 
   BTS_Z= new H_bridge_controller(R_pin_Z, L_pin_Z, PWM_frequency_channel, PWM_resolution_channel, R_channel_Z, L_channel_Z);
   BTS_Z->init();
 
+  // PID
   PID_Z = new PID(kp_z,ki_z,kd_z,i_saturation_z);
-
+  
+  // encoder
   encoder_Z =new Encoder(A_pin_Z,B_pin_Z,0,600,40,4);
   encoder_Z->init();
 
- // Creating Axis
+  // Creating Axis
   Axis_z= new Axis(encoder_Z, BTS_Z, endstop_R_Z, endstop_L_Z, PID_Z, Z_MAX_VEL, PWM_resolution_channel, Z_size, Z_tolerance);
 
-  //PID
-  PID_Z = new PID(kp_z,ki_z,kd_z,i_saturation_z);
-  
+
   // Não se mexe se começar no max
   // Testar se eu começar no meio da barra a origem se torna onde começou, ou se é mesmo na origem
   Axis_z->go_max();
@@ -116,8 +118,11 @@ void read_setpoint(){
              
       Serial.print("Z goal:");
       Serial.println(encoder_Z->getPosition());
+      
       Axis_z->setGoal(setPoint_z);
   }
+
+  
 
 }
 
