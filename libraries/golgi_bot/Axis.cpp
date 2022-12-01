@@ -49,14 +49,12 @@ void Axis::move(){
   if (output < 0) {
         if (output < -(this->MAX_PWM)*this->pwm_cte) {
           output = -(this->MAX_PWM)*this->pwm_cte;
-          Serial.println(this->MAX_PWM);
         }
         this->BTS->Set_R(-output);
         return;
       } else {
         if (output > (this->MAX_PWM)*this->pwm_cte) {
           output = (this->MAX_PWM)*this->pwm_cte;
-          Serial.println(this->MAX_PWM);
         }
         this->BTS->Set_L(output);
         return;
