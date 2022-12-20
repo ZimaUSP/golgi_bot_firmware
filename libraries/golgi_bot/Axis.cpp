@@ -106,5 +106,28 @@ bool Axis::onGoal(){
   }else{
     return false;
   }
-  
+
+void postionpertime(){
+
+// go max
+while (digitalRead(Chave_L->getPin())==HIGH){ 
+    this->BTS->Set_L((this->MAX_PWM)*this->pwm_cte);
+    Serial.Println(this->postion());
+  }
+  Serial.println("max");
+  this->encoder->setPulses(0);
+  this->stop();
+
+}
+
+// go origin 
+while (digitalRead(Chave_R->getPin())==HIGH){ 
+    this->BTS->Set_R((this->MAX_PWM)*this->pwm_cte);
+    Serial.Println(this->postion());
+  }
+  Serial.println("origin");
+  this->encoder->setPulses(0);
+  this->stop();
+ return;
+
 }

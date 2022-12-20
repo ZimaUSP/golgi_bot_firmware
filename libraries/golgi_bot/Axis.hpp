@@ -103,6 +103,14 @@ class Axis {
          */
         void go_max();
 
+
+        /**
+         * @brief postion per time
+         * 
+         */
+        void positionprint();
+
+
 };
 
 #endif  // __AXIS_HPP__
