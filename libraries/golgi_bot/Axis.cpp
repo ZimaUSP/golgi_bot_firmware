@@ -106,28 +106,61 @@ bool Axis::onGoal(){
   }else{
     return false;
   }
+}
 
-void postionpertime(){
+void Axis::positionprint(){
 
-// go max
-while (digitalRead(Chave_L->getPin())==HIGH){ 
-    this->BTS->Set_L((this->MAX_PWM)*this->pwm_cte);
-    Serial.Println(this->postion());
+  // condições iniciais 
+  while (digitalRead(Chave_R->getPin())==HIGH){ 
+    this->BTS->Set_R((this->MAX_PWM));
   }
-  Serial.println("max");
+  encoder->setPulses(0);
+
+
+  // go max
+  while (digitalRead(Chave_L->getPin())==HIGH){ 
+    this->BTS->Set_L((this->MAX_PWM));
+    Serial.println(this->encoder->getPosition());
+  }
+  
+
+
+  // go origin 
+  while (digitalRead(Chave_R->getPin())==HIGH){ 
+    this->BTS->Set_R((this->MAX_PWM));
+    Serial.println(this->encoder->getPosition());
+  }
   this->encoder->setPulses(0);
-  this->stop();
+
+
+  return;
 
 }
 
-// go origin 
-while (digitalRead(Chave_R->getPin())==HIGH){ 
-    this->BTS->Set_R((this->MAX_PWM)*this->pwm_cte);
-    Serial.Println(this->postion());
-  }
-  Serial.println("origin");
-  this->encoder->setPulses(0);
-  this->stop();
- return;
+void Axis::pulseprint(){
 
+  // condições iniciais 
+  while (digitalRead(Chave_R->getPin())==HIGH){ 
+    this->BTS->Set_R((this->MAX_PWM)*this->pwm_cte);
+  }
+  encoder->setPulses(0);
+
+
+  // go max
+  while (digitalRead(Chave_L->getPin())==HIGH){ 
+    this->BTS->Set_L((this->MAX_PWM)*this->pwm_cte);
+    Serial.println(this->encoder->getPulses());
+  }
+  
+
+
+  // go origin 
+  while (digitalRead(Chave_R->getPin())==HIGH){ 
+    this->BTS->Set_R((this->MAX_PWM)*this->pwm_cte);
+    Serial.println(this->encoder->getPulses());
+  }
+  this->encoder->setPulses(0);
+
+
+  return;
 }

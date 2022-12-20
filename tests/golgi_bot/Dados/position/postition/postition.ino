@@ -81,7 +81,9 @@ void setup() {
 
   //encoder 
   encoder_master_X = new Encoder(A_pin_master_X,B_pin_master_X,0,Nominal_pulses,pitch_pulley,4); 
+  encoder_master_X->init();
   encoder_slave_X = new Encoder(A_pin_slave_X,B_pin_slave_X,0,Nominal_pulses,pitch_pulley,4); 
+  encoder_slave_X->init();
 
 
   // Setup H_bridge
@@ -94,11 +96,9 @@ void setup() {
   Axis_master_X = new Axis(encoder_master_X, BTS_master_X, endstop_master_R_X, endstop_master_L_X, PID_master_X, X_master_MAX_VEL, PWM_resolution_channel, X_size, X_master_tolerance, pwm_master_cte);
   Axis_slave_X = new Axis(encoder_slave_X, BTS_slave_X, endstop_slave_R_X, endstop_slave_L_X, PID_slave_X, X_slave_MAX_VEL, PWM_resolution_channel, X_size, X_slave_tolerance, pwm_slave_cte);
   
-  Axis_master_X->go_max(); 
-  //Axis_slave_X->go_max();
+  
 }
 
 void loop(){
-  Axis_master_X->positionpertime();
+  Axis_slave_X->positionprint();
 }
-

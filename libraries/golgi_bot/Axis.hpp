@@ -105,10 +105,16 @@ class Axis {
 
 
         /**
-         * @brief postion per time
+         * @brief postion print terminal
          * 
          */
         void positionprint();
+
+        /**
+         * @brief pulses print terminal
+         * 
+         */
+        void pulseprint();
 
 
 };
