@@ -2,7 +2,7 @@
 #define __CONFIG_HPP__
 
 // Comum used
-#define Nominal_pulses 600
+#define Nominal_pulses 320 //600
 #define pitch_pulley 40
 #define Mode 1
 #define PWM_frequency_channel 40000
