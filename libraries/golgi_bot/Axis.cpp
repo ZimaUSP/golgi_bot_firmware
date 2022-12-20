@@ -50,6 +50,7 @@ void Axis::move(){
         if (output < -(this->MAX_PWM)*this->pwm_cte) {
           output = -(this->MAX_PWM)*this->pwm_cte;
         }
+        
         this->BTS->Set_R(-output);
         return;
       } else {
@@ -77,6 +78,7 @@ void Axis::go_max(){
     Serial.println("go max");
   }
   Serial.println("max");
+  this->encoder->setPulses(0);
   this->stop();
 }
 

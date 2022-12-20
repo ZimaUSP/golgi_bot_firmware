@@ -1,8 +1,8 @@
-
-
 // EIXO X
 #include "config.hpp"
+
 #include "Axis.hpp"
+
 Axis *Axis_master_X;
 Axis *Axis_slave_X;
 
@@ -17,7 +17,7 @@ Encoder *encoder_slave_X;
 H_bridge_controller *BTS_master_X; 
 H_bridge_controller *BTS_slave_X;
 
-//PID Z axis constants
+//PID X axis constants
 #include "PID.hpp"
 PID *PID_master_X; 
 PID *PID_slave_X; 
@@ -95,12 +95,20 @@ void setup() {
   Axis_slave_X = new Axis(encoder_slave_X, BTS_slave_X, endstop_slave_R_X, endstop_slave_L_X, PID_slave_X, X_slave_MAX_VEL, PWM_resolution_channel, X_size, X_slave_tolerance, pwm_slave_cte);
   
   Axis_master_X->go_max(); 
-  Axis_slave_X->go_max();
+  //Axis_slave_X->go_max();
 }
 
 void loop(){
-   Axis_master_X->go_origin();
-   Axis_master_X->go_max();
+   master();
+}
+
+void master(){
+  Axis_master_X->go_origin();
+  Axis_master_X->go_max();
+}
+
+void slave(){
    Axis_slave_X->go_origin();
    Axis_slave_X->go_max();
 }
+
