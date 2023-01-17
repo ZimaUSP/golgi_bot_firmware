@@ -27,17 +27,17 @@ void Atuador::init(){
 
 }
 
-void Atuador::Extend() {
+void Atuador::Extend() {                       //extends stroke by setting contract to low and extend to high
   digitalWrite(this->contract_pin, LOW);
   digitalWrite(this->extend_pin, HIGH);
 }
 
-void Atuador::Contract() {
+void Atuador::Contract() {                    //contracts stroke by setting contract to high and extend to low
   digitalWrite(this->extend_pin, LOW);
   digitalWrite(this->contract_pin, HIGH);
 }
 
-void Atuador::Stop() {
+void Atuador::Stop() {                       //stops atuador by setting both pins to low
   digitalWrite(this->extend_pin, LOW);
   digitalWrite(this->contract_pin, LOW);
 }
