@@ -19,11 +19,11 @@
 
 Atuador::Atuador(int extend_pin,int contract_pin) {
     this->extend_pin = extend_pin;
-    this->contract_pin = contract_pin; //teste
+    this->contract_pin = contract_pin; 
 }
 void Atuador::init(){
     pinMode(this->extend_pin,OUTPUT);
-    pinMode(this->contract_pin,OUTPUT);
+    pinMode(this->contract_pin,OUTPUT); 
 
 }
 

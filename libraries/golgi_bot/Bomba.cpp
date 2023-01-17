@@ -18,19 +18,19 @@
  *****************************************/
 
 Bomba::Bomba(int pin) {
-    this->pin = pin;
+    this->pin = pin; 
 }
 void Bomba::init(){
-    pinMode(this->pin,OUTPUT);
-    digitalWrite(this->pin, LOW);
+    pinMode(this->pin,OUTPUT); // sets the pin as output
+    digitalWrite(this->pin, LOW); // initially sets the bomba to off
 }
 
 void Bomba::turn_on() {
-  digitalWrite(this->pin, HIGH);
+  digitalWrite(this->pin, HIGH); // sends signal to turn on
 }
 
 void Bomba::turn_off() {
-  digitalWrite(this->pin, LOW);
+  digitalWrite(this->pin, LOW); //sends signal to turn off
 }
 
 
