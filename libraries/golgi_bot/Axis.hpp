@@ -39,6 +39,7 @@ class Axis {
         float Max_pos;
         float Min_pos;
         float pwm_cte;
+        bool debug;
     public:
         /**
          * @brief Default constructor of a PID base class
@@ -47,7 +48,7 @@ class Axis {
          * @param k_i Integrative constant 
          * @param k_d Derivative constant 
          */
-        Axis(Encoder *encoder, H_bridge_controller *BTS, Chave_fim_de_curso *Chave_R, Chave_fim_de_curso *Chave_L,PID *Pid, float max_vel,int PWM_RESOLUTION,float size,float tolerance, float pwm_cte);
+        Axis(Encoder *encoder, H_bridge_controller *BTS, Chave_fim_de_curso *Chave_R, Chave_fim_de_curso *Chave_L,PID *Pid, float max_vel,int PWM_RESOLUTION,float size,float tolerance, float pwm_cte, bool debug);
 
         /**
          * @brief moves axis with PID control, input position from enconder(mm)
@@ -104,17 +105,7 @@ class Axis {
         void go_max();
 
 
-        /**
-         * @brief postion print terminal
-         * 
-         */
-        void positionprint();
-
-        /**
-         * @brief pulses print terminal
-         * 
-         */
-        void pulseprint();
+        
 
 
 };
