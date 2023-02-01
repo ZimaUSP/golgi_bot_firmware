@@ -94,13 +94,13 @@ void setup() {
   PID_slave_X = new PID(kp_slave_x,ki_slave_x,kd_slave_x,i_saturation_slave_x);
  
   // Creating Axis
-  Axis_master_X = new Axis(encoder_master_X, BTS_master_X, endstop_master_R_X, endstop_master_L_X, PID_master_X, X_master_MAX_VEL, PWM_resolution_channel, X_size, X_master_tolerance, pwm_master_cte, true;
-  Axis_slave_X = new Axis(encoder_slave_X, BTS_slave_X, endstop_slave_R_X, endstop_slave_L_X, PID_slave_X, X_slave_MAX_VEL, PWM_resolution_channel, X_size, X_slave_tolerance, pwm_slave_cte, true);
+  Axis_master_X = new Axis(encoder_master_X, BTS_master_X, endstop_master_R_X, endstop_master_L_X, PID_master_X, X_master_MAX_VEL, PWM_resolution_channel, X_size, X_master_tolerance, pwm_master_cte, false);
+  Axis_slave_X = new Axis(encoder_slave_X, BTS_slave_X, endstop_slave_R_X, endstop_slave_L_X, PID_slave_X, X_slave_MAX_VEL, PWM_resolution_channel, X_size, X_slave_tolerance, pwm_slave_cte, false);
 
-  Axis_master_X->go_max(); 
+//  Axis_master_X->go_max(); 
   Axis_slave_X->go_max(); 
 
-  Axis_master_X->go_origin(); 
+  //Axis_master_X->go_origin(); 
   Axis_slave_X->go_origin();
 }
 
@@ -108,27 +108,24 @@ void setup() {
 void loop() {
   switch(STATE) {
       case STAND_BY :
-        Serial.println("STAND-BY");
+        //Serial.println("STAND-BY");
 
         // Recive Set point
         read_setpoint();
         return;
 
       case GOING :
-        Serial.println("Entrou no going");
         // Setting direction of motion acording to output_x PID
-        Serial.println("Set goal slave");
-        Axis_slave_X->setGoal(Axis_master_X->position());
+        //Serial.println("Set goal slave");
+        //Axis_slave_X->setGoal(Axis_master_X->position());
         
-        Serial.println("move slave");
         Axis_slave_X->move();
         
-        Serial.println("move master");  
-        Axis_master_X->move();
+        //Serial.println("move master");  
+        //Axis_master_X->move();
         
         //Code does not work without this delay (?)
         delay(2);
-        
         check_position();
 
         last_x_count = encoder_master_X->getPulses();
@@ -153,23 +150,29 @@ void read_setpoint(){
       comu->read_data(MAIN_SERIAL);
       char* recived=string_to_char(comu->get_received_data());
       int setPoint_master_X=atoi(recived);
-      Serial.println("Set_point_Master:"); 
-      Serial.println(setPoint_master_X);
 
-      Axis_master_X->setGoal(setPoint_master_X);     
+      //Serial.println("Set_point_Master:"); 
+      //Serial.println(setPoint_master_X);
+
+      //Axis_master_X->setGoal(setPoint_master_X);     
+      Axis_slave_X->setGoal(setPoint_master_X);     
+
 
   }
 }
 
 void check_position(){
-  if(Axis_master_X->onGoal()){
-    Serial.println("Entrou no if on goal master x");
+  //if(Axis_master_X->onGoal()){
+    if(Axis_slave_X->onGoal()){
+
+    //Serial.println("Entrou no if on goal master x");
     STATE=STAND_BY;
     Serial.println("STANDY-BY");
-    Serial.println(Axis_master_X->position());
+    //Serial.println(Axis_master_X->position());
     Serial.println(Axis_slave_X->position());
-    Axis_master_X->stop();
+    // Axis_master_X->stop();
     Axis_slave_X->stop();
   }
-  }
+}
+  
   
