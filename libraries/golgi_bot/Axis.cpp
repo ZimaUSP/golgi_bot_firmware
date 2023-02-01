@@ -48,12 +48,17 @@ void Axis::setGoal(double setpoint){
     {
       Serial.print("setpoint:");
       Serial.println(setpoint);
-      Serial.print("this->setpoint");
-      Serial.println(this->setpoint);
     }
 }
 
 void Axis::move(){
+  if (debug){
+    Serial.println("\nentrou no move");
+    Serial.print("encoder position");
+    Serial.println(this->encoder->getPosition());
+    Serial.print("setpoint");
+    Serial.println(this->setpoint);
+  }
   output=this->Pid->computePID(this->encoder->getPosition(),this->setpoint,this->tolerance*5);
   if (this->debug)
     {
@@ -65,15 +70,15 @@ void Axis::move(){
       output = -(this->MAX_PWM)*this->pwm_cte;
     } 
     this->BTS->Set_R(-output);
+    
     return;
   } else {
-    if (this->debug){
-      Serial.println("else");
-    }
+    
     if (output > (this->MAX_PWM)*this->pwm_cte) {
       output = (this->MAX_PWM)*this->pwm_cte;
     }
     this->BTS->Set_L(output);
+    
     return;
   }
 }
@@ -83,13 +88,12 @@ void Axis::go_origin(){
     this->BTS->Set_R((this->MAX_PWM)*this->pwm_cte);
     if (this->debug)
     {
-      Serial.print("\nGo origin:");
+      Serial.print("position to origin");
       Serial.println(encoder->getPosition());
     }
   }
-  if (this->debug)
-  {
-    Serial.println("Max");
+  if (debug){
+    Serial.println("origin");
   }
 
   this->encoder->setPulses(0);
@@ -101,15 +105,13 @@ void Axis::go_max(){
     this->BTS->Set_L((this->MAX_PWM)*this->pwm_cte);
     if (this->debug)
     {
-      Serial.print("\nGo origin:");
+      Serial.print("position to max:");
       Serial.println(encoder->getPosition());
     }
   }
-  if (this->debug)
-  {
-    Serial.println("Max");
+   if (debug){
+    Serial.println("max");
   }
-  // precisa disso? this->encoder->setPulses(0);
   this->stop();
 }
 
