@@ -46,7 +46,7 @@
 
 #define X_master_MAX_VEL 0.5
 #define X_slave_MAX_VEL 0.5
-#define X_size 414
+#define X_size 1700
 #define X_master_tolerance 2
 #define X_slave_tolerance 2
 #define X_max_index 3
@@ -63,7 +63,7 @@
 #define L_pin_master_X 26 // R Bts
 #define R_channel_master_X 0
 #define L_channel_master_X 1
-#define pwm_master_cte 0.7 // fraction of pwm velocity
+#define pwm_master_cte 0.6 // fraction of pwm velocity
 
 #define R_pin_slave_X 16 // pin
 #define L_pin_slave_X 13 // pin
@@ -87,9 +87,9 @@
 // X PID Slave 
 // aumentar kp para diminuir o tempo de resposta
 #define kp_slave_x  3.2
-#define ki_slave_x  0.01
-#define kd_slave_x  30
-#define i_saturation_slave_x 500 // Diminuir saturação para ser mais sensivel ao erro
+#define ki_slave_x  0.02
+#define kd_slave_x  33
+#define i_saturation_slave_x 1000 // Diminuir saturação para ser mais sensivel ao erro
 
 
 /// Z axis ///

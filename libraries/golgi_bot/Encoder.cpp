@@ -16,7 +16,7 @@
  * Class Methods Bodies Definitions
  *****************************************/
 
-Encoder::Encoder(int A_pin,int B_pin, byte which,int PulsesPerRev,int PitchPerRev,int mode):whichISR_(which) {
+Encoder::Encoder(int A_pin,int B_pin, const byte which,int PulsesPerRev,int PitchPerRev,int mode):whichISR_(which) {
     this-> A_pin = A_pin;
     this-> B_pin = B_pin;
     this->PitchPerRev=PitchPerRev;
