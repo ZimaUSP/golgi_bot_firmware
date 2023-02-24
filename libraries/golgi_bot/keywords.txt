@@ -1,0 +1,58 @@
+#######################################
+# Syntax Coloring Map For Motion_Control Library
+#######################################
+
+#######################################
+# Datatypes (KEYWORD1)
+#######################################
+
+Encoder	KEYWORD1
+Axis	KEYWORD1
+Controller	KEYWORD1
+
+#######################################
+# Methods and Functions (KEYWORD2)
+#######################################
+
+# class encoder
+
+setReference	KEYWORD2
+readPosition	KEYWORD2
+readPulses	KEYWORD2
+readSpeed	KEYWORD2
+
+# class Axis
+
+setOpMode	KEYWORD2
+getOpMode	KEYWORD2
+setOutput	KEYWORD2
+setMaxOutput	KEYWORD2
+getHoming	KEYWORD2
+setDebug	KEYWORD2
+moveAxisFoward	KEYWORD2
+moveAxisBackward	KEYWORD2
+brakeAxis	KEYWORD2
+looseAxis	KEYWORD2
+
+# class Controller
+
+runController	KEYWORD2
+setPosition	KEYWORD2
+setEnvelope	KEYWORD2
+setGains	KEYWORD2
+setPIDPeriod	KEYWORD2
+setController	KEYWORD2
+setControlStatus	KEYWORD2
+getPosition	KEYWORD2
+getSetpoint	KEYWORD2
+isInPosition	KEYWORD2
+moveAxis	KEYWORD2
+
+#######################################
+# Constants (LITERAL1)
+#######################################
+
+Envelope	KEYWORD3
+PID_gains	KEYWORD3
+Position	KEYWORD3
+
