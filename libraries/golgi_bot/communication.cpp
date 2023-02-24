@@ -38,4 +38,3 @@ std::string Communication::get_received_data() {
 std::string Communication::get_sent_data() {
     return this->sent_data;
 }
-

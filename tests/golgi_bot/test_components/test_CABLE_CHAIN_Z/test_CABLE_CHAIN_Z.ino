@@ -20,7 +20,7 @@ Chave_fim_de_curso *endstop_R_Z;
 
 void setup() {
   //Serial Comunication
-  Serial.begin (SERIAL_VEL);
+  Serial.begin (9600);
 
   //Chave fim de curso
   endstop_L_Z = new Chave_fim_de_curso(chave_L_Z,0);

@@ -1,8 +1,8 @@
 
 // BTS X axis 
 #include "H_bridge_controller.hpp"
-int R_pin_X=26; // L Bts
-int L_pin_X=27; // R Bts
+int R_pin_X=27; // L Bts
+int L_pin_X=26; // R Bts
 int PWM_frequency = 40000;
 int PWM_resolution = 8;
 int R_channel_X=1;
@@ -20,7 +20,7 @@ Chave_fim_de_curso *endstop_R_X;
 
 void setup() {
   //Serial Comunication
-  Serial.begin (SERIAL_VEL);
+  Serial.begin (9600);
 
   //Chave fim de curso
   endstop_L_X = new Chave_fim_de_curso(chave_L_X,0);
@@ -45,13 +45,13 @@ void loop() {
 void shake(){
   while (digitalRead(chave_R_X)==HIGH)
   {
-    BTS_X->Set_R(100);
+    BTS_X->Set_R(150);
   }
   BTS_X->SetPWM_R(0);
   BTS_X->SetPWM_L(0);
   while (digitalRead(chave_L_X)==HIGH)
   {
-    BTS_X->Set_L(100);
+    BTS_X->Set_L(150);
   }
   BTS_X->SetPWM_R(0);
   BTS_X->SetPWM_L(0);

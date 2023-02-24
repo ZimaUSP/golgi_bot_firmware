@@ -19,9 +19,10 @@ class Encoder {
     private:
         int A_pin;
         int B_pin;
-        
+        int PulsesPerRev;
+        int PitchPerRev;
         int pulses=0;
-
+        int mode;
         //nickgammon ideia
         const byte whichISR_;
 
@@ -46,7 +47,7 @@ class Encoder {
          * @param A_pin A phase pin 
          * @param B_pin B phase pin 
          */
-        Encoder(int A_pin,int B_pin, const byte which);
+        Encoder(int A_pin,int B_pin, const byte which,int PulsesPerRev,int PitchPerRev,int mode);
 
         void init();
     
@@ -72,6 +73,11 @@ class Encoder {
          * @param num number of pulses to be set 
          */
         void setPulses(int num);
+        
+        /**
+         * @brief get position in mm
+         */
+        float getPosition();
 
 
 };

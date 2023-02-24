@@ -1,9 +1,11 @@
-// atuador axis 
-#include "Atuador.hpp"
-int Extend_pin=33; //IN4
-int Contract_pin=25; //IN3
-Atuador *Atuador_Y;
+
+
+// Bomba axis 
+#include "Bomba.hpp"
+int bomba_pin=32;//IN2
+Bomba *Bomba_Y;
 int comand;
+
 
 //Serial comunication
 #include "serial_communication.hpp"
@@ -18,15 +20,19 @@ void setup() {
   Serial.begin (SERIAL_VEL);
   comu = new SerialCommunication("Posição setPoint_x:");
 
-  // Atuador
-  Atuador_Y= new Atuador( Extend_pin,Contract_pin);
-  Atuador_Y->init();
+  // Bomba
+  Bomba_Y= new Bomba( bomba_pin);
+  Bomba_Y->init();
+  Bomba_Y->turn_on();
   
 }
 
 void loop() {
-  read_command();
-    }
+  Bomba_Y->turn_on();
+  delay(1000);
+  Bomba_Y->turn_off();
+  delay(1000);
+  }
 
 
 char* string_to_char(std::string str) {
@@ -35,19 +41,17 @@ char* string_to_char(std::string str) {
    return cstr;
 }
 void read_command(){
-    Serial.println("oi");
+
+    
    if(Serial.available()){
      comu->read_data();
-
     comand=atoi(string_to_char(comu->get_received_data()));
     if(comand==1){
-    Atuador_Y->Extend();
+    Bomba_Y->turn_on();
+    Serial.println("on");
     }
-    if(comand==2){
-    Atuador_Y->Contract();
-    }
-    if(comand==3){
-    Atuador_Y->Stop();
+    else{
+    Bomba_Y->turn_off();
     }
     
   }

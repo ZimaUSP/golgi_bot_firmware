@@ -29,6 +29,11 @@ double PID::computePID(double input,float setpoint) {
 
   this->error = setpoint - input;                                      // determine error
   this->i_error +=  this->error *  this->delta_time;                           // compute integral
+  if(this->i_error>1000){
+    this->i_error=1000;
+  }else if(this->i_error>-1000){
+    this->i_error=-1000;
+  }
   this->d_error = (this->error - this->previus_error) / this->delta_time;             // compute derivative
 
   double out = this->k_p * this->error + this->k_i * this->i_error + this->k_d * this->d_error;  //PID output
@@ -37,4 +42,11 @@ double PID::computePID(double input,float setpoint) {
   this->previus_time =  this->current_time;                                //remember current time
 
   return out;                                                 //have function return the PID output
+}
+
+void PID::reset() {
+    this->error = 0;
+    this->i_error = 0;
+    this->d_error = 0;
+    this->previus_time = millis();
 }
