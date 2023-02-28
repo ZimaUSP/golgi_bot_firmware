@@ -1,4 +1,7 @@
 // Header file which contain Pin, constanst, states and etc...
+
+// Controller working - Post Zima february/2023
+
 #include "config.hpp"
 
 //Controller lib
