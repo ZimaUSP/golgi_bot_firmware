@@ -52,29 +52,29 @@
 #define X_max_index 3
 
 //  X Encoder
-#define A_pin_master_X 22 // Green cable
-#define B_pin_master_X 23 // White cable
+#define A_pin_master_X 13 // Green cable
+#define B_pin_master_X 15 // White cable
 
-#define A_pin_slave_X 2 // Green cable
-#define B_pin_slave_X 15 // White cable
+#define A_pin_slave_X 23 // Green cable
+#define B_pin_slave_X 12 // White cable
 
 // X BTS
-#define R_pin_master_X 27 // L Bts  
-#define L_pin_master_X 26 // R Bts
+#define R_pin_master_X 26 // L Bts  
+#define L_pin_master_X 27 // R Bts
 #define R_channel_master_X 0
 #define L_channel_master_X 1
-#define pwm_master_cte 0.6 // fraction of pwm velocity
+#define pwm_master_cte 0.5 // fraction of pwm velocity
 
 #define R_pin_slave_X 16 // pin
-#define L_pin_slave_X 13 // pin
+#define L_pin_slave_X 12 // pin
 #define R_channel_slave_X 4
 #define L_channel_slave_X 5
-#define pwm_slave_cte 0.7
+#define pwm_slave_cte 0.5
 
 // X CHAVE
 #define chave_master_R_X 39
 #define chave_master_L_X 36
-#define chave_slave_R_X 34 //5
+#define chave_slave_R_X 5
 #define chave_slave_L_X 4 
 
 // X PID Master
@@ -105,8 +105,8 @@
 #define B_pin_Z 21 // white cable
 
 // Z BTS 
-#define R_pin_Z 17 // R bts
-#define L_pin_Z 18 // L bts
+#define R_pin_Z 18 // R bts
+#define L_pin_Z 17 // L bts
 #define R_channel_Z  2
 #define L_channel_Z 3 
 #define pwm_cte_Z 0.5 // fraction of pwm velocity
