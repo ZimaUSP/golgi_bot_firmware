@@ -101,8 +101,8 @@
 #define Z_max_index 2
 
 // Z Encoder 
-#define A_pin_Z 19 // Green cable
-#define B_pin_Z 21 // white cable
+#define A_pin_Z 22 // Green cable
+#define B_pin_Z 23 // white cable
 
 // Z BTS 
 #define R_pin_Z 18 // R bts
