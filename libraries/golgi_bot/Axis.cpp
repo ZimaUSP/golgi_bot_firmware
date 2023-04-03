@@ -17,7 +17,7 @@
  * Class Methods Bodies Definitions
  *****************************************/
 
-Axis::Axis(Encoder *encoder, H_bridge_controller *BTS, Chave_fim_de_curso *Chave_R, Chave_fim_de_curso *Chave_L,PID *Pid, float max_vel,int PWM_RESOLUTION,float size,float tolerance, float pwm_cte, bool debug) {
+Axis::Axis(Encoder *encoder, H_bridge_controller *BTS, Chave_fim_de_curso *Chave_R, Chave_fim_de_curso *Chave_L,PID *Pid, float max_vel,int PWM_RESOLUTION,float tolerance, float pwm_cte, bool debug) {
     this->encoder = encoder;
     this->BTS= BTS;
     this->Chave_R= Chave_R;
@@ -28,9 +28,8 @@ Axis::Axis(Encoder *encoder, H_bridge_controller *BTS, Chave_fim_de_curso *Chave
     }
     this->MAX_PWM = (MAX_PWM-1);
     this->pwm_cte = pwm_cte;
-    this->size = size;
     this->tolerance = tolerance;
-    this->Max_pos = size;
+    this->Max_pos;
     this->Min_pos = 0;
     this->debug = debug;
 }
@@ -112,6 +111,8 @@ void Axis::go_max(){
    if (debug){
     Serial.println("max");
   }
+  this->Max_pos = this->encoder->getPosition();
+  Serial.println(this->Max_pos);
   this->stop();
 }
 

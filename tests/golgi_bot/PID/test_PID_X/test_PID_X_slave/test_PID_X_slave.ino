@@ -1,8 +1,8 @@
-int *count, *sum;
+int count, sum;
 
-int a = 10;
+int sample = 10;
 
-unsigned long *p_time, *c_time, *d_time;
+unsigned long p_time, c_time, d_time;
 
 // EIXO X
 #include "config.hpp"
@@ -37,7 +37,7 @@ PID *PID_slave_X;
 #include <string>
 #include <cstring>
 SerialCommunication *comu;
-double setPoint_master_X;
+double setPoint_slave_X;
 
 // Estados
 char STATE = 0 ; // 
@@ -47,7 +47,7 @@ char STATE = 0 ; //
 
 void setup() {
   // Set point
-  setPoint_master_X = 0;
+  setPoint_slave_X = 0;
 
   //Serial Comunication
   Serial.begin (SERIAL_VEL);
@@ -69,21 +69,25 @@ void setup() {
 
 // Setup encoder 
 
-  encoder_slave_X =new Encoder(A_pin_slave_X,B_pin_slave_X,0,Nominal_pulses,pitch_pulley,4);
+  encoder_slave_X =new Encoder(A_pin_slave_X,B_pin_slave_X,0,Nominal_pulses,pitch_pulley_slave,4);
   encoder_slave_X->init();
 
 //PID
   PID_slave_X = new PID(kp_slave_x,ki_slave_x,kd_slave_x,i_saturation_slave_x);
  
-  // Creating Axis
-  Axis_slave_X = new Axis(encoder_slave_X, BTS_slave_X, endstop_slave_R_X, endstop_slave_L_X, PID_slave_X, X_slave_MAX_VEL, PWM_resolution_channel, X_size, X_slave_tolerance, pwm_slave_cte, false);
 
-  // initial condition and axis debug
-  Axis_slave_X->go_max(); 
-  Axis_slave_X->go_origin();
+  // Creating Axis
+  Axis_slave_X = new Axis(encoder_slave_X, BTS_slave_X, endstop_slave_R_X, endstop_slave_L_X, PID_slave_X, X_slave_MAX_VEL, PWM_resolution_channel, X_slave_tolerance, pwm_slave_cte, true);
 
   sum = 0;
   c_time = millis();
+
+//Seting initial conditions
+
+  Axis_slave_X->go_origin();
+  Axis_slave_X->go_max();
+  Axis_slave_X->go_origin();
+
 }
 
 
@@ -121,8 +125,8 @@ void read_setpoint(){
       comu->read_data(MAIN_SERIAL);
       char* recived=string_to_char(comu->get_received_data());
 
-      int setPoint_master_X=atoi(recived);
-      Axis_slave_X->setGoal(setPoint_master_X);     
+      int setPoint_slave_X=atoi(recived);
+      Axis_slave_X->setGoal(setPoint_slave_X);     
   }
 }
 
@@ -145,12 +149,12 @@ void data(){
     p_time = c_time; // Ti 
   }
 
-  if (count == a) // agruping a serie of position 
+  if (count == sample) // agruping sample serie of position 
   {
     c_time = millis(); // Tf
     d_time = c_time - p_time; // delta = Tf - Ti
 
-    Serial.print(sum/a); // media of position 
+    Serial.print(sum/sample); // media of position 
     Serial.print(", ");
     Serial.println(d_time); // delta time 
 

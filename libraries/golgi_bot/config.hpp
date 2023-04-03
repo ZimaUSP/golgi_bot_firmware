@@ -2,8 +2,9 @@
 #define __CONFIG_HPP__
 
 // Comum used
-#define Nominal_pulses 320 //600
-#define pitch_pulley 40
+#define Nominal_pulses 360
+#define pitch_pulley_master 26
+#define pitch_pulley_slave 44
 #define Mode 1
 #define PWM_frequency_channel 40000
 #define PWM_resolution_channel 8
@@ -46,7 +47,6 @@
 
 #define X_master_MAX_VEL 0.5
 #define X_slave_MAX_VEL 0.5
-#define X_size 1700
 #define X_master_tolerance 2
 #define X_slave_tolerance 2
 #define X_max_index 3
@@ -55,12 +55,12 @@
 #define A_pin_master_X 13 // Green cable
 #define B_pin_master_X 15 // White cable
 
-#define A_pin_slave_X 23 // Green cable
-#define B_pin_slave_X 12 // White cable
+#define A_pin_slave_X 22 // Green cable
+#define B_pin_slave_X 23 // White cable
 
 // X BTS
-#define R_pin_master_X 26 // L Bts  
-#define L_pin_master_X 27 // R Bts
+#define R_pin_master_X 27 // L Bts  
+#define L_pin_master_X 26 // R Bts
 #define R_channel_master_X 0
 #define L_channel_master_X 1
 #define pwm_master_cte 0.5 // fraction of pwm velocity
