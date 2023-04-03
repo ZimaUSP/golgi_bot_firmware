@@ -96,7 +96,7 @@ void setup() {
   BTS_X= new H_bridge_controller( R_pin_X, L_pin_X, PWM_frequency_channel, PWM_resolution_channel, R_channel_X, L_channel_X);
   BTS_X->init();
 
-  BTS_Z= new H_bridge_controller( R_pin_Z, L_pin_Z, PWM_frequency_channel, PWM_resolution_channel, 2, 3);
+  BTS_Z= new H_bridge_controller( R_pin_Z, L_pin_Z, PWM_frequency_channel, PWM_resolution_channel, R_channel_Z, L_channel_Z);
   BTS_Z->init();
 
   // Encoder
@@ -150,8 +150,8 @@ void loop() {
         //Moves Controller
         Golgi_bot->move();
         if(c>50) {
-        hardenstop();
-        c =0;
+          hardenstop();
+          c =0;
         }
         c++;
         //Code does not work without this delay (?)
@@ -181,8 +181,8 @@ void read_setpoint(){
   if(Serial.available()){
       STATE=GOING;
       Serial.println("GOING"); 
-      String a = Serial.readString();
-      int b = a.toInt();
+      String received_str = Serial.readString();
+      int received = received_str.toInt();
       /*
       comu->read_data(MAIN_SERIAL);
       char* recived=string_to_char(comu->get_received_data());
@@ -193,7 +193,7 @@ void read_setpoint(){
       for(int j=0; j< Z_max_index; j++){
         for(int i =0; i < X_max_index; i++){
           counter=counter+1;
-          if (counter==b){
+          if (counter==received){
             Z_pos=pos_z[j];
             X_pos=pos_x[i];
           }
