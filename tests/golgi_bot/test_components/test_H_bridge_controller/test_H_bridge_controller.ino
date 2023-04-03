@@ -1,29 +1,41 @@
 
 #include "H_bridge_controller.hpp"
+#include "config.hpp"
+#include "Chave_fim_de_curso.hpp"
 H_bridge_controller *BTS_X;
-int R_pin_X=12;
-int L_pin_X=13;
-
-int PWM_frequency = 40000;
-int PWM_resolution = 10;
-
-int R_channel_X=1;
-int L_channel_X=2;
+// Chave fim de curso Z axis
+Chave_fim_de_curso *endstop_R_master_X; 
+Chave_fim_de_curso *endstop_L_master_X; 
 
 void setup() {
   Serial.begin(9600);
-  BTS_X= new H_bridge_controller( R_pin_X, L_pin_X, PWM_frequency, PWM_resolution, R_channel_X, L_channel_X);
+  BTS_X= new H_bridge_controller( R_pin_master_X, L_pin_master_X, PWM_frequency_channel, PWM_resolution_channel, R_channel_master_X, L_channel_master_X);
   BTS_X->init();
+  endstop_R_master_X = new Chave_fim_de_curso(chave_master_R_X,2);
+  endstop_R_master_X->init();
+  endstop_L_master_X = new Chave_fim_de_curso(chave_master_L_X,3);
+  endstop_L_master_X->init();
 }
 
-void loop() {
-  for(int i=0;i<1024;i++){
-      BTS_X->Set_R(i);
-      delay(10);
+void loop(){
+  while (!endstop_R_master_X->getBatente())
+  {
+      BTS_X->Set_R(150);
+      Serial.println("Going R");
   }
+  BTS_X->Set_R(0);  
+  Serial.println("chave fim de curso R pressionada");
+  delay(3000);
+  
+  
+  while (!endstop_L_master_X->getBatente())
+  {
+      BTS_X->Set_L(150);
+      Serial.println("Going L");
 
-  for(int i=0; i<1024;i++){
-      BTS_X->Set_L(i);
-      delay(10);
   }
+  BTS_X->Set_L(0);  
+  Serial.println("chave fim de curso L pressionada");
+  delay(3000);
+  
 }

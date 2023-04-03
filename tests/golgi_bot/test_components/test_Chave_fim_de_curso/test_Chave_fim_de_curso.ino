@@ -40,9 +40,9 @@ void loop() {
     Serial.println("Batente R slave X");
   }else if (endstop_L_master_X->getBatente())
   {
-    Serial.println("Batente L master Z");
+    Serial.println("Batente L master X");
   }else if (endstop_R_master_X->getBatente())
   {
-    Serial.println("Batente R master Z");
+    Serial.println("Batente R master X");
   }
   }
