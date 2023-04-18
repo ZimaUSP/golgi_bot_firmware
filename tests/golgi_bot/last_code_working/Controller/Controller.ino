@@ -130,6 +130,7 @@ void setup() {
 
   //Setting up the right inicital state
   Golgi_bot->reset_Y(DELAY_CONTRACT);
+  
 
   Golgi_bot->go_origin(true,true);
 
