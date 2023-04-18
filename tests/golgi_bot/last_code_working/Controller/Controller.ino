@@ -22,6 +22,7 @@ Chave_fim_de_curso *endstop_L_X;
 Chave_fim_de_curso *endstop_R_X; 
 
 //PID X axis constants
+
 PID *PID_X; 
 
 
@@ -68,6 +69,7 @@ int pos_z[Z_max_index]={70,190};
 double X_pos;
 double Z_pos;
 int counter;
+int c;
 
 //STATE
 char STATE = 0 ; 
@@ -94,7 +96,7 @@ void setup() {
   BTS_X= new H_bridge_controller( R_pin_X, L_pin_X, PWM_frequency_channel, PWM_resolution_channel, R_channel_X, L_channel_X);
   BTS_X->init();
 
-  BTS_Z= new H_bridge_controller( R_pin_Z, L_pin_Z, PWM_frequency_channel, PWM_resolution_channel, 2, 3);
+  BTS_Z= new H_bridge_controller( R_pin_Z, L_pin_Z, PWM_frequency_channel, PWM_resolution_channel, R_channel_Z, L_channel_Z);
   BTS_Z->init();
 
   // Encoder
@@ -148,6 +150,11 @@ void loop() {
       case GOING :
         //Moves Controller
         Golgi_bot->move();
+        if(c>50) {
+          hardenstop();
+          c =0;
+        }
+        c++;
         //Code does not work without this delay (?)
         delay(2);
         check_position();
@@ -175,14 +182,19 @@ void read_setpoint(){
   if(Serial.available()){
       STATE=GOING;
       Serial.println("GOING"); 
+      String received_str = Serial.readString();
+      int received = received_str.toInt();
+      /*
       comu->read_data(MAIN_SERIAL);
       char* recived=string_to_char(comu->get_received_data());
       int index_medicine=atoi(recived);
+      */
       counter=0;
+      
       for(int j=0; j< Z_max_index; j++){
         for(int i =0; i < X_max_index; i++){
           counter=counter+1;
-          if (counter==index_medicine){
+          if (counter==received){
             Z_pos=pos_z[j];
             X_pos=pos_x[i];
           }
@@ -209,4 +221,18 @@ void check_position(){
     
   }
 }     
+
+bool hardenstop(){
+  if(endstop_L_Z->getBatente() || endstop_R_Z->getBatente() || endstop_L_X->getBatente() || endstop_R_X->getBatente()){
+    BTS_X->Set_L(0);
+    BTS_Z->Set_L(0);
+    Serial.println("batente");
+    delay(10000);
+    
+    STATE=STAND_BY;
+
+    return true;
+  }
+  return false;
+}
   

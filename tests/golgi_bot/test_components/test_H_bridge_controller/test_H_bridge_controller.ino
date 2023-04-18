@@ -1,29 +1,33 @@
 
 #include "H_bridge_controller.hpp"
 H_bridge_controller *BTS_X;
-int R_pin_X=12;
-int L_pin_X=13;
+#include "config.hpp";
+#include "Chave_fim_de_curso.hpp";
 
-int PWM_frequency = 40000;
-int PWM_resolution = 10;
+Chave_fim_de_curso *endstop_R;
+Chave_fim_de_curso *endstop_L;
 
-int R_channel_X=1;
-int L_channel_X=2;
+
 
 void setup() {
   Serial.begin(9600);
-  BTS_X= new H_bridge_controller( R_pin_X, L_pin_X, PWM_frequency, PWM_resolution, R_channel_X, L_channel_X);
+  endstop_R = new Chave_fim_de_curso(chave_R_Z,0);
+  endstop_R->init();
+  endstop_L = new Chave_fim_de_curso(chave_L_Z,0);
+  endstop_L->init();
+  BTS_X= new H_bridge_controller( R_pin_Z, L_pin_Z, PWM_frequency_channel, PWM_resolution_channel, R_channel_X, L_channel_X);
   BTS_X->init();
 }
 
 void loop() {
-  for(int i=0;i<1024;i++){
-      BTS_X->Set_R(i);
-      delay(10);
+   while (!endstop_R->getBatente()){
+      BTS_X->Set_R(100);
+  }   
+      BTS_X->Set_R(0);
+      delay(3000);
+   while (!endstop_L->getBatente()){
+      BTS_X->Set_L(100);
+  }   
+      BTS_X->Set_L(0);
+        delay(3000);
   }
-
-  for(int i=0; i<1024;i++){
-      BTS_X->Set_L(i);
-      delay(10);
-  }
-}
