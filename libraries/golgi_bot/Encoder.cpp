@@ -109,7 +109,7 @@ int Encoder::getPulses() {
 }
 
 float Encoder::getPosition() {
- return this->pulses*this->PitchPerRev/this->PulsesPerRev;
+ return this->pulses*0.03;
 }
 
 void Encoder::setPulses(int num) {

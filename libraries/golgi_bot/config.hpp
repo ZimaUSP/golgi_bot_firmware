@@ -3,7 +3,7 @@
 
 // Comum used
 #define Nominal_pulses 360
-#define pitch_pulley_master 26
+#define pitch_pulley_master 44
 #define pitch_pulley_slave 44
 #define Mode 1
 #define PWM_frequency_channel 40000
