@@ -92,7 +92,6 @@ class Controller {
          * 
          */
         bool onGoal();
-        
 
         /**
          * @brief Go to origin on true axis

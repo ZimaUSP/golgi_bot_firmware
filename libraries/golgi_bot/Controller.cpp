@@ -50,29 +50,73 @@ void Controller::drop_medicine(){
 }
 
 void Controller::go_origin(bool axis1,bool axis2){
-  if(axis1){
-    this->Axis_1->go_origin();
+  bool going = true;
+  bool axis1OnOrigin = false; //caso axis1 seja false axis1OnMax fica true como padrão 
+  bool axis2OnOrigin = false;
+  while (going) {
+    Serial.println("going origin");
+    axis1OnOrigin = this->Axis_1->onOrigin();
+    axis2OnOrigin = this->Axis_2->onOrigin();
+    this->Axis_1->go_R();
+    this->Axis_2->setPoint(this->Axis_1->position());
+    if (axis1OnOrigin) {  
+      this->Axis_1->resetOrigin();
+      this->Axis_1->stop();
+    }
+    if (axis2OnOrigin) {
+      this->Axis_2->resetOrigin();
+      this->Axis_2->stop();
+    } else {
+      this->Axis_2->move();
+    }
+    if (axis1OnOrigin && axis2OnOrigin)
+      going = false;
   }
-  if(axis2){
-    this->Axis_2->go_origin();
-  }
+  Serial.println("going origin no more");
 }
 
 void Controller::go_max(bool axis1,bool axis2){
-  if(axis1){
-    this->Axis_1->go_max();
+  bool going = true;
+  bool axis1OnMax = false; //caso axis1 seja false axis1OnMax fica true como padrão 
+  bool axis2OnMax = false;
+  while (going) {
+    Serial.println("going max");
+    axis1OnMax = this->Axis_1->onMax();
+    axis2OnMax = this->Axis_2->onMax();
+    this->Axis_1->go_L();
+    this->Axis_2->setPoint(this->Axis_1->position());
+    if (axis1OnMax) {
+      this->Axis_1->resetMax();
+      this->Axis_1->stop();
+    }
+    if (axis2OnMax) {
+      this->Axis_2->resetMax();
+      this->Axis_2->stop();
+    } else {
+      this->Axis_2->move();
+    }
+    if (axis1OnMax && axis2OnMax)
+      going = false;
   }
-  if(axis2){
-    this->Axis_2->go_max();
+  Serial.println("going max no more");
+  if (axis1) {
+    this->Axis_1->resetMax();
+    this->Axis_1->stop();
+  }
+  if (axis2) {
+    this->Axis_2->resetMax();
+    this->Axis_2->stop();
   }
 }
 
 void Controller::stop(bool axis1,bool axis2){
    if(axis1){
     this->Axis_1->stop();
+    //Serial.println("Axis1 stop");
   }
   if(axis2){
     this->Axis_2->stop();
+    //Serial.println("Axis2 stop");
   }
 }
 

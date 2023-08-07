@@ -40,6 +40,7 @@ class Axis {
         float Min_pos;
         float pwm_cte;
         bool debug;
+       
     public:
         /**
          * @brief Default constructor of a PID base class
@@ -75,6 +76,12 @@ class Axis {
         void setGoal(double setpoint);
 
         /**
+         * @brief set goal regardless of min and max
+         * 
+         */
+        void setPoint(double setpoint);
+
+        /**
          * @brief set tolerance from edges
          * 
          */
@@ -93,13 +100,56 @@ class Axis {
         bool onGoal();
 
         /**
+         * @brief Get wether the axis is on Origin or not
+         * 
+         */
+        bool onOrigin();
+
+        /**
+         * @brief Get wether the axis is on Max or not
+         * 
+         */
+        bool onMax();
+
+        /**
+         * @brief Set the current position as the Origin
+         * 
+         */
+        void resetOrigin();
+
+        /**
+         * @brief Set the current position as the Max position
+         * 
+         */
+        void resetMax();
+
+        /**
+         * @brief Start moving to the right
+         * 
+         */
+        void go_R();
+
+        /**
+         * @brief Start moving to the left
+         * 
+         */
+        void go_L();
+
+        /**
+         * @brief Get the PWM
+         * 
+         * @return double 
+         */
+        double getOutput();
+
+        /**
          * @brief Go to origin
          * 
          */
         void go_origin();
 
         /**
-         * @brief go to max
+         * @brief Go to max
          * 
          */
         void go_max();
