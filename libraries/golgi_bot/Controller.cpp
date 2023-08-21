@@ -17,7 +17,7 @@
  * Class Methods Bodies Definitions
  *****************************************/
 
-Controller::Controller(Axis *Axis_1, Axis *Axis_2, Bomba *Bomba_Y, Atuador *Atuador_Y){
+Controller::Controller(Axis *Axis_1, Axis *Axis_2, Bomba *Bomba_Y, Atuador *Atuador_Y){ 
     this->Axis_1 = Axis_1;
     this->Axis_2= Axis_2;
     this->Bomba_Y= Bomba_Y;
@@ -25,13 +25,13 @@ Controller::Controller(Axis *Axis_1, Axis *Axis_2, Bomba *Bomba_Y, Atuador *Atua
 }
 
 void Controller::setGoal(double goal_axis_1,double goal_axis_2){
-  this->Axis_1->setGoal(goal_axis_1);
-  this->Axis_2->setGoal(goal_axis_2);
+  this->Axis_1->setGoal(goal_axis_1); // define the setpoint in the axis
+  this->Axis_2->setGoal(goal_axis_2); 
 }
 
 void Controller::move(){
-   this->Axis_1->move( );
-   this->Axis_2->move( );
+  this->Axis_1->move();
+  this->Axis_2->move();
 }
 
 void Controller::get_medicine(int DELAY_EX, int DELAY_CON){

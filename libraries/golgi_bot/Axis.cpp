@@ -17,7 +17,7 @@
  * Class Methods Bodies Definitions
  *****************************************/
 
-Axis::Axis(Encoder *encoder, H_bridge_controller *BTS, Chave_fim_de_curso *Chave_R, Chave_fim_de_curso *Chave_L,PID *Pid, float max_vel,int PWM_RESOLUTION,float size,float tolerance) {
+Axis::Axis(Encoder *encoder, H_bridge_controller *BTS, Chave_fim_de_curso *Chave_R, Chave_fim_de_curso *Chave_L,PID *Pid, float max_vel,int PWM_RESOLUTION,float size,float tolerance, float pwm_cte) {
     this->encoder = encoder;
     this->BTS= BTS;
     this->Chave_R= Chave_R;
@@ -27,6 +27,7 @@ Axis::Axis(Encoder *encoder, H_bridge_controller *BTS, Chave_fim_de_curso *Chave
       MAX_PWM=MAX_PWM*2;
     }
     this->MAX_PWM = (MAX_PWM-1);
+    this->pwm_cte = pwm_cte;
     this->size = size;
     this->tolerance = tolerance;
     this->Max_pos = size;
@@ -46,14 +47,15 @@ void Axis::setGoal(double setpoint){
 void Axis::move(){
   output=this->Pid->computePID(this->encoder->getPosition(),this->setpoint,this->tolerance*5);
   if (output < 0) {
-        if (output < -this->MAX_PWM) {
-          output = -this->MAX_PWM;
+        if (output < -(this->MAX_PWM)*this->pwm_cte) {
+          output = -(this->MAX_PWM)*this->pwm_cte;
         }
+        
         this->BTS->Set_R(-output);
         return;
       } else {
-        if (output > this->MAX_PWM) {
-          output = this->MAX_PWM;
+        if (output > (this->MAX_PWM)*this->pwm_cte) {
+          output = (this->MAX_PWM)*this->pwm_cte;
         }
         this->BTS->Set_L(output);
         return;
@@ -61,16 +63,22 @@ void Axis::move(){
 }
 
 void Axis::go_origin(){
-  while (digitalRead(this->Chave_R->getPin())==HIGH){
-    this->BTS->Set_R((this->MAX_PWM)*0.5);
+  while (digitalRead(Chave_R->getPin())==HIGH){ 
+    this->BTS->Set_R((this->MAX_PWM)*this->pwm_cte);
+    Serial.println("go origin");
   }
+  Serial.println("origin");
   this->encoder->setPulses(0);
   this->stop();
 }
+
 void Axis::go_max(){
-  while (digitalRead(this->Chave_L->getPin())==HIGH){
-    this->BTS->Set_L((this->MAX_PWM)*0.5);
+  while (digitalRead(Chave_L->getPin())==HIGH){ /*/Próxima vez que for testar o robozão ver se desse jeito ele busca o pino certo/*/
+    this->BTS->Set_L((this->MAX_PWM)*this->pwm_cte);
+    Serial.println("go max");
   }
+  Serial.println("max");
+  this->encoder->setPulses(0);
   this->stop();
 }
 
@@ -98,5 +106,61 @@ bool Axis::onGoal(){
   }else{
     return false;
   }
+}
+
+void Axis::positionprint(){
+
+  // condições iniciais 
+  while (digitalRead(Chave_R->getPin())==HIGH){ 
+    this->BTS->Set_R((this->MAX_PWM));
+  }
+  encoder->setPulses(0);
+
+
+  // go max
+  while (digitalRead(Chave_L->getPin())==HIGH){ 
+    this->BTS->Set_L((this->MAX_PWM));
+    Serial.println(this->encoder->getPosition());
+  }
   
+
+
+  // go origin 
+  while (digitalRead(Chave_R->getPin())==HIGH){ 
+    this->BTS->Set_R((this->MAX_PWM));
+    Serial.println(this->encoder->getPosition());
+  }
+  this->encoder->setPulses(0);
+
+
+  return;
+
+}
+
+void Axis::pulseprint(){
+
+  // condições iniciais 
+  while (digitalRead(Chave_R->getPin())==HIGH){ 
+    this->BTS->Set_R((this->MAX_PWM)*this->pwm_cte);
+  }
+  encoder->setPulses(0);
+
+
+  // go max
+  while (digitalRead(Chave_L->getPin())==HIGH){ 
+    this->BTS->Set_L((this->MAX_PWM)*this->pwm_cte);
+    Serial.println(this->encoder->getPulses());
+  }
+  
+
+
+  // go origin 
+  while (digitalRead(Chave_R->getPin())==HIGH){ 
+    this->BTS->Set_R((this->MAX_PWM)*this->pwm_cte);
+    Serial.println(this->encoder->getPulses());
+  }
+  this->encoder->setPulses(0);
+
+
+  return;
 }

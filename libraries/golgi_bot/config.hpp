@@ -1,7 +1,8 @@
 #ifndef __CONFIG_HPP__
 #define __CONFIG_HPP__
+
 // Comum used
-#define Nominal_pulses 600
+#define Nominal_pulses 320 //600
 #define pitch_pulley 40
 #define Mode 1
 #define PWM_frequency_channel 40000
@@ -43,50 +44,72 @@
 
 /// X axis ///
 
-#define X_MAX_VEL 0.5
+#define X_master_MAX_VEL 0.5
+#define X_slave_MAX_VEL 0.5
 #define X_size 414
-#define X_tolerance 2
+#define X_master_tolerance 2
+#define X_slave_tolerance 2
 #define X_max_index 3
 
 //  X Encoder
-#define A_pin_X 23 // Green cable
-#define B_pin_X 22 // White cable
+#define A_pin_master_X 22 // Green cable
+#define B_pin_master_X 23 // White cable
 
+#define A_pin_slave_X 2 // Green cable
+#define B_pin_slave_X 15 // White cable
 
 // X BTS
-#define R_pin_X 27 // L Bts
-#define L_pin_X 26 // R Bts
-#define R_channel_X 0
-#define L_channel_X 1
+#define R_pin_master_X 27 // L Bts  
+#define L_pin_master_X 26 // R Bts
+#define R_channel_master_X 0
+#define L_channel_master_X 1
+#define pwm_master_cte 0.7 // fraction of pwm velocity
+
+#define R_pin_slave_X 16 // pin
+#define L_pin_slave_X 13 // pin
+#define R_channel_slave_X 4
+#define L_channel_slave_X 5
+#define pwm_slave_cte 0.7
 
 // X CHAVE
-#define chave_L_X 36 
-#define chave_R_X 39
+#define chave_master_R_X 39
+#define chave_master_L_X 36
+#define chave_slave_R_X 34 //5
+#define chave_slave_L_X 4 
 
-// X PID
-#define kp_x  3.2
-#define ki_x  0.01
-#define kd_x  30
-#define i_saturation_x 1000
+// X PID Master
+#define kp_master_x  3.2
+#define ki_master_x  0.01
+#define kd_master_x  30
+#define i_saturation_master_x 1000
+
+
+// X PID Slave 
+// aumentar kp para diminuir o tempo de resposta
+#define kp_slave_x  3.2
+#define ki_slave_x  0.01
+#define kd_slave_x  30
+#define i_saturation_slave_x 500 // Diminuir saturação para ser mais sensivel ao erro
 
 
 /// Z axis ///
 
-
 #define Z_MAX_VEL 0.5
-#define Z_size 270
+#define Z_MAX_VEL 0.5
+#define Z_size 963
 #define Z_tolerance 4
 #define Z_max_index 2
 
 // Z Encoder 
-#define A_pin_Z 21 // Green cable
-#define B_pin_Z 19 // white cable
+#define A_pin_Z 19 // Green cable
+#define B_pin_Z 21 // white cable
 
 // Z BTS 
 #define R_pin_Z 17 // R bts
 #define L_pin_Z 18 // L bts
-#define R_channel_Z 2
-#define L_channel_Z 3
+#define R_channel_Z  2
+#define L_channel_Z 3 
+#define pwm_cte_Z 0.5 // fraction of pwm velocity
 
 // Z Chave
 #define chave_L_Z 34 

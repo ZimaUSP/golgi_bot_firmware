@@ -41,6 +41,9 @@ char STATE = 0 ; //
 #define STAND_BY 0
 #define GOING 1
 
+unsigned long current_time;
+unsigned long previus_time = millis();
+
 
 void setup() {
   // Set point
@@ -71,9 +74,6 @@ void setup() {
   // Creating Axis
   Axis_z= new Axis(encoder_Z, BTS_Z, endstop_R_Z, endstop_L_Z, PID_Z, Z_MAX_VEL, PWM_resolution_channel, Z_size, Z_tolerance);
 
-
-  // Não se mexe se começar no max
-  // Testar se eu começar no meio da barra a origem se torna onde começou, ou se é mesmo na origem
   Axis_z->go_max();
   Axis_z->go_origin();
 }
@@ -81,13 +81,16 @@ void setup() {
 void loop() {
   switch(STATE) {
       case STAND_BY :
-        Serial.println("STAND-BY");
         // Recive Set point
         read_setpoint();
         return;
       case GOING :
         // Setting direction of motion acording to output_z PID
         Axis_z->move();
+
+        Serial.print(encoder_1->getPosition());
+        Serial.print(",");
+        Serial.println(current_time);
 
         //Code does not work without this delay (?)
         delay(2);
@@ -109,27 +112,17 @@ char* string_to_char(std::string str) {
 void read_setpoint(){
   if(Serial.available()){
       STATE=GOING;
-      Serial.println("GOING"); 
+      
       comu->read_data(MAIN_SERIAL);
       char* recived=string_to_char(comu->get_received_data());
-      int setPoint_z=atoi(recived);
-      Serial.println(setPoint_z);
-      
-             
-      Serial.print("Z goal:");
-      Serial.println(encoder_Z->getPosition());
-      
+      int setPoint_z=atoi(recived);      
       Axis_z->setGoal(setPoint_z);
   }
-
-  
-
 }
 
 void check_position(){
   if(Axis_z->onGoal()){
     STATE=STAND_BY;
-    Serial.println("STANDY-BY");
     Serial.println(Axis_z->position());
     Axis_z->stop();
   }

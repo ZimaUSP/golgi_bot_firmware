@@ -1,6 +1,6 @@
 // EIXO X
 #include "config.hpp"
-
+#include <ctime>
 #include "Axis.hpp"
 
 Axis *Axis_master_X;
@@ -9,8 +9,6 @@ Axis *Axis_slave_X;
 // Encoder X axis 
 Encoder *encoder_master_X;
 Encoder *encoder_slave_X;
-
-// PWM_constante = Axis*PWM_constante
 
 // BTS X axis 
 #include "H_bridge_controller.hpp"
@@ -50,10 +48,13 @@ char STATE = 0 ;
 //Tempo
 int sample_time=500;
 unsigned long current_time;
-unsigned long previus_time = 0;
+unsigned long previus_time = milis(); // tempo inciial
 double delta_time;
 
+
+
 void setup() {
+  Serial.println(millis());
   //Serial Comunication
   Serial.begin (SERIAL_VEL);
   comu = new SerialCommunication("DEBUG");
@@ -81,7 +82,9 @@ void setup() {
 
   //encoder 
   encoder_master_X = new Encoder(A_pin_master_X,B_pin_master_X,0,Nominal_pulses,pitch_pulley,4); 
+  encoder_master_X->init();
   encoder_slave_X = new Encoder(A_pin_slave_X,B_pin_slave_X,0,Nominal_pulses,pitch_pulley,4); 
+  encoder_slave_X->init();
 
 
   // Setup H_bridge
@@ -93,22 +96,38 @@ void setup() {
   // Creating Axis
   Axis_master_X = new Axis(encoder_master_X, BTS_master_X, endstop_master_R_X, endstop_master_L_X, PID_master_X, X_master_MAX_VEL, PWM_resolution_channel, X_size, X_master_tolerance, pwm_master_cte);
   Axis_slave_X = new Axis(encoder_slave_X, BTS_slave_X, endstop_slave_R_X, endstop_slave_L_X, PID_slave_X, X_slave_MAX_VEL, PWM_resolution_channel, X_size, X_slave_tolerance, pwm_slave_cte);
+ 
   
-  Axis_master_X->go_max(); 
-  //Axis_slave_X->go_max();
+  Axis_master_X->go_origin();
 }
 
 void loop(){
-   master();
-}
+  
+  /*/
+  
+  Jeito com a biblioteca ctime, talvez assim funcione já
 
-void master(){
-  Axis_master_X->go_origin();
+
   Axis_master_X->go_max();
-}
 
-void slave(){
-   Axis_slave_X->go_origin();
-   Axis_slave_X->go_max();
-}
+  Matriz[2][1] = {encoder_master_X->getPosition(), time()};
 
+  Axis_master_X->go_origin();
+  Matriz[2][1] = {encoder_master_X->getPosition(), time()};
+  /*/
+
+  // Jeito utilizando a função millis()
+
+  current_time = milis() - previus_time; 
+
+  Axis_master_X->go_max();
+  Serial.print(encoder_master_X->getPosition());
+  Serial.print(",");
+  Serial.println(current_time);
+  
+
+  Axis_master_X->go_origin();
+  Serial.print(encoder_master_X->getPosition());
+  Serial.print(",");
+  Serial.println(current_time);
+}

@@ -1,20 +1,11 @@
-
 // BTS X axis 
 #include "H_bridge_controller.hpp"
-int R_pin_X=27; // L Bts
-int L_pin_X=26; // R Bts
-int PWM_frequency = 40000;
-int PWM_resolution = 8;
-int R_channel_X=1;
-int L_channel_X=2;
-int PWM_R_X=0;
-int PWM_L_X=0;
+#include "config.hpp"
 H_bridge_controller *BTS_X;
 
 // Chave fim de curso X axis
 #include "Chave_fim_de_curso.hpp"
-int chave_L_X=36; 
-int chave_R_X=39; 
+
 Chave_fim_de_curso *endstop_L_X; 
 Chave_fim_de_curso *endstop_R_X; 
 
@@ -29,11 +20,8 @@ void setup() {
   endstop_R_X->init();
 
   // BTS
-  BTS_X= new H_bridge_controller( R_pin_X, L_pin_X, PWM_frequency, PWM_resolution, R_channel_X, L_channel_X);
+  BTS_X= new H_bridge_controller( R_pin_X, L_pin_X, PWM_frequency_channel, PWM_resolution_channel, R_channel_X, L_channel_X);
   BTS_X->init();
-  
-
-
 }
 
 void loop() {

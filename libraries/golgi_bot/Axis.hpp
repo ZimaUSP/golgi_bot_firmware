@@ -16,14 +16,17 @@
 
 #include "PID.hpp"
 #include "Encoder.hpp"
+#include "config.hpp"
 #include "H_bridge_controller.hpp"
 #include "Chave_fim_de_curso.hpp"
 #include <math.h> 
+#include "serial_communication.hpp"
 
 class Axis {
     protected:
         Encoder *encoder;
         H_bridge_controller *BTS;
+        H_bridge_controller *PWM_constant;
         Chave_fim_de_curso *Chave_R;
         Chave_fim_de_curso *Chave_L;
         PID *Pid;
@@ -35,6 +38,7 @@ class Axis {
         float tolerance;
         float Max_pos;
         float Min_pos;
+        float pwm_cte;
     public:
         /**
          * @brief Default constructor of a PID base class
@@ -43,7 +47,7 @@ class Axis {
          * @param k_i Integrative constant 
          * @param k_d Derivative constant 
          */
-        Axis(Encoder *encoder, H_bridge_controller *BTS, Chave_fim_de_curso *Chave_R, Chave_fim_de_curso *Chave_L,PID *Pid, float max_vel,int PWM_RESOLUTION,float size,float tolerance);
+        Axis(Encoder *encoder, H_bridge_controller *BTS, Chave_fim_de_curso *Chave_R, Chave_fim_de_curso *Chave_L,PID *Pid, float max_vel,int PWM_RESOLUTION,float size,float tolerance, float pwm_cte);
 
         /**
          * @brief moves axis with PID control, input position from enconder(mm)
@@ -98,6 +102,20 @@ class Axis {
          * 
          */
         void go_max();
+
+
+        /**
+         * @brief postion print terminal
+         * 
+         */
+        void positionprint();
+
+        /**
+         * @brief pulses print terminal
+         * 
+         */
+        void pulseprint();
+
 
 };
 
