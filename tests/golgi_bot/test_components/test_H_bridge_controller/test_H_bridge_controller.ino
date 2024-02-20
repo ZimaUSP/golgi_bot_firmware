@@ -11,12 +11,13 @@ Chave_fim_de_curso *endstop_L;
 
 void setup() {
   Serial.begin(9600);
-  endstop_R = new Chave_fim_de_curso(chave_R_Z,0);
+  endstop_R = new Chave_fim_de_curso(chave_R_X_slave,0);
   endstop_R->init();
-  endstop_L = new Chave_fim_de_curso(chave_L_Z,0);
+  endstop_L = new Chave_fim_de_curso(chave_L_X_slave,1);
   endstop_L->init();
-  BTS_X= new H_bridge_controller( R_pin_Z, L_pin_Z, PWM_frequency_channel, PWM_resolution_channel, R_channel_X, L_channel_X);
+  BTS_X= new H_bridge_controller( 16, 12, PWM_frequency_channel, PWM_resolution_channel, 4, 5);
   BTS_X->init();
+  
 }
 
 void loop() {

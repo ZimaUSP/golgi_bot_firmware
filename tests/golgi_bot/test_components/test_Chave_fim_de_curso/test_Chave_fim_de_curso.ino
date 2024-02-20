@@ -1,6 +1,7 @@
 #include "Chave_fim_de_curso.hpp"
+#include "config.hpp"
 
-int chave_pin=34;
+int chave_pin=chave_R_Z;
 Chave_fim_de_curso *endstop;
 
 void setup() {     

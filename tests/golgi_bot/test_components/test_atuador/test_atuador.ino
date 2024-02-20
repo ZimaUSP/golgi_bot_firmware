@@ -26,9 +26,9 @@ void setup() {
 
 void loop() {
   Atuador_Y->Extend();
-  delay(1000);
+  delay(5000);
   Atuador_Y->Contract();
-  delay(1000);
+  delay(5000);
   Serial.println(".");
     }
 

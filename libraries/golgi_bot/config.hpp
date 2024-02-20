@@ -79,8 +79,10 @@
 #define X_max_index 3
 
 //  X Encoder
-#define A_pin_X 23 // Green cable
-#define B_pin_X 22 // White cable
+#define A_pin_X_master 13 // Green cable
+#define B_pin_X_master 15 // White cable
+#define A_pin_X_slave 22 // Green cable
+#define B_pin_X_slave 23 // White cable
 
 
 // X BTS
@@ -90,8 +92,10 @@
 #define L_channel_X 1
 
 // X CHAVE
-#define chave_L_X 36 
-#define chave_R_X 39
+#define chave_L_X_master 36 
+#define chave_R_X_master 39
+#define chave_L_X_slave 4
+#define chave_R_X_slave 5
 
 // X PID
 #define kp_x  3.2
@@ -108,12 +112,12 @@
 #define Z_max_index 2
 
 // Z Encoder 
-#define A_pin_Z 21 // Green cable
-#define B_pin_Z 19 // white cable
+#define A_pin_Z 19 // Green cable
+#define B_pin_Z 21 // white cable
 
 // Z BTS 
-#define R_pin_Z 17 // R bts
-#define L_pin_Z 18 // L bts
+#define R_pin_Z 18 // R bts
+#define L_pin_Z 17 // L bts
 #define R_channel_Z 2
 #define L_channel_Z 3
 
