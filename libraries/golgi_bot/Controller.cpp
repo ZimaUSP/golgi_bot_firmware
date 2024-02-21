@@ -59,6 +59,8 @@ void Controller::go_origin(bool axis1,bool axis2){
     axis2OnOrigin = this->Axis_2->onOrigin();
     this->Axis_1->go_R();
     this->Axis_2->setPoint(this->Axis_1->position());
+    Serial.println(this->Axis_1->position());
+
     if (axis1OnOrigin) {  
       this->Axis_1->resetOrigin();
       this->Axis_1->stop();

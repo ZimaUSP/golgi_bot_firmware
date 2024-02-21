@@ -53,13 +53,13 @@ void Axis::setPoint(double setpoint) {
 }
 
 void Axis::move(){
-  if (debug){
+  
     Serial.println("\nentrou no move");
     Serial.print("encoder position");
     Serial.println(this->encoder->getPosition());
     Serial.print("setpoint");
     Serial.println(this->setpoint);
-  }
+  
   
   this->output=this->Pid->computePID(this->encoder->getPosition(),this->setpoint,this->tolerance*5);
   if (this->debug)

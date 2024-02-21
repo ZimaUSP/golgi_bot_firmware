@@ -1,114 +1,216 @@
+
+int sample = 4;
+
+
 // EIXO X
 #include "config.hpp"
-
-#include "Axis.hpp"
-
-Axis *Axis_master_X;
-Axis *Axis_slave_X;
+#include "Controller.hpp"
 
 // Encoder X axis 
 Encoder *encoder_master_X;
 Encoder *encoder_slave_X;
 
-// PWM_constante = Axis*PWM_constante
+// Axis X
+Axis *Axis_master_X;
+Axis *Axis_slave_X;
+int error_axis;
 
 // BTS X axis 
-#include "H_bridge_controller.hpp"
-H_bridge_controller *BTS_master_X; 
+H_bridge_controller *BTS_master_X;
 H_bridge_controller *BTS_slave_X;
 
-//PID X axis constants
-#include "PID.hpp"
-PID *PID_master_X; 
-PID *PID_slave_X; 
-
 // Chave fim de curso X axis
-#include "Chave_fim_de_curso.hpp"
-Chave_fim_de_curso *endstop_master_L_X; 
-Chave_fim_de_curso *endstop_master_R_X; 
 
-Chave_fim_de_curso *endstop_slave_L_X; 
+// master
+Chave_fim_de_curso *endstop_master_L_X; 
+Chave_fim_de_curso *endstop_master_R_X;
+
+// Slave
+Chave_fim_de_curso *endstop_slave_L_X;
 Chave_fim_de_curso *endstop_slave_R_X;
 
-//Serial comunication/
-#include "serial_communication.hpp"
+// PID X axis 
+PID *PID_master_X;
+PID *PID_slave_X;
 
-SerialCommunication* comu;
+Controller *controller;
+
+Bomba *Bomba_Y;
+Atuador *Atuador_Y;
+
+
+//Serial comunication
+#include "serial_communication.hpp"
 #include <string>
 #include <cstring>
-double X_pos;
-double Z_pos;
+SerialCommunication *comu;
+double setPoint_master_X;
+double setPoint_slave_X;
 
-// Position array in milimeters
-int pos_x[X_max_index]={97,229,370};
-int pos_z[Z_max_index]={70,201};
-int counter;
-int index_medicine;
-//STATE
-char STATE = 0 ; 
+// Estados
+char STATE = 0 ; // 
+#define STAND_BY 0
+#define GOING 1
 
-//Tempo
-int sample_time=500;
-unsigned long current_time;
-unsigned long previus_time = 0;
-double delta_time;
+int sum;
+int c_time;
 
 void setup() {
+  // Set point
+  setPoint_master_X = 0;
+  setPoint_slave_X = 0;
+
   //Serial Comunication
   Serial.begin (SERIAL_VEL);
-  comu = new SerialCommunication("DEBUG");
+  comu = new SerialCommunication("Posição SetPoint:");
+  
+// Setup Batentes 
 
-  // Setup Batentes 
-
-  // Batente master
-  endstop_master_L_X = new Chave_fim_de_curso(chave_master_L_X,0);
+  // master
+  endstop_master_L_X = new Chave_fim_de_curso(chave_master_L_X, chave_channel_master_L_X);
   endstop_master_L_X->init();
-
-  endstop_master_R_X = new Chave_fim_de_curso(chave_master_R_X,1);
+  endstop_master_R_X = new Chave_fim_de_curso(chave_master_R_X, chave_channel_master_R_X);
   endstop_master_R_X->init();
-  
-  // Batente slave
-
-  endstop_slave_L_X = new Chave_fim_de_curso(chave_slave_L_X,2);
+    
+  // Slave
+  endstop_slave_L_X = new Chave_fim_de_curso(chave_slave_L_X, chave_channel_slave_L_X);
   endstop_slave_L_X->init();
-  
-  endstop_slave_R_X = new Chave_fim_de_curso(chave_slave_R_X,3);
+  endstop_slave_R_X = new Chave_fim_de_curso(chave_slave_R_X, chave_channel_slave_R_X);
   endstop_slave_R_X->init();
 
-  //PID
-  PID_master_X = new PID(kp_master_x,ki_master_x,kd_master_x,i_saturation_master_x);
-  PID_slave_X = new PID(kp_slave_x,ki_slave_x,kd_slave_x,i_saturation_slave_x);
 
-  //encoder 
-  encoder_master_X = new Encoder(A_pin_master_X,B_pin_master_X,0,Nominal_pulses,pitch_pulley,4); 
-  encoder_slave_X = new Encoder(A_pin_slave_X,B_pin_slave_X,0,Nominal_pulses,pitch_pulley,4); 
+// Setup H_bridge
 
-
-  // Setup H_bridge
-  BTS_master_X = new H_bridge_controller(R_pin_master_X, L_pin_master_X, PWM_frequency_channel, PWM_resolution_channel, R_channel_master_X, L_channel_master_X);
+  BTS_master_X = new H_bridge_controller(L_pin_master_X, R_pin_master_X, PWM_frequency_channel, PWM_resolution_channel, R_channel_master_X, L_channel_master_X);
   BTS_master_X->init();
+  
   BTS_slave_X = new H_bridge_controller(R_pin_slave_X, L_pin_slave_X, PWM_frequency_channel, PWM_resolution_channel, R_channel_slave_X, L_channel_slave_X);
   BTS_slave_X->init();
 
-  // Creating Axis
-  Axis_master_X = new Axis(encoder_master_X, BTS_master_X, endstop_master_R_X, endstop_master_L_X, PID_master_X, X_master_MAX_VEL, PWM_resolution_channel, X_size, X_master_tolerance, pwm_master_cte, true);
-  Axis_slave_X = new Axis(encoder_slave_X, BTS_slave_X, endstop_slave_R_X, endstop_slave_L_X, PID_slave_X, X_slave_MAX_VEL, PWM_resolution_channel, X_size, X_slave_tolerance, pwm_slave_cte, true);
+// Setup encoder 
+
+  encoder_master_X =new Encoder(A_pin_master_X,B_pin_master_X,0,Nominal_pulses,pitch_pulley_master,4);
+  encoder_master_X->init();
   
-  Axis_master_X->go_max(); 
+  encoder_slave_X = new Encoder(B_pin_slave_X, A_pin_slave_X, 1, Nominal_pulses, pitch_pulley_slave, 4);
+  encoder_slave_X->init();
+
+//PID
+  PID_master_X = new PID(kp_master_x,ki_master_x,kd_master_x,i_saturation_master_x);
+  PID_slave_X = new PID(kp_slave_x, ki_slave_x, kd_slave_x, i_saturation_slave_x);
+ 
+
+  // Creating Axis
+  // Doesn't work with debug true
+  Axis_master_X = new Axis(encoder_master_X, BTS_master_X, endstop_master_R_X, endstop_master_L_X, PID_master_X, X_master_MAX_VEL, PWM_resolution_channel, X_master_tolerance, pwm_master_cte, false);
+  Axis_slave_X = new Axis(encoder_slave_X, BTS_slave_X, endstop_slave_R_X, endstop_slave_L_X, PID_slave_X, X_slave_MAX_VEL, PWM_resolution_channel, X_slave_tolerance, pwm_slave_cte, false);
+
+  Bomba_Y = new Bomba(bomba_pin);
+  Atuador_Y = new Atuador(Extend_pin,Contract_pin);
+
+  controller = new Controller(Axis_master_X, Axis_slave_X, Bomba_Y, Atuador_Y);
+
+  sum = 0;
+  c_time = millis();
+
+//Seting initial conditions
+
+
+
+  //Axis_master_X->go_max();
   //Axis_slave_X->go_max();
+  //Axis_master_X->go_origin();
+  //Axis_slave_X->go_origin();
+
 }
 
-void loop(){
-   master();
+
+void loop() {
+  //Serial.println(analogRead(35));
+  //Serial.println(endstop_slave_R_X->getBatente());
+  //Serial.println(endstop_slave_L_X->getBatente());
+  controller->go_origin(true,true);
+  //BTS_master_X->Set_L(125);
+  //BTS_slave_X->Set_L(125);
+   }   
+/*
+void ISR(){
+  BTS_master_X->Set_L(0);
+  delay(1000);
+}
+*/
+char* string_to_char(std::string str) {
+   char* cstr = new char[str.size() + 1];
+   strcpy(cstr, str.c_str());
+   return cstr;
 }
 
-void master(){
-  Axis_master_X->go_origin();
-  Axis_master_X->go_max();
+
+// colocar essas funções dentro do axis.cpp
+// como eu coloco serial comunication dentro do 
+
+void read_setpoint(){
+  if(Serial.available()){
+      STATE=GOING;
+      //Serial.println("GOING"); 
+      
+      comu->read_data(MAIN_SERIAL);
+      char* recived=string_to_char(comu->get_received_data());
+
+      int setPoint_X = atoi(recived);
+      controller->setGoal(setPoint_X, Axis_master_X->position());
+      //controller->setGoal(setPoint_X, setPoint_X);
+  }
 }
 
-void slave(){
-   Axis_slave_X->go_origin();
-   Axis_slave_X->go_max();
+void check_position(){
+    if (controller->onGoal()) {
+      STATE=STAND_BY;
+      controller->stop(true, true);
+      float *position = controller->positionPoint();
+      //Serial.println("STANDY-BY");
+      //controller->stop(true, true);
+      //Serial.printf("Axis1: %f\n", position[0]);
+      //Serial.printf("Axis2: %f\n", position[1]);
+    }
 }
+  
+void data(){
+  static long sum = 0;
+  static long sum2 = 0;
+  static unsigned long count = 0;
+  static unsigned long ti = 0;
+  static unsigned long p_time = 0;
 
+  Serial.println("position1(mm),position2(mm),time(ms),system input1(pwm),system input2(pwm)");
+
+  sum += encoder_master_X->getPosition();
+  sum2 += encoder_slave_X->getPosition();
+
+  if (count == 0)
+  {
+    ti = millis(); // Ti 
+  }
+
+  if (count == sample) // agruping sample serie of position 
+  {
+    unsigned long c_time = millis(); // Tf
+    unsigned long t = c_time - ti; // delta = Tf - Ti
+
+    Serial.print(sum*0.2 ); // media of position 
+    Serial.print(", ");
+    Serial.print(sum2*0.2);
+    Serial.print(", ");
+    Serial.print(t); 
+    Serial.print(", ");
+    Serial.print(Axis_master_X->getOutput());
+    Serial.print(", ");
+    Serial.println(Axis_slave_X->getOutput());
+
+    p_time= c_time;
+
+    sum = 0;
+    sum2 = 0;
+    count = 0;
+  }
+}

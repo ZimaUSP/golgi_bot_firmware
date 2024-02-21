@@ -52,6 +52,9 @@ char STATE = 0 ; //
 #define STAND_BY 0
 #define GOING 1
 
+int sum;
+int c_time;
+
 void setup() {
   // Set point
   setPoint_master_X = 0;
@@ -86,7 +89,7 @@ void setup() {
 
 // Setup encoder 
 
-  encoder_master_X =new Encoder(A_pin_master_X,B_pin_master_X,0,Nominal_pulses,pitch_pulley_master,4);
+  encoder_master_X =new Encoder(A_pin_Z,B_pin_Z,0,Nominal_pulses,pitch_pulley_master,4);
   encoder_master_X->init();
   
   encoder_slave_X = new Encoder(B_pin_slave_X, A_pin_slave_X, 1, Nominal_pulses, pitch_pulley_slave, 4);

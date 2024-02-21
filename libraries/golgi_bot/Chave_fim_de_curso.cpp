@@ -64,6 +64,9 @@ int Chave_fim_de_curso::getPin() {
 }
 
 bool Chave_fim_de_curso::getBatente() {
+ if(this->batente){
+ Serial.println("ENTROUUUUUU");
+ }
  return this->batente;
 }
 
