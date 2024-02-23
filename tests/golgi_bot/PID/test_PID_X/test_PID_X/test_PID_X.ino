@@ -67,21 +67,21 @@ void setup() {
 // Setup Batentes 
 
   // master
-  endstop_master_L_X = new Chave_fim_de_curso(chave_master_L_X,1);
+  endstop_master_L_X = new Chave_fim_de_curso(chave_master_L_X,chave_channel_master_L_X);
   endstop_master_L_X->init();
-  endstop_master_R_X = new Chave_fim_de_curso(chave_master_R_X,2);
+  endstop_master_R_X = new Chave_fim_de_curso(chave_master_R_X,chave_channel_master_R_X);
   endstop_master_R_X->init();
     
   // Slave
-  endstop_slave_L_X = new Chave_fim_de_curso(chave_slave_L_X, 3);
+  endstop_slave_L_X = new Chave_fim_de_curso(chave_slave_L_X, chave_channel_slave_L_X);
   endstop_slave_L_X->init();
-  endstop_slave_R_X = new Chave_fim_de_curso(chave_slave_R_X, 4);
+  endstop_slave_R_X = new Chave_fim_de_curso(chave_slave_R_X, chave_channel_slave_R_X);
   endstop_slave_R_X->init();
 
 
 // Setup H_bridge
 
-  BTS_master_X = new H_bridge_controller(L_pin_master_X, R_pin_master_X, PWM_frequency_channel, PWM_resolution_channel, R_channel_master_X, L_channel_master_X);
+  BTS_master_X = new H_bridge_controller(R_pin_master_X, L_pin_master_X, PWM_frequency_channel, PWM_resolution_channel, R_channel_master_X, L_channel_master_X);
   BTS_master_X->init();
   
   BTS_slave_X = new H_bridge_controller(R_pin_slave_X, L_pin_slave_X, PWM_frequency_channel, PWM_resolution_channel, R_channel_slave_X, L_channel_slave_X);
@@ -89,10 +89,10 @@ void setup() {
 
 // Setup encoder 
 
-  encoder_master_X =new Encoder(A_pin_Z,B_pin_Z,0,Nominal_pulses,pitch_pulley_master,4);
+  encoder_master_X =new Encoder(A_pin_master_X ,B_pin_master_X ,0,Nominal_pulses,pitch_pulley_master,4);
   encoder_master_X->init();
   
-  encoder_slave_X = new Encoder(B_pin_slave_X, A_pin_slave_X, 1, Nominal_pulses, pitch_pulley_slave, 4);
+  encoder_slave_X = new Encoder(A_pin_slave_X, B_pin_slave_X, 1, Nominal_pulses, pitch_pulley_slave, 4);
   encoder_slave_X->init();
 
 //PID
@@ -124,16 +124,24 @@ void setup() {
   //Axis_slave_X->go_origin();
 
 }
-
+int firstTime = 0;
 
 void loop() {
+
   switch(STATE) {
       case STAND_BY:
-        read_setpoint(); // Recive Set point
+        //delay(5000);                                                  //for tests
+        controller->setGoal(200, Axis_master_X->position());          //for tests
+        STATE = GOING;                                                //for tests
+        //read_setpoint(); // Recive Set point
         return;
 
       case GOING:
-        controller->move(); 
+        if (firstTime = 0) {
+          controller->move(); 
+          firstTime = 1;
+        }
+        Axis_slave_X->move();
         Axis_slave_X->setGoal(Axis_master_X->position());
         // moving axis to setpoint
         //Serial.println(Axis_slave_X->position()); 

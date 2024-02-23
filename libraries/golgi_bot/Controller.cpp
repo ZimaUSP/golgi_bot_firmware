@@ -61,13 +61,15 @@ void Controller::go_origin(bool axis1,bool axis2){
     this->Axis_2->setPoint(this->Axis_1->position());
     Serial.println(this->Axis_1->position());
 
-    if (axis1OnOrigin) {  
+if (axis1OnOrigin || axis2OnOrigin) {  
       this->Axis_1->resetOrigin();
       this->Axis_1->stop();
-    }
-    if (axis2OnOrigin) {
+      axis2OnOrigin = true;
+    
       this->Axis_2->resetOrigin();
       this->Axis_2->stop();
+      axis1OnOrigin = true;
+      delay(1000);
     } else {
       this->Axis_2->move();
     }
@@ -87,13 +89,15 @@ void Controller::go_max(bool axis1,bool axis2){
     axis2OnMax = this->Axis_2->onMax();
     this->Axis_1->go_L();
     this->Axis_2->setPoint(this->Axis_1->position());
-    if (axis1OnMax) {
-      this->Axis_1->resetMax();
+if (axis1OnMax || axis2OnMax) {  
+      this->Axis_1->resetOrigin();
       this->Axis_1->stop();
-    }
-    if (axis2OnMax) {
-      this->Axis_2->resetMax();
+      axis2OnMax= true;
+    
+      this->Axis_2->resetOrigin();
       this->Axis_2->stop();
+      axis1OnMax = true;
+      delay(1000);
     } else {
       this->Axis_2->move();
     }

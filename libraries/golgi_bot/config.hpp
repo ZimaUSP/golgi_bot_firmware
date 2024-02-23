@@ -59,14 +59,14 @@
 #define B_pin_slave_X 23 // White cable
 
 // X BTS
-#define R_pin_master_X 26 // L Bts  
-#define L_pin_master_X 27 // R Bts
+#define R_pin_master_X 27 // L Bts  
+#define L_pin_master_X 26 // R Bts
 #define R_channel_master_X 4
 #define L_channel_master_X 5
 #define pwm_master_cte 0.5 // fraction of pwm velocity
 
-#define R_pin_slave_X 12 // pin
-#define L_pin_slave_X 16 // pin
+#define R_pin_slave_X 16 // pin
+#define L_pin_slave_X 12 // pin
 #define R_channel_slave_X 6
 #define L_channel_slave_X 7
 #define pwm_slave_cte 0.5
@@ -115,8 +115,8 @@
 // Z BTS 
 #define R_pin_Z 18 // R bts
 #define L_pin_Z 17 // L bts
-#define R_channel_Z  8
-#define L_channel_Z 9
+#define R_channel_Z  9
+#define L_channel_Z 10
 #define pwm_cte_Z 0.5 // fraction of pwm velocity
 
 // Z Chave

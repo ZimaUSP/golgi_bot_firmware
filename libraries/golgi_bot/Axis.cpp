@@ -54,14 +54,17 @@ void Axis::setPoint(double setpoint) {
 
 void Axis::move(){
   
-    Serial.println("\nentrou no move");
     Serial.print("encoder position");
     Serial.println(this->encoder->getPosition());
     Serial.print("setpoint");
     Serial.println(this->setpoint);
+    Serial.print("PWM:");
+    Serial.println(this->output);
   
   
-  this->output=this->Pid->computePID(this->encoder->getPosition(),this->setpoint,this->tolerance*5);
+  this->output=-(this->Pid->computePID(this->encoder->getPosition(),this->setpoint,this->tolerance*5));
+  Serial.print("output");
+  Serial.println(this->output);
   if (this->debug)
     {
       Serial.print("output:");
@@ -158,6 +161,9 @@ void Axis::resetOrigin() {
 
 void Axis::resetMax() {
   this->Max_pos = this->encoder->getPosition();
+}
+void Axis::setMax(int max){
+  this->Max_pos = max;
 }
 
 void Axis::go_R() {

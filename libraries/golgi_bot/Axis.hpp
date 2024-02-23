@@ -123,6 +123,8 @@ class Axis {
          */
         void resetMax();
 
+        void setMax(int max);
+
         /**
          * @brief Start moving to the right
          * 
