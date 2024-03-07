@@ -52,8 +52,8 @@ char STATE = 0 ; //
 #define STAND_BY 0
 #define GOING 1
 
-int sum;
-int c_time;
+long sum;
+long c_time;
 
 void setup() {
   // Set point
@@ -81,7 +81,7 @@ void setup() {
 
 // Setup H_bridge
 
-  BTS_master_X = new H_bridge_controller(R_pin_master_X, L_pin_master_X, PWM_frequency_channel, PWM_resolution_channel, R_channel_master_X, L_channel_master_X);
+  BTS_master_X = new H_bridge_controller(L_pin_master_X, R_pin_master_X, PWM_frequency_channel, PWM_resolution_channel, R_channel_master_X, L_channel_master_X);
   BTS_master_X->init();
   
   BTS_slave_X = new H_bridge_controller(R_pin_slave_X, L_pin_slave_X, PWM_frequency_channel, PWM_resolution_channel, R_channel_slave_X, L_channel_slave_X);
@@ -92,7 +92,7 @@ void setup() {
   encoder_master_X =new Encoder(A_pin_master_X ,B_pin_master_X ,0,Nominal_pulses,pitch_pulley_master,4);
   encoder_master_X->init();
   
-  encoder_slave_X = new Encoder(A_pin_slave_X, B_pin_slave_X, 1, Nominal_pulses, pitch_pulley_slave, 4);
+  encoder_slave_X = new Encoder(B_pin_slave_X, A_pin_slave_X, 1, Nominal_pulses, pitch_pulley_slave, 4);
   encoder_slave_X->init();
 
 //PID
@@ -115,6 +115,13 @@ void setup() {
 
 //Seting initial conditions
 
+  //delay(5000);
+  //int looping = 1;
+  //while (looping==1) {
+    //controller->go_origin(true, true);
+    //BTS_master_X->Set_R(125);
+    //BTS_slave_X->Set_R(125);
+  //}
   controller->go_origin(true, true);
   controller->go_max(true, true);
   controller->go_origin(true, true);
@@ -122,27 +129,34 @@ void setup() {
   //Axis_slave_X->go_max();
   //Axis_master_X->go_origin();
   //Axis_slave_X->go_origin();
+  //STATE = STAND_BY;
 
 }
-int firstTime = 0;
+//int firstTime = 0;
 
 void loop() {
-
   switch(STATE) {
       case STAND_BY:
-        //delay(5000);                                                  //for tests
-        controller->setGoal(200, Axis_master_X->position());          //for tests
-        STATE = GOING;                                                //for tests
-        //read_setpoint(); // Recive Set point
+        //delay(2000);                                                  //for tests
+        //controller->setGoal(200, Axis_master_X->position());          //for tests
+        //STATE = GOING;                                                //for tests
+        read_setpoint(); // Recive Set point
         return;
 
       case GOING:
-        if (firstTime = 0) {
-          controller->move(); 
-          firstTime = 1;
-        }
-        Axis_slave_X->move();
+        //Serial.println("Entrou");   
+        //if (firstTime = 0) {
+        controller->move(); 
+          //Axis_master_X->go_L();
+          //firstTime = 1;
+        //}
+        //Axis_slave_X->move();
         Axis_slave_X->setGoal(Axis_master_X->position());
+
+        //Serial.println("Posicao do master:");
+        //Serial.println(Axis_master_X->position());
+        //Serial.println("Posicao do slave:");
+        //Serial.println(Axis_slave_X->position());
         // moving axis to setpoint
         //Serial.println(Axis_slave_X->position()); 
         //attachInterrupt (endstop_master_R_X->getPin(), ISR(), RISING);
@@ -184,14 +198,37 @@ void read_setpoint(){
 }
 
 void check_position(){
-    if (controller->onGoal()) {
-      STATE=STAND_BY;
-      controller->stop(true, true);
-      float *position = controller->positionPoint();
+    //Serial.println(Axis_master_X->position());
+    //Serial.println(Axis_master_X->onGoal());
+    //Serial.println(Axis_slave_X->position());
+    //Serial.println(Axis_master_X->onGoal());
+    /*if (Axis_master_X->onGoal()) {
+      //STATE=STAND_BY;
+      //controller->stop(true, true); 
+      Serial.println("DEU CERTO 1"); 
+      //float *position = controller->positionPoint();
       //Serial.println("STANDY-BY");
-      //controller->stop(true, true);
-      //Serial.printf("Axis1: %f\n", position[0]);
-      //Serial.printf("Axis2: %f\n", position[1]);
+    }*/
+
+    /*if (Axis_slave_X->onGoal()) {
+      //STATE=STAND_BY;
+      //controller->stop(true, true); 
+      Serial.println("DEU CERTO 2"); 
+      //float *position = controller->positionPoint();
+      //Serial.println("STANDY-BY");
+    }*/
+
+    if (Axis_master_X->onGoal()) {
+      if (controller->onGoal()) {
+        Serial.println("Entrou");                        //tests
+        STATE=STAND_BY;
+        controller->stop(true, true);
+        float *position = controller->positionPoint();
+        Serial.println("STANDY-BY");
+        //controller->stop(true, true);
+        //Serial.printf("Axis1: %f\n", position[0]);
+        //Serial.printf("Axis2: %f\n", position[1]);
+      }
     }
 }
   
@@ -202,7 +239,7 @@ void data(){
   static unsigned long ti = 0;
   static unsigned long p_time = 0;
 
-  Serial.println("position1(mm),position2(mm),time(ms),system input1(pwm),system input2(pwm)");
+  //Serial.println("position1(mm),position2(mm),time(ms),system input1(pwm),system input2(pwm)");
 
   sum += encoder_master_X->getPosition();
   sum2 += encoder_slave_X->getPosition();

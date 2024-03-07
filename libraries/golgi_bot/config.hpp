@@ -59,17 +59,17 @@
 #define B_pin_slave_X 23 // White cable
 
 // X BTS
-#define R_pin_master_X 27 // L Bts  
-#define L_pin_master_X 26 // R Bts
-#define R_channel_master_X 4
-#define L_channel_master_X 5
+#define R_pin_master_X 26 // L Bts  
+#define L_pin_master_X 27 // R Bts
+#define R_channel_master_X 0
+#define L_channel_master_X 1
 #define pwm_master_cte 0.5 // fraction of pwm velocity
 
 #define R_pin_slave_X 16 // pin
 #define L_pin_slave_X 12 // pin
-#define R_channel_slave_X 6
-#define L_channel_slave_X 7
-#define pwm_slave_cte 0.5
+#define R_channel_slave_X 4
+#define L_channel_slave_X 5
+#define pwm_slave_cte 0.5              // should be 0.75
 
 // X CHAVE
 #define chave_master_R_X 39
@@ -77,9 +77,9 @@
 #define chave_slave_R_X 5
 #define chave_slave_L_X 4 
 
-#define chave_channel_master_R_X 0
+#define chave_channel_master_R_X 2
 #define chave_channel_master_L_X 1
-#define chave_channel_slave_R_X 2
+#define chave_channel_slave_R_X 4
 #define chave_channel_slave_L_X 3
 
 
@@ -94,7 +94,7 @@
 
 // X PID Slave 
 // aumentar kp para diminuir o tempo de resposta
-#define kp_slave_x  7
+#define kp_slave_x  6.8
 #define ki_slave_x  0.03
 #define kd_slave_x  60
 #define i_saturation_slave_x 1000 // Diminuir saturação para ser mais sensivel ao erro
@@ -115,8 +115,8 @@
 // Z BTS 
 #define R_pin_Z 18 // R bts
 #define L_pin_Z 17 // L bts
-#define R_channel_Z  9
-#define L_channel_Z 10
+#define R_channel_Z 6
+#define L_channel_Z 7
 #define pwm_cte_Z 0.5 // fraction of pwm velocity
 
 // Z Chave

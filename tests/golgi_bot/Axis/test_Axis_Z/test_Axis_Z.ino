@@ -33,9 +33,9 @@ void setup() {
   Serial.begin (SERIAL_VEL);
 
   // Setup Batentes
-  endstop_L_Z = new Chave_fim_de_curso(chave_L_Z,2);
+  endstop_L_Z = new Chave_fim_de_curso(chave_L_Z,L_channel_Z);
   endstop_L_Z->init();
-  endstop_R_Z = new Chave_fim_de_curso(chave_R_Z,3);
+  endstop_R_Z = new Chave_fim_de_curso(chave_R_Z,R_channel_Z);
   endstop_R_Z->init();
 
   // Setup H_bridge
@@ -43,13 +43,16 @@ void setup() {
   BTS_Z->init();
   
   // Creating Axis
-  Axis_z= new Axis(encoder_Z, BTS_Z, endstop_R_Z, endstop_L_Z, PID_Z, Z_MAX_VEL, PWM_resolution_channel, Z_size, Z_tolerance);
+  Axis_z= new Axis(encoder_Z, BTS_Z, endstop_R_Z, endstop_L_Z, PID_Z, Z_MAX_VEL, PWM_resolution_channel, Z_size, Z_tolerance, false);
   
-  Axis_z->go_max(); //Se colocar pra começar na origem da erro
+  //Axis_z->go_max(); //Se colocar pra começar na origem da erro
+  //delay(5000);
 }
 
 void loop(){
-    Axis_z->go_origin();
+    BTS_Z->Set_R(125);
+    //Axis_z->go_L();
+    //Axis_z->go_origin();
       
-    Axis_z->go_max();
+    //Axis_z->go_max();
 }

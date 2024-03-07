@@ -81,7 +81,7 @@ void setup() {
 
 // Setup H_bridge
 
-  BTS_master_X = new H_bridge_controller(R_pin_master_X, L_pin_master_X, PWM_frequency_channel, PWM_resolution_channel, R_channel_master_X, L_channel_master_X);
+  BTS_master_X = new H_bridge_controller(L_pin_master_X, R_pin_master_X, PWM_frequency_channel, PWM_resolution_channel, R_channel_master_X, L_channel_master_X);
   BTS_master_X->init();
   
   BTS_slave_X = new H_bridge_controller(R_pin_slave_X, L_pin_slave_X, PWM_frequency_channel, PWM_resolution_channel, R_channel_slave_X, L_channel_slave_X);
@@ -92,7 +92,7 @@ void setup() {
   encoder_master_X =new Encoder(A_pin_master_X,B_pin_master_X,0,Nominal_pulses,pitch_pulley_master,4);
   encoder_master_X->init();
   
-  encoder_slave_X = new Encoder(A_pin_slave_X, B_pin_slave_X, 1, Nominal_pulses, pitch_pulley_slave, 4);
+  encoder_slave_X = new Encoder(B_pin_slave_X, A_pin_slave_X, 1, Nominal_pulses, pitch_pulley_slave, 4);
   encoder_slave_X->init();
 
 //PID
@@ -127,12 +127,14 @@ void loop() {
   //Serial.println(analogRead(35));
   //Serial.println(endstop_slave_R_X->getBatente());
   //Serial.println(endstop_slave_L_X->getBatente());
-  controller->go_origin(true,true);
-  controller->go_max(true, true);
-  //BTS_master_X->Set_L(125);
-  //BTS_slave_X->Set_L(125);
-  //Axis_master_X->go_R();
-  //Axis_slave_X->go_R();
+  //Serial.println(encoder_master_X->getPosition());
+  //Serial.println(encoder_master_X->getPosition());
+  //controller->go_origin(true,true);
+  //controller->go_max(true, true);
+  BTS_master_X->Set_R(125);
+  BTS_slave_X->Set_R(125);
+  Axis_master_X->go_R();
+  Axis_slave_X->go_R();
   //Axis_master_X->go_origin();
   //Axis_slave_X->go_origin();
   //Axis_master_X->go_max();

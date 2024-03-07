@@ -46,6 +46,8 @@ void Axis::setGoal(double setpoint){
       Serial.print("setpoint:");
       Serial.println(setpoint);
     }
+    //Serial.print("setpoint:");
+    //Serial.println(setpoint);
 }
 
 void Axis::setPoint(double setpoint) {
@@ -54,17 +56,18 @@ void Axis::setPoint(double setpoint) {
 
 void Axis::move(){
   
-    Serial.print("encoder position");
-    Serial.println(this->encoder->getPosition());
-    Serial.print("setpoint");
-    Serial.println(this->setpoint);
-    Serial.print("PWM:");
-    Serial.println(this->output);
+    //Serial.print("encoder position");
+    //Serial.println(this->encoder->getPosition());
+    //Serial.print("setpoint");
+    //Serial.println(this->setpoint);
+    //Serial.print("PWM:");
+    //Serial.println(this->output);
+
+  delay(2);
   
-  
-  this->output=-(this->Pid->computePID(this->encoder->getPosition(),this->setpoint,this->tolerance*5));
-  Serial.print("output");
-  Serial.println(this->output);
+  this->output=(this->Pid->computePID(this->encoder->getPosition(),this->setpoint,this->tolerance*5));
+  //Serial.print("output");
+  //Serial.println(this->output);
   if (this->debug)
     {
       Serial.print("output:");
@@ -90,6 +93,7 @@ void Axis::move(){
 }
 
 void Axis::go_origin(){
+  Serial.print("going origin");
   while (onOrigin() == LOW){ 
     go_R();
     if (this->debug)
@@ -108,6 +112,7 @@ void Axis::go_origin(){
 void Axis::go_max(){
   while (onMax() == LOW){ /*/Próxima vez que for testar o robozão ver se desse jeito ele busca o pino certo/*/
     go_L();
+    Serial.println("going on max:");
     if (this->debug)
     {
       Serial.print("position to max:");
@@ -140,7 +145,7 @@ void Axis::setEnvelope(float tolerance){
 }
 
 bool Axis::onGoal(){
-  if((this->position()>this->setpoint - this->tolerance) && (this->position()<this->setpoint + this->tolerance)){
+  if((this->position()>this->setpoint - this->tolerance) && ((this->position())<this->setpoint + this->tolerance)){
     return true;
   }else{
     return false;

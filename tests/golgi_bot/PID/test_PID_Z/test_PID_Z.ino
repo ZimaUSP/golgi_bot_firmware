@@ -69,11 +69,13 @@ void setup() {
   encoder_Z->init();
 
   // Creating Axis
-  Axis_z= new Axis(encoder_Z, BTS_Z, endstop_R_Z, endstop_L_Z, PID_Z, Z_MAX_VEL, PWM_resolution_channel, Z_size, Z_tolerance);
+  Axis_z= new Axis(encoder_Z, BTS_Z, endstop_R_Z, endstop_L_Z, PID_Z, Z_MAX_VEL, PWM_resolution_channel, Z_size, Z_tolerance, false);
 
 
   // Não se mexe se começar no max
   // Testar se eu começar no meio da barra a origem se torna onde começou, ou se é mesmo na origem
+  //delay(5000);
+  //Axis_z->go_origin();
   Axis_z->go_max();
   Axis_z->go_origin();
 }
