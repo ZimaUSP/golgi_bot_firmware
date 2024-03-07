@@ -19,17 +19,15 @@ void setup() {
   comu = new SerialCommunication("Posição setPoint_x:");
 
   // Atuador
-  Atuador_Y= new Atuador( Extend_pin,Contract_pin);
+  Atuador_Y= new Atuador(Extend_pin,Contract_pin);
   Atuador_Y->init();
   
 }
 
-void loop() {
-  Atuador_Y->Extend();
-  delay(5000);
-  Atuador_Y->Contract();
-  delay(5000);
-  Serial.println(".");
+void loop() { 
+  delay(10);
+ read_command();
+  delay(10);
     }
 
 
@@ -40,24 +38,28 @@ char* string_to_char(std::string str) {
 }
 void read_command(){
   Serial.println(".");
+  delay(1000);
    if(Serial.available()){
      comu->read_data();
-
     comand=atoi(string_to_char(comu->get_received_data()));
     if(comand==1){
     Atuador_Y->Extend();
-    
     Serial.println("extend");
+     delay(1000);
     }
+    
     if(comand==2){
     Atuador_Y->Contract();
     
     Serial.println("contrac");
+     delay(1000);
+
     }
     if(comand==3){
     Atuador_Y->Stop();
     
     Serial.println("stop");
+     delay(1000);
     }
     
   }

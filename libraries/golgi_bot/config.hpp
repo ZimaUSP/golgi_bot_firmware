@@ -1,8 +1,10 @@
 #ifndef __CONFIG_HPP__
 #define __CONFIG_HPP__
+
 // Comum used
-#define Nominal_pulses 600
-#define pitch_pulley 40
+#define Nominal_pulses 360
+#define pitch_pulley_master 44
+#define pitch_pulley_slave 44
 #define Mode 1
 #define PWM_frequency_channel 40000
 #define PWM_resolution_channel 8
@@ -34,36 +36,6 @@
 #define max_string_length 100
 #define end_char '\n'
 
-// driver controller configuration
-#define FREQUENCY 10e6
-#define BIT_RESOLUTION 12
-
-#define MIN_VEL -1
-#define MAX_VEL 1
-#define MIN_VEL_BITS 0
-#define MAX_VEL_BITS pow(2,BIT_RESOLUTION)-1
-
-#define MIN_ROT -1
-#define MAX_ROT 1
-#define MIN_ROT_BITS 0
-#define MAX_ROT_BITS pow(2,BIT_RESOLUTION)-1
-
-#define STOP_VALUE 0
-
-//spi config
-#define SPI_MODE SPI_MODE0 //SPI_MODE0 or SPI_MODE1 or SPI_MODE2 or SPI_MODE3
-#define SPI_MASTER_FREQ SPI_MASTER_FREQ_8M
-#define DMA_CHANNEL 1
-#define QUEUE_SIZE 1
-#define SPI_TYPE HSPI //HSPI or VSPI 
-#define TARGET_SIZE 16
-#define HEADER_SIZE 2
-#define BUFFER_SIZE TARGET_SIZE + 4
-#define FOOTER_SIZE HEADER_SIZE
-
-// rosserial configuration
-#define VEL_TOPIC "/cmd_vel"
-
 //i2c configuration
     // set the max number of bytes the slave will send.
     // if the slave send more bytes, they will still be read
@@ -73,53 +45,71 @@
 
 /// X axis ///
 
-#define X_MAX_VEL 0.5
-#define X_size 414
-#define X_tolerance 20
+#define X_master_MAX_VEL 0.5
+#define X_slave_MAX_VEL 0.5
+#define X_master_tolerance 2
+#define X_slave_tolerance 2
 #define X_max_index 3
 
 //  X Encoder
-#define A_pin_X_master 13 // Green cable
-#define B_pin_X_master 15 // White cable
-#define A_pin_X_slave 22 // Green cable
-#define B_pin_X_slave 23 // White cable
+#define A_pin_master_X 13 // Green cable
+#define B_pin_master_X 15 // White cable
 
+#define A_pin_slave_X 22 // Green cable
+#define B_pin_slave_X 23 // White cable
 
 // X BTS
-#define R_pin_X 27 // L Bts
-#define L_pin_X 26 // R Bts
-#define R_channel_X 0
-#define L_channel_X 1
+#define R_pin_master_X 27 // L Bts  
+#define L_pin_master_X 26 // R Bts
+#define R_channel_master_X 0
+#define L_channel_master_X 1
+#define pwm_master_cte 0.6 // fraction of pwm velocity
+
+#define R_pin_slave_X 16 // pin
+#define L_pin_slave_X 12 // pin
+#define R_channel_slave_X 4
+#define L_channel_slave_X 5
+#define pwm_slave_cte 0.75
 
 // X CHAVE
-#define chave_L_X_master 36 
-#define chave_R_X_master 39
-#define chave_L_X_slave 4
-#define chave_R_X_slave 5
+#define chave_master_R_X 39
+#define chave_master_L_X 36
+#define chave_slave_R_X 5
+#define chave_slave_L_X 4 
 
-// X PID
-#define kp_x  3.2
-#define ki_x  0.01
-#define kd_x  30
+// X PID Master
+#define kp_master_x  4.5
+#define ki_master_x  0.05
+#define kd_master_x  60
+#define i_saturation_master_x 1000
+
+
+// X PID Slave 
+// aumentar kp para diminuir o tempo de resposta
+#define kp_slave_x  7
+#define ki_slave_x  0.03
+#define kd_slave_x  60
+#define i_saturation_slave_x 1000 // Diminuir saturação para ser mais sensivel ao erro
 
 
 /// Z axis ///
 
-
 #define Z_MAX_VEL 0.5
-#define Z_size 270
-#define Z_tolerance 8
+#define Z_MAX_VEL 0.5
+#define Z_size 963
+#define Z_tolerance 4
 #define Z_max_index 2
 
 // Z Encoder 
-#define A_pin_Z 19 // Green cable
-#define B_pin_Z 21 // white cable
+#define A_pin_Z 22 // Green cable
+#define B_pin_Z 23 // white cable
 
 // Z BTS 
 #define R_pin_Z 18 // R bts
 #define L_pin_Z 17 // L bts
-#define R_channel_Z 2
-#define L_channel_Z 3
+#define R_channel_Z  2
+#define L_channel_Z 3 
+#define pwm_cte_Z 0.5 // fraction of pwm velocity
 
 // Z Chave
 #define chave_L_Z 34 
@@ -128,7 +118,8 @@
 // Z PID 
 #define kp_z 3.2
 #define ki_z 0.01
-#define kd_z 8 
+#define kd_z 8
+#define i_saturation_z 1000
 
 
 /// Y axis ///

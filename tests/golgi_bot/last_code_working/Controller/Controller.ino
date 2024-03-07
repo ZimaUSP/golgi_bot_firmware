@@ -64,8 +64,8 @@ Controller *Golgi_bot;
 SerialCommunication* comu;
 #include <string>
 #include <cstring>
-int pos_x[X_max_index]={97,229,370};
-int pos_z[Z_max_index]={70,190};
+int pos_x[X_max_index]={85,225,364};
+int pos_z[Z_max_index]={55,190};
 double X_pos;
 double Z_pos;
 int counter;
@@ -118,9 +118,9 @@ void setup() {
   Bomba_Y->init();
 
   //PID
-  PID_X = new PID(kp_x,ki_x,kd_x);
+  PID_X = new PID(kp_x,ki_x,kd_x,i_saturation_x);
   
-  PID_Z = new PID(kp_z,ki_z,kd_z);
+  PID_Z = new PID(kp_z,ki_z,kd_z,i_saturation_z);
 
   //Creating Axis
   Axis_x= new Axis(encoder_X, BTS_X, endstop_R_X, endstop_L_X, PID_X, X_MAX_VEL, PWM_resolution_channel, X_size, X_tolerance);
@@ -132,7 +132,6 @@ void setup() {
 
   //Setting up the right inicital state
   Golgi_bot->reset_Y(DELAY_CONTRACT);
-  
 
   Golgi_bot->go_origin(true,true);
 
@@ -215,10 +214,10 @@ void check_position(){
     Golgi_bot->stop(true,true);
     STATE=GETING_MEDICINE;
     Serial.println("GETING_MEDICINE");
-    Serial.println(Golgi_bot->positionPoint()[0]);
+    Serial.print(Golgi_bot->positionPoint()[0]);
     Serial.print(",");
     Serial.println(Golgi_bot->positionPoint()[1]);
-    
+    Golgi_bot->stop(true,true);
   }
 }     
 

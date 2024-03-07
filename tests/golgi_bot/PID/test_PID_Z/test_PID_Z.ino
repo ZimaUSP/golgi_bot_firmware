@@ -1,22 +1,27 @@
 
 // EIXO Z 
+#include "config.hpp"
 
 // Encoder Z axis 
-#include "config.hpp"
 #include "Controller.hpp"
 Encoder *encoder_Z;
 int last_z_count;
 
+//Axis Z
+#include "Axis.hpp"
+Axis *Axis_z;
+
 // BTS Z axis 
+#include "H_bridge_controller.hpp"
 H_bridge_controller *BTS_Z;
 
 // Chave fim de curso Z axis
+#include "Chave_fim_de_curso.hpp"
 Chave_fim_de_curso *endstop_L_Z; 
 Chave_fim_de_curso *endstop_R_Z; 
 
 //PID Z axis constants
-int output_z;
-double setPoint_z;
+#include "PID.hpp"
 PID *PID_Z; 
 Axis *Axis_z;
 
@@ -30,66 +35,50 @@ int MAX_POSITION_Z;
 #include <string>
 #include <cstring>
 SerialCommunication *comu;
+double setPoint_z;
 
 // Estados
 char STATE = 0 ; // 
 #define STAND_BY 0
 #define GOING 1
-#define GETING_MEDICINE 2
-#define DROPING_MEDICINE 3
 
 
 void setup() {
   // Set point
   setPoint_z = 0;
   
-  //Serial Comunication
+  // Serial Comunication
   Serial.begin (SERIAL_VEL);
   comu = new SerialCommunication("Posição SetPoint:");
 
+  // Endstop
   endstop_L_Z = new Chave_fim_de_curso(chave_L_Z,2);
   endstop_L_Z->init();
   endstop_R_Z = new Chave_fim_de_curso(chave_R_Z,3);
   endstop_R_Z->init();
 
+  // Ponte H
 
-  BTS_Z= new H_bridge_controller( R_pin_Z, L_pin_Z, PWM_frequency_channel, PWM_resolution_channel, R_channel_Z, L_channel_Z);
+  BTS_Z= new H_bridge_controller(R_pin_Z, L_pin_Z, PWM_frequency_channel, PWM_resolution_channel, R_channel_Z, L_channel_Z);
   BTS_Z->init();
 
-
-  encoder_Z = new Encoder(A_pin_Z,B_pin_Z,1,Nominal_pulses,pitch_pulley,Mode);
+  // PID
+  PID_Z = new PID(kp_z,ki_z,kd_z,i_saturation_z);
+  
+  // encoder
+  encoder_Z =new Encoder(A_pin_Z,B_pin_Z,0,600,40,4);
   encoder_Z->init();
     
   //PID
 
-  PID_Z = new PID(kp_z,ki_z,kd_z);
-
+  // Creating Axis
   Axis_z= new Axis(encoder_Z, BTS_Z, endstop_R_Z, endstop_L_Z, PID_Z, Z_MAX_VEL, PWM_resolution_channel, Z_size, Z_tolerance);
 
-  //Set origin
-  
 
-  
-  Axis_z->go_origin();
-  Serial.print("Origem: ");
-  Serial.println(Axis_z->position());
-  
+  // Não se mexe se começar no max
+  // Testar se eu começar no meio da barra a origem se torna onde começou, ou se é mesmo na origem
   Axis_z->go_max();
-
-  MAX_POSITION_Z = Axis_z->position();
-  
-
-
   Axis_z->go_origin();
-  Serial.print("Origem: ");
-  Serial.println(Axis_z->position());
-  if (endstop_R_Z->getBatente())
-  {
-    Serial.println("batente");
-  }
-  
-
-  Serial.println("STAND-BY");
 }
 
 void loop() {
@@ -100,7 +89,6 @@ void loop() {
         read_setpoint();
         return;
       case GOING :
-        // PID Z
         // Setting direction of motion acording to output_z PID
         Axis_z->move();
 
@@ -121,40 +109,31 @@ char* string_to_char(std::string str) {
    return cstr;
 }
 
-
-
 void read_setpoint(){
-    if(Serial.available()){
-      
+  if(Serial.available()){
       STATE=GOING;
       Serial.println("GOING"); 
-      String received_str = Serial.readString();
-      int received = received_str.toInt();
-
-
-      if (received > MAX_POSITION_Z){
-       setPoint_z=MAX_POSITION_Z;
-      }else{
-      setPoint_z=received;
-      }
-
-      Serial.print("setPoint: ");
+      comu->read_data(MAIN_SERIAL);
+      char* recived=string_to_char(comu->get_received_data());
+      int setPoint_z=atoi(recived);
       Serial.println(setPoint_z);
-
+      
+             
+      Serial.print("Z goal:");
+      Serial.println(encoder_Z->getPosition());
+      
       Axis_z->setGoal(setPoint_z);
+  }
 
-      PID_Z->reset();
-    }
+  
+
 }
 
 void check_position(){
-  if((encoder_Z->getPosition()>= setPoint_z - Z_tolerance &&
-                      encoder_Z->getPosition()<= setPoint_z + Z_tolerance )){
-          BTS_Z->Set_R(0);
-          STATE=STAND_BY;
-          Serial.print("    counter Z :");
-          Serial.println(encoder_Z->getPosition());
-          Serial.println("STAND-BY");
-          return;
-        }
-}
+  if(Axis_z->onGoal()){
+    STATE=STAND_BY;
+    Serial.println("STANDY-BY");
+    Serial.println(Axis_z->position());
+    Axis_z->stop();
+  }
+  }

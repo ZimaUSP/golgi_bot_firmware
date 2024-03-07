@@ -17,7 +17,7 @@
  * Class Methods Bodies Definitions
  *****************************************/
 
-Axis::Axis(Encoder *encoder, H_bridge_controller *BTS, Chave_fim_de_curso *Chave_R, Chave_fim_de_curso *Chave_L,PID *Pid, float max_vel,int PWM_RESOLUTION,float size,float tolerance) {
+Axis::Axis(Encoder *encoder, H_bridge_controller *BTS, Chave_fim_de_curso *Chave_R, Chave_fim_de_curso *Chave_L,PID *Pid, float max_vel,int PWM_RESOLUTION,float tolerance, float pwm_cte, bool debug) {
     this->encoder = encoder;
     this->BTS= BTS;
     this->Chave_R= Chave_R;
@@ -27,50 +27,95 @@ Axis::Axis(Encoder *encoder, H_bridge_controller *BTS, Chave_fim_de_curso *Chave
       MAX_PWM=MAX_PWM*2;
     }
     this->MAX_PWM = (MAX_PWM-1);
-    this->size = size;
+    this->pwm_cte = pwm_cte;
     this->tolerance = tolerance;
-    this->Max_pos = size;
+    this->Max_pos;
     this->Min_pos = 0;
+    this->debug = debug;
 }
 void Axis::setGoal(double setpoint){
-  if (setpoint>this->Max_pos){
+  if (setpoint > this->Max_pos){
     this->setpoint=this->Max_pos;
-
-  }else if(setpoint<this->Min_pos){
+  }else if(setpoint < this->Min_pos){
     this->setpoint=this->Min_pos;
-
   }else{
     this->setpoint=setpoint;
-  } 
+  }
+  if (this->debug)
+    {
+      Serial.print("setpoint:");
+      Serial.println(setpoint);
+    }
 }
+
+void Axis::setPoint(double setpoint) {
+  this->setpoint = setpoint;
+}
+
 void Axis::move(){
-  output=this->Pid->computePID(this->encoder->getPosition(),this->setpoint);
+  if (debug){
+    Serial.println("\nentrou no move");
+    Serial.print("encoder position");
+    Serial.println(this->encoder->getPosition());
+    Serial.print("setpoint");
+    Serial.println(this->setpoint);
+  }
+  
+  this->output=this->Pid->computePID(this->encoder->getPosition(),this->setpoint,this->tolerance*5);
+  if (this->debug)
+    {
+      Serial.print("output:");
+      Serial.println(output);
+    }
   if (output < 0) {
-        if (output < -this->MAX_PWM) {
-          output = -this->MAX_PWM;
-        }
-        this->BTS->Set_R(-output);
-        return;
-      } else {
-        if (output > this->MAX_PWM) {
-          output = this->MAX_PWM;
-        }
-        this->BTS->Set_L(output);
-        return;
-      }
+    if (output < -(this->MAX_PWM)*this->pwm_cte) {
+      output = -(this->MAX_PWM)*this->pwm_cte;
+    } 
+    this->output = -output;
+    this->BTS->Set_R(output);
+    
+    return;
+  } else {
+    
+    if (output > (this->MAX_PWM)*this->pwm_cte) {
+      output = (this->MAX_PWM)*this->pwm_cte;
+    }
+    this->BTS->Set_L(output);
+    
+    return;
+  }
 }
 
 void Axis::go_origin(){
-  while (digitalRead(this->Chave_R->getPin())==HIGH){
-    this->BTS->Set_R((this->MAX_PWM)*0.5);
+  while (onOrigin() == LOW){ 
+    go_R();
+    if (this->debug)
+    {
+      Serial.print("position to origin");
+      Serial.println(encoder->getPosition());
+    }
   }
-  this->encoder->setPulses(0);
+  if (debug){
+    Serial.println("origin");
+  }
+  resetOrigin();
   this->stop();
 }
+
 void Axis::go_max(){
-  while (digitalRead(this->Chave_L->getPin())==HIGH){
-    this->BTS->Set_L((this->MAX_PWM)*0.5);
+  while (onMax() == LOW){ /*/Próxima vez que for testar o robozão ver se desse jeito ele busca o pino certo/*/
+    go_L();
+    if (this->debug)
+    {
+      Serial.print("position to max:");
+      Serial.println(encoder->getPosition());
+    }
   }
+   if (debug){
+    Serial.println("max");
+  }
+  resetMax();
+  Serial.println(this->Max_pos);
   this->stop();
 }
 
@@ -92,11 +137,37 @@ void Axis::setEnvelope(float tolerance){
 }
 
 bool Axis::onGoal(){
-  
   if((this->position()>this->setpoint - this->tolerance) && (this->position()<this->setpoint + this->tolerance)){
     return true;
   }else{
     return false;
   }
-  
+}
+
+bool Axis::onOrigin() {
+  return digitalRead(Chave_R->getPin()) == LOW;
+}
+
+bool Axis::onMax() {
+  return digitalRead(Chave_L->getPin()) == LOW;
+}
+
+void Axis::resetOrigin() {
+  this->encoder->setPulses(0);
+}
+
+void Axis::resetMax() {
+  this->Max_pos = this->encoder->getPosition();
+}
+
+void Axis::go_R() {
+    this->BTS->Set_R((this->MAX_PWM)*this->pwm_cte);
+}
+
+void Axis::go_L() {
+  this->BTS->Set_L((this->MAX_PWM)*this->pwm_cte);
+}
+
+double Axis::getOutput() {
+  return this->output;
 }
