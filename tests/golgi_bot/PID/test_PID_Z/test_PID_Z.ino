@@ -3,7 +3,7 @@
 #include "config.hpp"
 
 // Encoder Z axis 
-#include "Encoder.hpp"
+#include "Controller.hpp"
 Encoder *encoder_Z;
 int last_z_count;
 
@@ -23,14 +23,15 @@ Chave_fim_de_curso *endstop_R_Z;
 //PID Z axis constants
 #include "PID.hpp"
 PID *PID_Z; 
+Axis *Axis_z;
+
 
 //Count MAX
-int MAX_PULSES_Z =0;
+int MAX_POSITION_Z;
 
 
 //Serial comunication
 #include "serial_communication.hpp"
-#include "config.hpp"
 #include <string>
 #include <cstring>
 SerialCommunication *comu;
@@ -67,6 +68,8 @@ void setup() {
   // encoder
   encoder_Z =new Encoder(A_pin_Z,B_pin_Z,0,600,40,4);
   encoder_Z->init();
+    
+  //PID
 
   // Creating Axis
   Axis_z= new Axis(encoder_Z, BTS_Z, endstop_R_Z, endstop_L_Z, PID_Z, Z_MAX_VEL, PWM_resolution_channel, Z_size, Z_tolerance);
@@ -81,7 +84,7 @@ void setup() {
 void loop() {
   switch(STATE) {
       case STAND_BY :
-        Serial.println("STAND-BY");
+        
         // Recive Set point
         read_setpoint();
         return;
@@ -94,7 +97,7 @@ void loop() {
         
         check_position();
         
-        last_z_count=encoder_Z->getPulses();
+        last_z_count=encoder_Z->getPosition();
         return;
    }
     

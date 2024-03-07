@@ -30,8 +30,8 @@ void Controller::setGoal(double goal_axis_1,double goal_axis_2){
 }
 
 void Controller::move(){
-   this->Axis_1->move( );
-   this->Axis_2->move( );
+   this->Axis_1->move();
+   this->Axis_2->move();
 }
 
 void Controller::get_medicine(int DELAY_EX, int DELAY_CON){

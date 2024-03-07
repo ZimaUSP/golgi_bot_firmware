@@ -1,7 +1,6 @@
 #include "Encoder.hpp"
 #include "config.hpp"
 
-
 Encoder *encoder;
 
 void setup() {     
