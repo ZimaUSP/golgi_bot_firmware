@@ -67,8 +67,8 @@
 
 #define R_pin_slave_X 16 // pin
 #define L_pin_slave_X 12 // pin
-#define R_channel_slave_X 4
-#define L_channel_slave_X 5
+#define R_channel_slave_X 5                                   //Checkar depois se está funcionando, antes estava inertido
+#define L_channel_slave_X 4
 #define pwm_slave_cte 0.5              // should be 0.75
 
 // X CHAVE
@@ -79,7 +79,7 @@
 
 #define chave_channel_master_R_X 2
 #define chave_channel_master_L_X 1
-#define chave_channel_slave_R_X 4
+#define chave_channel_slave_R_X 0
 #define chave_channel_slave_L_X 3
 
 
@@ -109,19 +109,21 @@
 #define Z_max_index 2
 
 // Z Encoder 
-#define A_pin_Z 19 // Green cable
-#define B_pin_Z 21 // white cable
+#define A_pin_Z 21 // Green cable
+#define B_pin_Z 19 // white cable
 
 // Z BTS 
-#define R_pin_Z 18 // R bts
-#define L_pin_Z 17 // L bts
-#define R_channel_Z 6
-#define L_channel_Z 7
+#define R_pin_Z 17 // R bts
+#define L_pin_Z 18 // L bts
+#define R_channel_Z 5
+#define L_channel_Z 4
 #define pwm_cte_Z 0.5 // fraction of pwm velocity
 
 // Z Chave
-#define chave_L_Z 34 
-#define chave_R_Z 35 
+#define chave_L_Z 34
+#define chave_R_Z 35
+#define chave_channel_R_Z 5
+#define chave_channel_L_Z 4
 
 // Z PID 
 #define kp_z 3.2

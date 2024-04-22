@@ -21,7 +21,7 @@ void setup() {
   comu = new SerialCommunication("Posição setPoint_x:");
 
   // Bomba
-  Bomba_Y= new Bomba( bomba_pin);
+  Bomba_Y= new Bomba(bomba_pin);
   Bomba_Y->init();
   Bomba_Y->turn_on();
   

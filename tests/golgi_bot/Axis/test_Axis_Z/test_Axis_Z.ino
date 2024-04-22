@@ -33,9 +33,9 @@ void setup() {
   Serial.begin (SERIAL_VEL);
 
   // Setup Batentes
-  endstop_L_Z = new Chave_fim_de_curso(chave_L_Z,L_channel_Z);
+  endstop_L_Z = new Chave_fim_de_curso(chave_L_Z, chave_channel_L_Z);
   endstop_L_Z->init();
-  endstop_R_Z = new Chave_fim_de_curso(chave_R_Z,R_channel_Z);
+  endstop_R_Z = new Chave_fim_de_curso(chave_R_Z, chave_channel_R_Z);
   endstop_R_Z->init();
 
   // Setup H_bridge

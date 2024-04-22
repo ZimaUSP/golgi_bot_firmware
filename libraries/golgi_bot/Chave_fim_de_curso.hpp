@@ -31,13 +31,17 @@ class Chave_fim_de_curso {
         static void isr2();
 
         static void isr3();
-     
-     
 
+        static void isr4();
+
+        static void isr5();
+     
         static Chave_fim_de_curso* instance0_;
         static Chave_fim_de_curso* instance1_;
         static Chave_fim_de_curso* instance2_;
         static Chave_fim_de_curso* instance3_;
+        static Chave_fim_de_curso* instance4_;
+        static Chave_fim_de_curso* instance5_;
 
         void handleInterrupt();
         //

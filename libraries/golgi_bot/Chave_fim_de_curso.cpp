@@ -56,6 +56,18 @@ void Chave_fim_de_curso::init() {
         instance3_ = this;
         this->batente_trigger();
         break;
+
+      case 4: 
+        attachInterrupt (this->pin, isr4, CHANGE); 
+        instance4_ = this;
+        this->batente_trigger();
+        break;
+
+      case 5: 
+        attachInterrupt (this->pin, isr5, CHANGE); 
+        instance5_ = this;
+        this->batente_trigger();
+        break;
     } 
 }
 
@@ -64,9 +76,6 @@ int Chave_fim_de_curso::getPin() {
 }
 
 bool Chave_fim_de_curso::getBatente() {
- if(this->batente){
- Serial.println("ENTROUUUUUU");
- }
  return this->batente;
 }
 
@@ -75,6 +84,8 @@ Chave_fim_de_curso * Chave_fim_de_curso::instance0_;
 Chave_fim_de_curso * Chave_fim_de_curso::instance1_;
 Chave_fim_de_curso * Chave_fim_de_curso::instance2_;
 Chave_fim_de_curso * Chave_fim_de_curso::instance3_;
+Chave_fim_de_curso * Chave_fim_de_curso::instance4_;
+Chave_fim_de_curso * Chave_fim_de_curso::instance5_;
 
 void Chave_fim_de_curso::isr0 (){
   instance0_->handleInterrupt();
@@ -90,6 +101,14 @@ void Chave_fim_de_curso::isr2 (){
 
 void Chave_fim_de_curso::isr3 (){
   instance3_->handleInterrupt();  
+}
+
+void Chave_fim_de_curso::isr4 (){
+  instance4_->handleInterrupt();  
+}
+
+void Chave_fim_de_curso::isr5 (){
+  instance5_->handleInterrupt();  
 }
 
 void Chave_fim_de_curso::handleInterrupt(){

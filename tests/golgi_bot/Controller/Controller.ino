@@ -6,21 +6,32 @@
 #include "Controller.hpp"
 // EIXO X
 
-Axis *Axis_x;
-
 // Encoder X axis 
-Encoder *encoder_X;
+Encoder *encoder_master_X;
+Encoder *encoder_slave_X;
+
+// Axis X
+Axis *Axis_master_X;
+Axis *Axis_slave_X;
+int error_axis;
 
 // BTS X axis 
-H_bridge_controller *BTS_X;
+H_bridge_controller *BTS_master_X;
+H_bridge_controller *BTS_slave_X;
 
 // Chave fim de curso X axis
-Chave_fim_de_curso *endstop_L_X; 
-Chave_fim_de_curso *endstop_R_X; 
 
-//PID X axis constants
-PID *PID_X; 
+// master
+Chave_fim_de_curso *endstop_master_L_X; 
+Chave_fim_de_curso *endstop_master_R_X;
 
+// Slave
+Chave_fim_de_curso *endstop_slave_L_X;
+Chave_fim_de_curso *endstop_slave_R_X;
+
+// PID X axis 
+PID *PID_master_X;
+PID *PID_slave_X;
 
 // EIXO Z
 
@@ -60,7 +71,7 @@ Controller *Golgi_bot;
 SerialCommunication* comu;
 #include <string>
 #include <cstring>
-int pos_x[X_max_index]={85,225,364};
+int pos_x[X_max_index]={85,225,364};          // check if its still workig
 int pos_z[Z_max_index]={55,190};
 double X_pos;
 double Z_pos;
@@ -77,28 +88,45 @@ void setup() {
   comu = new SerialCommunication("Posição SetPoint:");
 
   //Chave fim de curso
-  endstop_L_X = new Chave_fim_de_curso(chave_L_X,0);
-  endstop_L_X->init();
-  endstop_R_X = new Chave_fim_de_curso(chave_R_X,1);
-  endstop_R_X->init();
 
-  endstop_L_Z = new Chave_fim_de_curso(chave_L_Z,2);
+  // Master X
+  endstop_master_L_X = new Chave_fim_de_curso(chave_master_L_X,chave_channel_master_L_X);
+  endstop_master_L_X->init();
+  endstop_master_R_X = new Chave_fim_de_curso(chave_master_R_X,chave_channel_master_R_X);
+  endstop_master_R_X->init();
+    
+  // Slave X
+  endstop_slave_L_X = new Chave_fim_de_curso(chave_slave_L_X, chave_channel_slave_L_X);
+  endstop_slave_L_X->init();
+  endstop_slave_R_X = new Chave_fim_de_curso(chave_slave_R_X, chave_channel_slave_R_X);
+  endstop_slave_R_X->init();
+
+  // Z
+  endstop_L_Z = new Chave_fim_de_curso(chave_L_Z, chave_channel_L_Z);
   endstop_L_Z->init();
-  endstop_R_Z = new Chave_fim_de_curso(chave_R_Z,3);
+  endstop_R_Z = new Chave_fim_de_curso(chave_R_Z, chave_channel_R_Z);
   endstop_R_Z->init();
 
   // BTS
-  BTS_X= new H_bridge_controller( R_pin_X, L_pin_X, PWM_frequency_channel, PWM_resolution_channel, R_channel_X, L_channel_X);
-  BTS_X->init();
 
-  BTS_Z= new H_bridge_controller( R_pin_Z, L_pin_Z, PWM_frequency_channel, PWM_resolution_channel, R_channel_Z, L_channel_Z);
+  BTS_master_X = new H_bridge_controller(L_pin_master_X, R_pin_master_X, PWM_frequency_channel, PWM_resolution_channel, R_channel_master_X, L_channel_master_X);
+  BTS_master_X->init();
+  
+  BTS_slave_X = new H_bridge_controller(R_pin_slave_X, L_pin_slave_X, PWM_frequency_channel, PWM_resolution_channel, R_channel_slave_X, L_channel_slave_X);
+  BTS_slave_X->init();
+
+  BTS_Z= new H_bridge_controller(R_pin_master_X, L_pin_master_X, PWM_frequency_channel, PWM_resolution_channel, R_channel_Z, L_channel_Z);      //esses canais talvez deem problema
   BTS_Z->init();
 
   // Encoder
-  encoder_X = new Encoder(A_pin_X,B_pin_X,0,Nominal_pulses,pitch_pulley,Mode);
-  encoder_X->init();
 
-  encoder_Z = new Encoder(A_pin_Z,B_pin_Z,1,Nominal_pulses,pitch_pulley,Mode);
+  encoder_master_X =new Encoder(A_pin_master_X ,B_pin_master_X ,0,Nominal_pulses,pitch_pulley_master,4);
+  encoder_master_X->init();
+  
+  encoder_slave_X = new Encoder(B_pin_slave_X, A_pin_slave_X, 1, Nominal_pulses, pitch_pulley_slave, 4);
+  encoder_slave_X->init();
+
+  encoder_Z =new Encoder(A_pin_Z,B_pin_Z,0,600,40,4);
   encoder_Z->init();
 
    // Atuador
@@ -113,14 +141,16 @@ void setup() {
   Bomba_Y->init();
 
   //PID
-  PID_X = new PID(kp_x,ki_x,kd_x,i_saturation_x);
+  PID_master_X = new PID(kp_master_x,ki_master_x,kd_master_x,i_saturation_master_x);
+  PID_slave_X = new PID(kp_slave_x, ki_slave_x, kd_slave_x, i_saturation_slave_x);
   
   PID_Z = new PID(kp_z,ki_z,kd_z,i_saturation_z);
 
   //Creating Axis
-  Axis_x= new Axis(encoder_X, BTS_X, endstop_R_X, endstop_L_X, PID_X, X_MAX_VEL, PWM_resolution_channel, X_size, X_tolerance);
+  Axis_master_X = new Axis(encoder_master_X, BTS_master_X, endstop_master_R_X, endstop_master_L_X, PID_master_X, X_master_MAX_VEL, PWM_resolution_channel, X_master_tolerance, pwm_master_cte, false);
+  Axis_slave_X = new Axis(encoder_slave_X, BTS_slave_X, endstop_slave_R_X, endstop_slave_L_X, PID_slave_X, X_slave_MAX_VEL, PWM_resolution_channel, X_slave_tolerance, pwm_slave_cte, false);
   
-  Axis_z= new Axis(encoder_Z, BTS_Z, endstop_R_Z, endstop_L_Z, PID_Z, Z_MAX_VEL, PWM_resolution_channel, Z_size, Z_tolerance);
+  Axis_z= new Axis(encoder_Z, BTS_Z, endstop_R_Z, endstop_L_Z, PID_Z, Z_MAX_VEL, PWM_resolution_channel, Z_tolerance, pwm_cte_Z, false);
 
   //Creating Controller
   Golgi_bot = new Controller(Axis_x, Axis_z, Bomba_Y, Atuador_Y);

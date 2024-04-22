@@ -51,14 +51,14 @@ void setup() {
   comu = new SerialCommunication("Posição SetPoint:");
 
   // Endstop
-  endstop_L_Z = new Chave_fim_de_curso(chave_L_Z,2);
+  endstop_L_Z = new Chave_fim_de_curso(chave_L_Z, chave_channel_L_Z);
   endstop_L_Z->init();
-  endstop_R_Z = new Chave_fim_de_curso(chave_R_Z,3);
+  endstop_R_Z = new Chave_fim_de_curso(chave_R_Z, chave_channel_R_Z);
   endstop_R_Z->init();
 
   // Ponte H
 
-  BTS_Z= new H_bridge_controller(R_pin_Z, L_pin_Z, PWM_frequency_channel, PWM_resolution_channel, R_channel_Z, L_channel_Z);
+  BTS_Z= new H_bridge_controller(R_pin_Z, L_pin_Z, PWM_frequency_channel, PWM_resolution_channel, R_channel_Z, L_channel_Z);      //esses canais talvez deem problema
   BTS_Z->init();
 
   // PID
@@ -69,26 +69,33 @@ void setup() {
   encoder_Z->init();
 
   // Creating Axis
-  Axis_z= new Axis(encoder_Z, BTS_Z, endstop_R_Z, endstop_L_Z, PID_Z, Z_MAX_VEL, PWM_resolution_channel, Z_size, Z_tolerance, false);
+  Axis_z= new Axis(encoder_Z, BTS_Z, endstop_R_Z, endstop_L_Z, PID_Z, Z_MAX_VEL, PWM_resolution_channel, Z_tolerance, pwm_cte_Z, false);
 
 
   // Não se mexe se começar no max
   // Testar se eu começar no meio da barra a origem se torna onde começou, ou se é mesmo na origem
-  //delay(5000);
+
+  //int sempre = 1;
+  //while (sempre = 1) {
+    //BTS_Z->Set_R(125);
+    //Serial.println("AA");
+  //}
+
   //Axis_z->go_origin();
-  Axis_z->go_max();
-  Axis_z->go_origin();
+  //Axis_z->go_max();
+  //Axis_z->go_origin();
 }
 
 void loop() {
   switch(STATE) {
       case STAND_BY :
-        Serial.println("STAND-BY");
+        //Serial.println("STAND-BY");
         // Recive Set point
         read_setpoint();
         return;
       case GOING :
         // Setting direction of motion acording to output_z PID
+        //Serial.println("MOVING");
         Axis_z->move();
 
         //Code does not work without this delay (?)

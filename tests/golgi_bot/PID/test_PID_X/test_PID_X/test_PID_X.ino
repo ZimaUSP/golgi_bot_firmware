@@ -220,7 +220,6 @@ void check_position(){
 
     if (Axis_master_X->onGoal()) {
       if (controller->onGoal()) {
-        Serial.println("Entrou");                        //tests
         STATE=STAND_BY;
         controller->stop(true, true);
         float *position = controller->positionPoint();
