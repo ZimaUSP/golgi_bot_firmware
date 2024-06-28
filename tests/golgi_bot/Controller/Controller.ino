@@ -3,6 +3,7 @@
 
 //Controller lib
 
+//#include "Controller.hpp"
 #include "Controller.hpp"
 // EIXO X
 
@@ -71,7 +72,7 @@ Controller *Golgi_bot;
 SerialCommunication* comu;
 #include <string>
 #include <cstring>
-int pos_x[X_max_index]={85,225,364};          // check if its still workig
+int pos_x[X_max_index]={85,225,364};
 int pos_z[Z_max_index]={55,190};
 double X_pos;
 double Z_pos;
@@ -85,7 +86,7 @@ void setup() {
    
   //Serial Comunication
   Serial.begin (SERIAL_VEL);
-  comu = new SerialCommunication("Posição SetPoint:");
+  //comu = new SerialCommunication("Posição SetPoint:");
 
   //Chave fim de curso
 
@@ -112,21 +113,21 @@ void setup() {
   BTS_master_X = new H_bridge_controller(L_pin_master_X, R_pin_master_X, PWM_frequency_channel, PWM_resolution_channel, R_channel_master_X, L_channel_master_X);
   BTS_master_X->init();
   
-  BTS_slave_X = new H_bridge_controller(R_pin_slave_X, L_pin_slave_X, PWM_frequency_channel, PWM_resolution_channel, R_channel_slave_X, L_channel_slave_X);
+  BTS_slave_X = new H_bridge_controller(L_pin_slave_X, R_pin_slave_X, PWM_frequency_channel, PWM_resolution_channel, R_channel_slave_X, L_channel_slave_X);
   BTS_slave_X->init();
 
-  BTS_Z= new H_bridge_controller(R_pin_master_X, L_pin_master_X, PWM_frequency_channel, PWM_resolution_channel, R_channel_Z, L_channel_Z);      //esses canais talvez deem problema
+  BTS_Z= new H_bridge_controller(R_pin_Z, L_pin_Z, PWM_frequency_channel, PWM_resolution_channel, R_channel_Z, L_channel_Z);      //esses canais talvez deem problema
   BTS_Z->init();
 
   // Encoder
 
-  encoder_master_X =new Encoder(A_pin_master_X ,B_pin_master_X ,0,Nominal_pulses,pitch_pulley_master,4);
+  encoder_master_X =new Encoder(A_pin_master_X ,B_pin_master_X , 0, Nominal_pulses, pitch_pulley_master, 4);
   encoder_master_X->init();
   
   encoder_slave_X = new Encoder(B_pin_slave_X, A_pin_slave_X, 1, Nominal_pulses, pitch_pulley_slave, 4);
   encoder_slave_X->init();
 
-  encoder_Z =new Encoder(A_pin_Z,B_pin_Z,0,600,40,4);
+  encoder_Z =new Encoder(A_pin_Z,B_pin_Z,2,600,40,4);
   encoder_Z->init();
 
    // Atuador
@@ -153,12 +154,24 @@ void setup() {
   Axis_z= new Axis(encoder_Z, BTS_Z, endstop_R_Z, endstop_L_Z, PID_Z, Z_MAX_VEL, PWM_resolution_channel, Z_tolerance, pwm_cte_Z, false);
 
   //Creating Controller
-  Golgi_bot = new Controller(Axis_x, Axis_z, Bomba_Y, Atuador_Y);
+  Golgi_bot = new Controller(Axis_master_X, Axis_slave_X, Axis_z, Bomba_Y, Atuador_Y);
 
   //Setting up the right inicital state
   Golgi_bot->reset_Y(DELAY_CONTRACT);
 
-  Golgi_bot->go_origin(true,true);
+
+  //int sempre = 1;
+  //while (sempre = 1) {
+    //Serial.println(encoder_master_X->getPosition());
+    //BTS_master_X->Set_R(125);
+    //BTS_slave_X->Set_R(125);
+    //Serial.println(encoder_master_X->getPosition());
+  //}
+
+
+  Golgi_bot->go_origin(true, true);
+  Golgi_bot->go_max(true, true, true);      // test if it needs to go max, or if going once to orign works
+  Golgi_bot->go_origin(true, true);
 
 
   Serial.println("STAND-BY");
@@ -219,7 +232,7 @@ void read_setpoint(){
       Serial.println(X_pos);      
       Serial.print("Z goal:");
       Serial.println(Z_pos);
-      Golgi_bot->setGoal(X_pos,Z_pos);
+      Golgi_bot->setGoal(X_pos, X_pos, Z_pos);
   }
 
 }
@@ -231,7 +244,8 @@ void check_position(){
     Serial.print(Golgi_bot->positionPoint()[0]);
     Serial.print(",");
     Serial.println(Golgi_bot->positionPoint()[1]);
-    Golgi_bot->stop(true,true);
+    Serial.print(",");
+    Serial.println(Golgi_bot->positionPoint()[2]);
+    Golgi_bot->stop(true,true,true);
   }
-}     
-  
+}

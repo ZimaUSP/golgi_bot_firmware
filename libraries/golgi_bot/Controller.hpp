@@ -11,8 +11,8 @@
  */
 
 
-#ifndef __CONTROLLER_HPP__
-#define __CONTROLLER_HPP__
+#ifndef _CONTROLLER_HPP_
+#define _CONTROLLER_HPP_
 
 #include "Axis.hpp"
 #include "Bomba.hpp"
@@ -22,21 +22,22 @@ class Controller {
     protected:
         Axis *Axis_1;
         Axis *Axis_2;
+        Axis *Axis_3;
         Bomba *Bomba_Y;
         Atuador *Atuador_Y;
-        float position[2];
+        float position[3];
     public:
         /**
          * @brief Default constructor of a PID base class
          * 
          */
-        Controller(Axis *Axis_1, Axis *Axis_2, Bomba *Bomba_Y, Atuador *Atuador_Y);
+        Controller(Axis *Axis_1, Axis *Axis_2, Axis *Axis_3, Bomba *Bomba_Y, Atuador *Atuador_Y);
 
         /**
          * @brief set goal in mm
          * 
          */
-        void setGoal(double goal_axis_1,double goal_axis_2);
+        void setGoal(double goal_axis_1, double goal_axis_2, double goal_axis_3);
 
         /**
          * @brief moves axis with PID control, input position from enconder(mm)
@@ -60,7 +61,7 @@ class Controller {
          * @brief stop Motors
          * 
          */
-        void stop(bool axis1,bool axis2);
+        void stop(bool axis1, bool axis2, bool axis3);
 
         /**
          * @brief reset both PID
@@ -103,8 +104,8 @@ class Controller {
          * @brief go to max on true axis
          * 
          */
-        void go_max(bool axis1,bool axis2);
+        void go_max(bool axis1,bool axis2, bool axis3);
 
 };
 
-#endif  // __CONTROLLER_HPP__
+#endif  // _CONTROLLER_HPP_
