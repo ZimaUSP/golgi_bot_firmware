@@ -72,8 +72,8 @@ Controller *Golgi_bot;
 SerialCommunication* comu;
 #include <string>
 #include <cstring>
-int pos_x[X_max_index]={85,225,364};
-int pos_z[Z_max_index]={55,190};
+int pos_x[X_max_index]={85,225,364,654};
+int pos_z[Z_max_index]={55,190,279};
 double X_pos;
 double Z_pos;
 int counter;
@@ -86,7 +86,7 @@ void setup() {
    
   //Serial Comunication
   Serial.begin (SERIAL_VEL);
-  //comu = new SerialCommunication("Posição SetPoint:");
+  comu = new SerialCommunication("Posição SetPoint:");
 
   //Chave fim de curso
 
@@ -187,6 +187,7 @@ void loop() {
       case GOING :
         //Moves Controller
         Golgi_bot->move();
+        Axis_slave_X->setGoal(Axis_master_X->position());
         //Code does not work without this delay (?)
         delay(2);
         check_position();
@@ -227,12 +228,12 @@ void read_setpoint(){
           }
         }
       }
-        
-      Serial.print("X goal:");
-      Serial.println(X_pos);      
-      Serial.print("Z goal:");
-      Serial.println(Z_pos);
-      Golgi_bot->setGoal(X_pos, X_pos, Z_pos);
+      
+    Serial.print("X goal:");
+    Serial.println(X_pos);      
+    Serial.print("Z goal:");
+    Serial.println(Z_pos);
+    Golgi_bot->setGoal(X_pos, X_pos, Z_pos);
   }
 
 }

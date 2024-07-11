@@ -63,7 +63,7 @@ void Axis::move(){
     //Serial.print("PWM:");
     //Serial.println(this->output);
 
-  delay(2);
+  //delay(2);
   
   this->output=(this->Pid->computePID(this->encoder->getPosition(),this->setpoint,this->tolerance*5));
   //Serial.print("output");

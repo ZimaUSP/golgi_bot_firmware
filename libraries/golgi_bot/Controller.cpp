@@ -58,23 +58,27 @@ void Controller::go_origin(bool axis1,bool axis2){
   bool axis2OnOrigin = false;
   bool axis3OnOrigin = false;
 
+  bool xOnOrigin = false;
+  bool zOnOrigin = false;
+  Serial.println("going origin");
+
   while (going) {
-    //Serial.println("going origin");
+    Serial.println("going origin");
     axis1OnOrigin = this->Axis_1->onOrigin();
     axis2OnOrigin = this->Axis_2->onOrigin();
     axis3OnOrigin = this->Axis_3->onOrigin();
-    
-    bool xOnOrigin = false;
-    bool zOnOrigin = false;
+  
 
     this->Axis_1->go_R();
-    this->Axis_2->setPoint(this->Axis_1->position());
+    this->Axis_2->setPoint((this->Axis_1->position()));
+    //Serial.println((String)"ENcoder 1 " + this->Axis_1->position());                           //os encoders n estão com a mesma distância
+    //Serial.println((String)"ENcoder 2 " + this->Axis_2->position());
 
     this->Axis_3->go_R();
 
-    //Serial.println(this->Axis_2->onGoal());
+    //Serial.println(this->Axis_2->onGoal())
 
-    if (axis1OnOrigin || axis2OnOrigin && (!xOnOrigin)) {  
+    if (axis1OnOrigin && axis2OnOrigin && (!xOnOrigin)) {  
       Serial.println("ENTROU X");
       this->Axis_1->resetOrigin();
       this->Axis_1->stop();
@@ -88,6 +92,7 @@ void Controller::go_origin(bool axis1,bool axis2){
       delay(10);
     } else {
       this->Axis_2->move();
+      delay(2);
     }
 
     if (axis3OnOrigin && (!zOnOrigin)) {
@@ -104,6 +109,7 @@ void Controller::go_origin(bool axis1,bool axis2){
     }
   }
   Serial.println("going origin no more");
+  delay(100);
 }
 
 void Controller::go_max(bool axis1,bool axis2, bool axis3){
@@ -113,6 +119,10 @@ void Controller::go_max(bool axis1,bool axis2, bool axis3){
   bool axis3OnMax = false;
   Serial.println("going max");
 
+  bool xOnMax = false;
+  bool zOnMax = false;
+
+
 
   while (going) {
     //Serial.println("going max");
@@ -120,56 +130,42 @@ void Controller::go_max(bool axis1,bool axis2, bool axis3){
     axis2OnMax = this->Axis_2->onMax();
     axis3OnMax = this->Axis_3->onMax();
 
-    bool xOnMax = false;
-    bool zOnMax = false;
-
-
     this->Axis_1->go_L();
     this->Axis_2->setPoint(this->Axis_1->position());
 
-    this->Axis_3->go_L();
-
-if (axis1OnMax || axis2OnMax && (!xOnMax)) {  
-      this->Axis_1->resetOrigin();
+if (axis1OnMax && axis2OnMax && (!xOnMax)) {  
+      Serial.println("ENTROU X");
+      this->Axis_1->resetMax();
       this->Axis_1->stop();
       axis2OnMax= true;
     
-      this->Axis_2->resetOrigin();
+      this->Axis_2->resetMax();
       this->Axis_2->stop();
       axis1OnMax = true;
 
       xOnMax = true;
-      delay(1000);
     } else {
       this->Axis_2->move();
+      delay(2);
     }
 
     if (axis3OnMax && (!zOnMax)) {
+      Serial.println("ENTROU Z");
       this->Axis_3->resetMax();
       this->Axis_3->stop();
       zOnMax = true;
-      delay(1000);
+      delay(10);
+    }
+    else if (zOnMax == false) {
+      this->Axis_3->go_L();
     }
 
     if (xOnMax && zOnMax) {
       going = false;
       Serial.println("going max no more");
   }
-
-  if (axis1) {
-    this->Axis_1->resetMax();
-    this->Axis_1->stop();
-  }
-  if (axis2) {
-    this->Axis_2->resetMax();
-    this->Axis_2->stop();
-  }
-
-  if (axis3) {
-    this->Axis_3->resetMax();
-    this->Axis_3->stop();
-  }
 }
+  delay(100);
 }
 
 void Controller::stop(bool axis1,bool axis2, bool axis3){

@@ -49,7 +49,7 @@
 #define X_slave_MAX_VEL 0.5
 #define X_master_tolerance 2
 #define X_slave_tolerance 2
-#define X_max_index 3
+#define X_max_index 4
 
 //  X Encoder
 #define A_pin_master_X 13 // Green cable
@@ -106,7 +106,7 @@
 #define Z_MAX_VEL 0.5
 #define Z_size 963
 #define Z_tolerance 4
-#define Z_max_index 2
+#define Z_max_index 3
 
 // Z Encoder 
 #define A_pin_Z 21 // Green cable
