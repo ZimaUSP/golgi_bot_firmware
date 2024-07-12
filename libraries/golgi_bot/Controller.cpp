@@ -63,14 +63,11 @@ void Controller::go_origin(bool axis1,bool axis2){
   Serial.println("going origin");
 
   while (going) {
-    Serial.println("going origin");
     axis1OnOrigin = this->Axis_1->onOrigin();
     axis2OnOrigin = this->Axis_2->onOrigin();
     axis3OnOrigin = this->Axis_3->onOrigin();
   
 
-    this->Axis_1->go_R();
-    this->Axis_2->setPoint((this->Axis_1->position()));
     //Serial.println((String)"ENcoder 1 " + this->Axis_1->position());                           //os encoders n estão com a mesma distância
     //Serial.println((String)"ENcoder 2 " + this->Axis_2->position());
 
@@ -90,9 +87,13 @@ void Controller::go_origin(bool axis1,bool axis2){
 
       xOnOrigin = true;
       delay(10);
-    } else {
+    } else if (xOnOrigin == false) {
+      this->Axis_1->go_R();
+      this->Axis_2->setPoint((this->Axis_1->position()));
       this->Axis_2->move();
       delay(2);
+    } else {
+      delay(1);                           // só para pegar possíveis excessões
     }
 
     if (axis3OnOrigin && (!zOnOrigin)) {
@@ -104,7 +105,6 @@ void Controller::go_origin(bool axis1,bool axis2){
     }
 
     if (xOnOrigin && zOnOrigin) {
-      Serial.println("AAAAA");
       going = false;
     }
   }
