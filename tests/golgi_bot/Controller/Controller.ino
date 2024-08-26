@@ -82,11 +82,12 @@ int counter;
 char STATE = 0 ; 
 
 
+#define led 2
+
 void setup() {
    
   //Serial Comunication
   Serial.begin (SERIAL_VEL);
-  comu = new SerialCommunication("Posição SetPoint:");
 
   //Chave fim de curso
 
@@ -175,6 +176,8 @@ void setup() {
 
 
   Serial.println("STAND-BY");
+  pinMode(led, OUTPUT);
+  digitalWrite(led, LOW);
 
 }
 
@@ -212,12 +215,37 @@ char* string_to_char(std::string str) {
 }
 
 void read_setpoint(){
+  String id_remedio;
   if(Serial.available()){
+
       STATE=GOING;
       Serial.println("GOING"); 
-      comu->read_data(MAIN_SERIAL);
-      char* recived=string_to_char(comu->get_received_data());
-      int index_medicine=atoi(recived);
+      
+      //digitalWrite(led, HIGH);
+      //delay(1000);
+      //digitalWrite(led, LOW);
+      
+      id_remedio = Serial.readString();
+      id_remedio.trim();
+      int index_medicine = 0;
+      if(id_remedio.equals("17424")){ 
+        //digitalWrite(led, HIGH);
+        //delay(2000);
+        //digitalWrite(led, LOW);
+        index_medicine = 0;
+
+      }
+      else if(id_remedio.equals("17292")){
+        index_medicine = 1;
+      }
+      else if(id_remedio.equals("27198")){
+        index_medicine = 2;
+      }
+      else if(id_remedio.equals("18899")){
+        index_medicine = 3;
+      }
+      
+      
       counter=0;
       for(int j=0; j< Z_max_index; j++){
         for(int i =0; i < X_max_index; i++){
