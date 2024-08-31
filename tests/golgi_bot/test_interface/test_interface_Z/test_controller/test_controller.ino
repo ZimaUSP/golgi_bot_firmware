@@ -84,6 +84,8 @@ int counter_Z = 0;
 char STATE = 0 ; 
 
 
+#define led 2
+
 void setup() {
    
   //Serial Comunication
@@ -176,6 +178,8 @@ void setup() {
 
 
   Serial.println("STAND-BY");
+  pinMode(led, OUTPUT);
+  digitalWrite(led, LOW);
 
 }
 
@@ -214,18 +218,54 @@ char* string_to_char(std::string str) {
 }
 
 void read_setpoint(){
-  STATE=GOING;
-  Serial.println("GOING");  
-  // Versão com posições sequenciais
 
-  if (counter_Z == 3 && counter_X == 4) {
-    counter_Z = 0;
-    counter_X = 0;
-  }     
+  String id_remedio;
+  if(Serial.available()){
 
-  if (counter_X == 4) {
-    counter_X = 0;
-    counter_Z++;
+      STATE=GOING;
+      Serial.println("GOING"); 
+      
+      //digitalWrite(led, HIGH);
+      //delay(1000);
+      //digitalWrite(led, LOW);
+      
+      id_remedio = Serial.readString();
+      id_remedio.trim();
+      int index_medicine = 0;
+      if(id_remedio.equals("17424")){ 
+        //digitalWrite(led, HIGH);
+        //delay(2000);
+        //digitalWrite(led, LOW);
+        index_medicine = 0;
+
+      }
+      else if(id_remedio.equals("17292")){
+        index_medicine = 1;
+      }
+      else if(id_remedio.equals("27198")){
+        index_medicine = 2;
+      }
+      else if(id_remedio.equals("18899")){
+        index_medicine = 3;
+      }
+      
+      
+      counter=0;
+      for(int j=0; j< Z_max_index; j++){
+        for(int i =0; i < X_max_index; i++){
+          counter=counter+1;
+          if (counter==index_medicine){
+            Z_pos=pos_z[j];
+            X_pos=pos_x[i];
+          }
+        }
+      }
+      
+    Serial.print("X goal:");
+    Serial.println(X_pos);      
+    Serial.print("Z goal:");
+    Serial.println(Z_pos);
+    Golgi_bot->setGoal(X_pos, X_pos, Z_pos);
   }
 
   Z_pos=pos_z[counter_Z];
