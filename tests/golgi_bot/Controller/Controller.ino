@@ -72,11 +72,13 @@ Controller *Golgi_bot;
 SerialCommunication* comu;
 #include <string>
 #include <cstring>
-int pos_x[X_max_index]={85,225,364,654};
-int pos_z[Z_max_index]={55,190,279};
+int pos_x[X_max_index]={85,225,364,645};
+int pos_z[Z_max_index]={55,190,305};
 double X_pos;
 double Z_pos;
-int counter;
+int counter = 0;
+int counter_X = 0;
+int counter_Z = 0;
 
 //STATE
 char STATE = 0 ; 
@@ -181,6 +183,7 @@ void setup() {
 void loop() {
   switch(STATE) {
       case STAND_BY :
+      delay(4000);
         // Recive Set point
         read_setpoint();
         return;
@@ -212,29 +215,54 @@ char* string_to_char(std::string str) {
 }
 
 void read_setpoint(){
-  if(Serial.available()){
-      STATE=GOING;
-      Serial.println("GOING"); 
-      comu->read_data(MAIN_SERIAL);
-      char* recived=string_to_char(comu->get_received_data());
-      int index_medicine=atoi(recived);
-      counter=0;
-      for(int j=0; j< Z_max_index; j++){
-        for(int i =0; i < X_max_index; i++){
-          counter=counter+1;
-          if (counter==index_medicine){
-            Z_pos=pos_z[j];
-            X_pos=pos_x[i];
-          }
-        }
-      }
-      
-    Serial.print("X goal:");
-    Serial.println(X_pos);      
-    Serial.print("Z goal:");
-    Serial.println(Z_pos);
-    Golgi_bot->setGoal(X_pos, X_pos, Z_pos);
+  STATE=GOING;
+  Serial.println("GOING");  
+  // Versão com posições sequenciais
+
+  if (counter_Z == 3 && counter_X == 4) {
+    counter_Z = 0;
+    counter_X = 0;
+  }     
+
+  if (counter_X == 4) {
+    counter_X = 0;
+    counter_Z++;
   }
+
+  Z_pos=pos_z[counter_Z];
+  X_pos=pos_x[counter_X++];
+  Serial.print("counter_Z: ");
+  Serial.println(counter_Z);
+  Serial.print("counter_X: ");
+  Serial.println(counter_X);
+  //Serial.print("X goal:");
+  //Serial.println(X_pos);      
+  //Serial.print("Z goal:");
+  //Serial.println(Z_pos);
+  //X_pos = 645;
+  //Z_pos = 305;
+  Golgi_bot->setGoal(X_pos, X_pos, Z_pos);
+
+
+//  Versão com posições aleatórias
+  /*
+  srand((unsigned) time(NULL));
+  int random = rand() % 13;
+
+  counter = 0;
+  for(int j=0; j< Z_max_index; j++){
+    for(int i =0; i < X_max_index; i++){
+      counter=counter+1;
+      if (counter==random){
+        Z_pos=pos_z[j];
+        X_pos=pos_x[i];
+      }
+    }
+  }
+  Serial.println(random);  
+
+  Golgi_bot->setGoal(X_pos, X_pos, Z_pos);
+  */
 
 }
 
@@ -242,11 +270,11 @@ void check_position(){
   if(Golgi_bot->onGoal()){
     STATE=GETING_MEDICINE;
     Serial.println("GETING_MEDICINE");
-    Serial.print(Golgi_bot->positionPoint()[0]);
-    Serial.print(",");
-    Serial.println(Golgi_bot->positionPoint()[1]);
-    Serial.print(",");
-    Serial.println(Golgi_bot->positionPoint()[2]);
+    //Serial.print(Golgi_bot->positionPoint()[0]);
+    //Serial.print(",");
+    //Serial.println(Golgi_bot->positionPoint()[1]);
+    //Serial.print(",");
+    //Serial.println(Golgi_bot->positionPoint()[2]);
     Golgi_bot->stop(true,true,true);
   }
 }

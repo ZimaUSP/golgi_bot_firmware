@@ -60,7 +60,7 @@ void Controller::go_origin(bool axis1,bool axis2){
 
   bool xOnOrigin = false;
   bool zOnOrigin = false;
-  Serial.println("going origin");
+  //Serial.println("going origin");
 
   while (going) {
     axis1OnOrigin = this->Axis_1->onOrigin();
@@ -76,7 +76,7 @@ void Controller::go_origin(bool axis1,bool axis2){
     //Serial.println(this->Axis_2->onGoal())
 
     if (axis1OnOrigin && axis2OnOrigin && (!xOnOrigin)) {  
-      Serial.println("ENTROU X");
+      //Serial.println("ENTROU X");
       this->Axis_1->resetOrigin();
       this->Axis_1->stop();
       axis2OnOrigin = true;
@@ -97,7 +97,7 @@ void Controller::go_origin(bool axis1,bool axis2){
     }
 
     if (axis3OnOrigin && (!zOnOrigin)) {
-      Serial.println("ENTROU Z");
+      //Serial.println("ENTROU Z");
       this->Axis_3->resetOrigin();
       this->Axis_3->stop();
       zOnOrigin = true;
@@ -117,7 +117,7 @@ void Controller::go_max(bool axis1,bool axis2, bool axis3){
   bool axis1OnMax = false; //caso axis1 seja false axis1OnMax fica true como padrão 
   bool axis2OnMax = false;
   bool axis3OnMax = false;
-  Serial.println("going max");
+  //Serial.println("going max");
 
   bool xOnMax = false;
   bool zOnMax = false;
@@ -134,7 +134,7 @@ void Controller::go_max(bool axis1,bool axis2, bool axis3){
     this->Axis_2->setPoint(this->Axis_1->position());
 
 if (axis1OnMax && axis2OnMax && (!xOnMax)) {  
-      Serial.println("ENTROU X");
+      //Serial.println("ENTROU X");
       this->Axis_1->resetMax();
       this->Axis_1->stop();
       axis2OnMax= true;
@@ -150,7 +150,7 @@ if (axis1OnMax && axis2OnMax && (!xOnMax)) {
     }
 
     if (axis3OnMax && (!zOnMax)) {
-      Serial.println("ENTROU Z");
+      //Serial.println("ENTROU Z");
       this->Axis_3->resetMax();
       this->Axis_3->stop();
       zOnMax = true;
@@ -162,7 +162,7 @@ if (axis1OnMax && axis2OnMax && (!xOnMax)) {
 
     if (xOnMax && zOnMax) {
       going = false;
-      Serial.println("going max no more");
+      //Serial.println("going max no more");
   }
 }
   delay(100);
