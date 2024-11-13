@@ -59,8 +59,8 @@
 #define B_pin_slave_X 23 // White cable
 
 // X BTS
-#define R_pin_master_X 26 // L Bts  
-#define L_pin_master_X 27 // R Bts
+#define R_pin_master_X 27 // L Bts  
+#define L_pin_master_X 26 // R Bts
 #define R_channel_master_X 11
 #define L_channel_master_X 10
 #define pwm_master_cte 0.5 // fraction of pwm velocity
@@ -83,20 +83,18 @@
 #define chave_channel_slave_L_X 3
 
 
-
-
 // X PID Master
-#define kp_master_x  4.5
-#define ki_master_x  0.05
-#define kd_master_x  60
+#define kp_master_x  5.5            //3.7
+#define ki_master_x  0.001           //0.001 ficou bom
+#define kd_master_x  2.5            
 #define i_saturation_master_x 1000
 
 
 // X PID Slave 
 // aumentar kp para diminuir o tempo de resposta
-#define kp_slave_x  6.8
-#define ki_slave_x  0.03
-#define kd_slave_x  60
+#define kp_slave_x  8.9            //10.7
+#define ki_slave_x  0.01            //0.01
+#define kd_slave_x  1.8
 #define i_saturation_slave_x 1000 // Diminuir saturação para ser mais sensivel ao erro
 
 
@@ -113,22 +111,22 @@
 #define B_pin_Z 19 // white cable
 
 // Z BTS 
-#define R_pin_Z 17 // R bts
-#define L_pin_Z 18 // L bts
+#define R_pin_Z 18 // R bts
+#define L_pin_Z 17 // L bts
 #define R_channel_Z 7
 #define L_channel_Z 6
 #define pwm_cte_Z 0.5 // fraction of pwm velocity
 
 // Z Chave
-#define chave_L_Z 34
-#define chave_R_Z 35
+#define chave_L_Z 35
+#define chave_R_Z 34
 #define chave_channel_R_Z 5
 #define chave_channel_L_Z 4
 
 // Z PID 
-#define kp_z 3.2
-#define ki_z 0.01
-#define kd_z 8
+#define kp_z 1.4
+#define ki_z 0.005
+#define kd_z 0.01
 #define i_saturation_z 1000
 
 
@@ -136,7 +134,7 @@
 
 
 // DELAY TIME
-#define DELAY_EXTEND 2000
+#define DELAY_EXTEND 1000
 #define DELAY_CONTRACT 1000
 // Y Bomba 
 #define bomba_pin 32//IN2

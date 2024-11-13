@@ -1,3 +1,6 @@
+unsigned long previousMillis1 = 0;
+const long interval1 = 25;
+
 // Header file which contain Pin, constanst, states and etc...
 #include "config.hpp"
 
@@ -72,7 +75,7 @@ Controller *Golgi_bot;
 SerialCommunication* comu;
 #include <string>
 #include <cstring>
-int pos_x[X_max_index]={85,225,364,645};
+int pos_x[X_max_index]={100,200,300,645};
 int pos_z[Z_max_index]={55,190,305};
 double X_pos;
 double Z_pos;
@@ -87,7 +90,8 @@ char STATE = 0 ;
 void setup() {
    
   //Serial Comunication
-  Serial.begin (SERIAL_VEL);
+  Serial.begin(SERIAL_VEL);
+  delay(100);
 
   //Chave fim de curso
 
@@ -161,13 +165,20 @@ void setup() {
   Golgi_bot->reset_Y(DELAY_CONTRACT);
 
 
-  //int sempre = 1;
-  //while (sempre = 1) {
-    //Serial.println(encoder_master_X->getPosition());
-    //BTS_master_X->Set_R(125);
-    //BTS_slave_X->Set_R(125);
-    //Serial.println(encoder_master_X->getPosition());
-  //}
+  // int sempre = 1;
+  // while (sempre = 1) {
+  //   //Serial.println(encoder_master_X->getPosition());
+  //   BTS_master_X->Set_R(125); //
+  //   //BTS_master_X->Set_L(125);
+  //   delay(2); //
+  //   Axis_slave_X->setGoal(Axis_master_X->position());
+  //   //Serial.println(Axis_slave_X->getOutput());
+  //   // Serial.println(Axis_master_X->position()); //
+  //   Axis_slave_X->move(); //
+  //   //int output1 = 125;
+  //   // BTS_slave_X->Set_R(125);
+  //   //Serial.println(encoder_master_X->getPosition());
+  // }
 
 
   Golgi_bot->go_origin(true, true);
@@ -180,9 +191,10 @@ void setup() {
 }
 
 void loop() {
+  unsigned long currentMillis1 = millis();
   switch(STATE) {
       case STAND_BY :
-      delay(4000);
+      delay(3000);
         // Recive Set point
         read_setpoint();
         return;
@@ -190,6 +202,18 @@ void loop() {
         //Moves Controller
         Golgi_bot->move();
         Axis_slave_X->setGoal(Axis_master_X->position());
+
+        //   if (currentMillis1 - previousMillis1 >= interval1) {
+        //   previousMillis1 = currentMillis1;
+
+        //   Serial.println(Axis_z->getOutput());
+        //   // Serial.print(setPoint_X);
+        //   // Serial.print(" , ");
+        //   //Serial.print(Axis_master_X->position());
+        //   //Serial.print(" , ");
+        //   //Serial.println(Axis_slave_X->position()); // Plotts the PID response
+        // }
+
         //Code does not work without this delay (?)
         delay(2);
         check_position();
@@ -238,8 +262,8 @@ void read_setpoint(){
   //Serial.println(X_pos);      
   //Serial.print("Z goal:");
   //Serial.println(Z_pos);
-  //X_pos = 645;
-  //Z_pos = 305;
+  //X_pos = 382;                   //382
+  //Z_pos = 365;                   //365
   Golgi_bot->setGoal(X_pos, X_pos, Z_pos);
 
 

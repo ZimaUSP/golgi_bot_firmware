@@ -41,6 +41,8 @@ void Controller::get_medicine(int DELAY_EX, int DELAY_CON){
   this->Bomba_Y->turn_on();
   this->Atuador_Y->Extend();
   delay(DELAY_EX);
+  this->Atuador_Y->Stop();
+  delay(1000);
   this->Atuador_Y->Contract();
   delay(DELAY_CON);
   this->Atuador_Y->Stop();
@@ -48,6 +50,7 @@ void Controller::get_medicine(int DELAY_EX, int DELAY_CON){
 
 void Controller::drop_medicine(){
   this->go_origin(true,true);
+  delay(1000);
   this->Bomba_Y->turn_off();
   this->reset_PID();
 }
@@ -63,13 +66,10 @@ void Controller::go_origin(bool axis1,bool axis2){
   //Serial.println("going origin");
 
   while (going) {
+
     axis1OnOrigin = this->Axis_1->onOrigin();
     axis2OnOrigin = this->Axis_2->onOrigin();
     axis3OnOrigin = this->Axis_3->onOrigin();
-  
-
-    //Serial.println((String)"ENcoder 1 " + this->Axis_1->position());                           //os encoders n estão com a mesma distância
-    //Serial.println((String)"ENcoder 2 " + this->Axis_2->position());
 
     this->Axis_3->go_R();
 
@@ -86,12 +86,11 @@ void Controller::go_origin(bool axis1,bool axis2){
       axis1OnOrigin = true;
 
       xOnOrigin = true;
-      delay(10);
     } else if (xOnOrigin == false) {
       this->Axis_1->go_R();
       this->Axis_2->setPoint((this->Axis_1->position()));
-      this->Axis_2->move();
       delay(2);
+      this->Axis_2->move();
     } else {
       delay(1);                           // só para pegar possíveis excessões
     }
@@ -101,15 +100,16 @@ void Controller::go_origin(bool axis1,bool axis2){
       this->Axis_3->resetOrigin();
       this->Axis_3->stop();
       zOnOrigin = true;
-      delay(10);
     }
 
     if (xOnOrigin && zOnOrigin) {
       going = false;
+      this->Axis_1->stop();
+      this->Axis_2->stop();
+      this->Axis_3->stop();
     }
   }
-  Serial.println("going origin no more");
-  delay(100);
+  //Serial.println("going origin no more");
 }
 
 void Controller::go_max(bool axis1,bool axis2, bool axis3){

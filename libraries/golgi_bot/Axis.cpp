@@ -12,6 +12,8 @@
 
 #include "Axis.hpp"
 
+//unsigned long previous_millis = 0;
+//const long interval = 25;
 
 /*****************************************
  * Class Methods Bodies Definitions
@@ -67,17 +69,30 @@ void Axis::move(){
   
   this->output=(this->Pid->computePID(this->encoder->getPosition(),this->setpoint,this->tolerance*5));
   //Serial.print("output");
-  //Serial.println(this->output);
+  //unsigned long current_millis = millis();
+
+  //if (current_millis - previous_millis >= interval) {
+    //previous_millis = current_millis;
+    //Serial.println(output);
+  //}
+
   if (this->debug)
     {
       Serial.print("output:");
-      Serial.println(output);
+      //Serial.println(output);
     }
   if (output < 0) {
     if (output < -(this->MAX_PWM)*this->pwm_cte) {
       output = -(this->MAX_PWM)*this->pwm_cte;
+      //if (current_millis - previous_millis >= interval) {
+        //previous_millis = current_millis;
+        //Serial.print("OUTPUT:");
+        //Serial.println(output);
+      //}
     } 
     this->output = -output;
+    // Serial.print("OUTPUT:");
+    //Serial.println(output);
     this->BTS->Set_R(output);
     
     return;
@@ -85,7 +100,12 @@ void Axis::move(){
     
     if (output > (this->MAX_PWM)*this->pwm_cte) {
       output = (this->MAX_PWM)*this->pwm_cte;
+      //if (current_millis - previous_millis >= interval) {
+        //previous_millis = current_millis;
+        // Serial.print("OUTPUT:");
+      //}
     }
+    //Serial.println(output);
     this->BTS->Set_L(output);
     
     return;
@@ -165,7 +185,8 @@ void Axis::resetOrigin() {
 }
 
 void Axis::resetMax() {
-  this->Max_pos = this->encoder->getPosition();
+  this->Max_pos = (this->encoder->getPosition() - 4);               //minus 4 cause sometimes it can't notice it is in the end
+  Serial.println(Max_pos);
 }
 void Axis::setMax(int max){
   this->Max_pos = max;

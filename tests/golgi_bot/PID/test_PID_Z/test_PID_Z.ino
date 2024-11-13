@@ -27,6 +27,16 @@ PID *PID_Z;
 //Count MAX
 int MAX_PULSES_Z =0;
 
+// EIXO Y 
+
+// Bomba axis 
+#include "Bomba.hpp"
+Bomba *Bomba_Y;
+
+// atuador axis 
+#include "Atuador.hpp"
+Atuador *Atuador_Y;
+
 
 //Serial comunication
 #include "serial_communication.hpp"
@@ -58,7 +68,7 @@ void setup() {
 
   // Ponte H
 
-  BTS_Z= new H_bridge_controller(R_pin_Z, L_pin_Z, PWM_frequency_channel, PWM_resolution_channel, R_channel_Z, L_channel_Z);      //esses canais talvez deem problema
+  BTS_Z= new H_bridge_controller(R_pin_Z, L_pin_Z, PWM_frequency_channel, PWM_resolution_channel, R_channel_Z, L_channel_Z);    
   BTS_Z->init();
 
   // PID
@@ -71,6 +81,17 @@ void setup() {
   // Creating Axis
   Axis_z= new Axis(encoder_Z, BTS_Z, endstop_R_Z, endstop_L_Z, PID_Z, Z_MAX_VEL, PWM_resolution_channel, Z_tolerance, pwm_cte_Z, false);
 
+  // Atuador
+  Atuador_Y= new Atuador(Extend_pin,Contract_pin);
+  Atuador_Y->init();
+  Atuador_Y->Contract();
+  delay(DELAY_EXTEND);
+  Atuador_Y->Stop();
+
+  // Bomba
+  Bomba_Y= new Bomba(bomba_pin);
+  Bomba_Y->init();
+
 
   // Não se mexe se começar no max
   // Testar se eu começar no meio da barra a origem se torna onde começou, ou se é mesmo na origem
@@ -81,9 +102,11 @@ void setup() {
     //Serial.println("AA");
   //}
 
-  //Axis_z->go_origin();
-  //Axis_z->go_max();
-  //Axis_z->go_origin();
+  Bomba_Y->turn_off();
+
+  Axis_z->go_origin();
+  Axis_z->go_max();
+  Axis_z->go_origin();
 }
 
 void loop() {
