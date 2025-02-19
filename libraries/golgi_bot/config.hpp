@@ -67,9 +67,9 @@
 
 #define R_pin_slave_X 16 // pin
 #define L_pin_slave_X 12 // pin
-#define R_channel_slave_X 15                                  //Checkar depois se está funcionando, antes estava inertido
+#define R_channel_slave_X 15                              
 #define L_channel_slave_X 14
-#define pwm_slave_cte 0.5              // should be 0.75
+#define pwm_slave_cte 0.5          
 
 // X CHAVE
 #define chave_master_R_X 39
@@ -84,17 +84,17 @@
 
 
 // X PID Master
-#define kp_master_x  5.5            //3.7
-#define ki_master_x  0.001           //0.001 ficou bom
-#define kd_master_x  2.5            
+#define kp_master_x  8.4         
+#define ki_master_x  0.05           
+#define kd_master_x  60            
 #define i_saturation_master_x 1000
 
 
 // X PID Slave 
 // aumentar kp para diminuir o tempo de resposta
-#define kp_slave_x  8.9            //10.7
-#define ki_slave_x  0.01            //0.01
-#define kd_slave_x  1.8
+#define kp_slave_x 13.8            
+#define ki_slave_x 0.05            
+#define kd_slave_x 60
 #define i_saturation_slave_x 1000 // Diminuir saturação para ser mais sensivel ao erro
 
 
@@ -103,7 +103,7 @@
 #define Z_MAX_VEL 0.5
 #define Z_MAX_VEL 0.5
 #define Z_size 963
-#define Z_tolerance 4
+#define Z_tolerance 10
 #define Z_max_index 3
 
 // Z Encoder 
@@ -124,7 +124,7 @@
 #define chave_channel_L_Z 4
 
 // Z PID 
-#define kp_z 1.4
+#define kp_z 1.2
 #define ki_z 0.005
 #define kd_z 0.01
 #define i_saturation_z 1000
@@ -142,6 +142,23 @@
 // Y Atuador
 #define Extend_pin 25 //IN4
 #define Contract_pin 33 //IN3
+
+// Sliding mode controller parameters
+#define Elast_coef_param 2.5   
+#define Torque_coef_param 0.27301136
+#define Load_mass_param_master 3.2
+#define Load_mass_param_slave 5.3
+#define Load_inercia_param_master 0.0003872
+#define Load_inercia_param_slave 0.0006413
+#define Velocity_param_master 0.6
+#define Velocity_param_slave 0.5
+#define Position_param 1
+#define gama_param 0.00012098536077
+#define alpha_param 0.1
+#define radius_param 0.011
+#define Motor_resistance 8.9
+#define sampling_time_param 0.01
+
 
 #endif  // __CONFIG_HPP__
 

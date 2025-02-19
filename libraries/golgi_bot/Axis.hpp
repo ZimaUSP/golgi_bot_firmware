@@ -15,6 +15,9 @@
 #define __AXIS_HPP__
 
 #include "PID.hpp"
+#include "PID_incremental.hpp"
+#include "Fuzzy_controller.hpp"
+#include "Sliding_controller.hpp"
 #include "Encoder.hpp"
 #include "config.hpp"
 #include "H_bridge_controller.hpp"
@@ -29,7 +32,7 @@ class Axis {
         H_bridge_controller *PWM_constant;
         Chave_fim_de_curso *Chave_R;
         Chave_fim_de_curso *Chave_L;
-        PID *Pid;
+        Sliding_controller *SMC;
         int PWM_RESOLUTION;
         double output;
         double setpoint;
@@ -49,13 +52,15 @@ class Axis {
          * @param k_i Integrative constant 
          * @param k_d Derivative constant 
          */
-        Axis(Encoder *encoder, H_bridge_controller *BTS, Chave_fim_de_curso *Chave_R, Chave_fim_de_curso *Chave_L,PID *Pid, float max_vel,int PWM_RESOLUTION,float tolerance, float pwm_cte, bool debug);
+        Axis(Encoder *encoder, H_bridge_controller *BTS, Chave_fim_de_curso *Chave_R, Chave_fim_de_curso *Chave_L,Sliding_controller *SMC, float max_vel,int PWM_RESOLUTION,float tolerance, float pwm_cte, bool debug);
 
         /**
          * @brief moves axis with PID control, input position from enconder(mm)
          * 
          */
         void move();
+
+        void move_acompanhado(double output);
 
         /**
          * @brief stop Motors

@@ -1,5 +1,9 @@
 unsigned long previousMillis1 = 0;
 const long interval1 = 25;
+bool insideError = false;
+unsigned long primeira_chegada = 0;
+double initial_time =0;
+#include <chrono>
 
 // Header file which contain Pin, constanst, states and etc...
 #include "config.hpp"
@@ -37,6 +41,15 @@ Chave_fim_de_curso *endstop_slave_R_X;
 PID *PID_master_X;
 PID *PID_slave_X;
 
+PID_incremental *PIDinc_master_X;
+PID_incremental *PIDinc_slave_X;
+
+Fuzzy_controller *Fuzzy_master_X;
+Fuzzy_controller *Fuzzy_slave_X;
+
+Sliding_controller *SMC_master_X;
+Sliding_controller *SMC_slave_X;
+
 // EIXO Z
 
 Axis *Axis_z;
@@ -54,6 +67,11 @@ Chave_fim_de_curso *endstop_R_Z;
 //PID Z axis constants
 PID *PID_Z; 
 
+PID_incremental *PIDinc_Z;
+
+Fuzzy_controller *Fuzzy_Z;
+
+Sliding_controller *SMC_Z;
 
 // EIXO Y 
 
@@ -75,8 +93,8 @@ Controller *Golgi_bot;
 SerialCommunication* comu;
 #include <string>
 #include <cstring>
-int pos_x[X_max_index]={100,200,300,645};
-int pos_z[Z_max_index]={55,190,305};
+int pos_x[X_max_index]={100,200,400,600};
+int pos_z[Z_max_index]={55,120,150};
 double X_pos;
 double Z_pos;
 int counter = 0;
@@ -152,11 +170,30 @@ void setup() {
   
   PID_Z = new PID(kp_z,ki_z,kd_z,i_saturation_z);
 
+  // PID incremental       teste
+
+  PIDinc_master_X = new PID_incremental(80, 3.2, 10, 0.001, 0.01);
+  PIDinc_slave_X = new PID_incremental(80, 18.2, 2, 0.001, 0.01);         //0.001  
+
+  PIDinc_Z = new PID_incremental(80, 1.3, 100, 0.001, 0.01);
+
+  // Fuzzy control
+
+  Fuzzy_master_X = new Fuzzy_controller(0.01);
+  Fuzzy_slave_X = new Fuzzy_controller(0.01);
+  Fuzzy_Z = new Fuzzy_controller(0.01);
+
+  // Sliding mode control
+
+  SMC_master_X = new Sliding_controller(Elast_coef_param, Torque_coef_param, Load_mass_param_master, Load_inercia_param_master, Velocity_param_master, 1, gama_param, alpha_param, radius_param, 15.9, sampling_time_param);
+  SMC_slave_X = new Sliding_controller(Elast_coef_param, Torque_coef_param, Load_mass_param_slave, Load_inercia_param_slave, Velocity_param_slave, 1, gama_param, 0.1, radius_param, 15.7, sampling_time_param);
+  SMC_Z = new Sliding_controller(Elast_coef_param, Torque_coef_param, Load_mass_param_master, Load_inercia_param_master, Velocity_param_master, 1, gama_param, alpha_param, radius_param, Motor_resistance, sampling_time_param);
+
   //Creating Axis
-  Axis_master_X = new Axis(encoder_master_X, BTS_master_X, endstop_master_R_X, endstop_master_L_X, PID_master_X, X_master_MAX_VEL, PWM_resolution_channel, X_master_tolerance, pwm_master_cte, false);
-  Axis_slave_X = new Axis(encoder_slave_X, BTS_slave_X, endstop_slave_R_X, endstop_slave_L_X, PID_slave_X, X_slave_MAX_VEL, PWM_resolution_channel, X_slave_tolerance, pwm_slave_cte, false);
+  Axis_master_X = new Axis(encoder_master_X, BTS_master_X, endstop_master_R_X, endstop_master_L_X, SMC_master_X, X_master_MAX_VEL, PWM_resolution_channel, 1.5, pwm_master_cte, false);
+  Axis_slave_X = new Axis(encoder_slave_X, BTS_slave_X, endstop_slave_R_X, endstop_slave_L_X, SMC_slave_X, X_slave_MAX_VEL, PWM_resolution_channel, 1.5, pwm_slave_cte, false);
   
-  Axis_z= new Axis(encoder_Z, BTS_Z, endstop_R_Z, endstop_L_Z, PID_Z, Z_MAX_VEL, PWM_resolution_channel, Z_tolerance, pwm_cte_Z, false);
+  Axis_z= new Axis(encoder_Z, BTS_Z, endstop_R_Z, endstop_L_Z, SMC_Z, Z_MAX_VEL, PWM_resolution_channel, Z_tolerance, pwm_cte_Z, false);
 
   //Creating Controller
   Golgi_bot = new Controller(Axis_master_X, Axis_slave_X, Axis_z, Bomba_Y, Atuador_Y);
@@ -168,15 +205,21 @@ void setup() {
   // int sempre = 1;
   // while (sempre = 1) {
   //   //Serial.println(encoder_master_X->getPosition());
-  //   BTS_master_X->Set_R(125); //
-  //   //BTS_master_X->Set_L(125);
-  //   delay(2); //
-  //   Axis_slave_X->setGoal(Axis_master_X->position());
+  //   // BTS_Z->Set_L(127); 
+  //   // Serial.println("AAAAAAAAAAAAAA");
+  //   Axis_z->move()
+  //   // Golgi_bot->go_origin(true, true);
+  //   // delay(2000);
+  //   // Golgi_bot->go_max(true, true, true);      // test if it needs to go max, or if going once to orign works
+  //   // delay(2000);
+  //   // Golgi_bot->go_origin(true, true);
+  //   // delay(2000);
+  //   // BTS_slave_X->Set_R(127);
+  //   // Axis_slave_X->setPoint(Axis_master_X->position());
   //   //Serial.println(Axis_slave_X->getOutput());
   //   // Serial.println(Axis_master_X->position()); //
-  //   Axis_slave_X->move(); //
+  //   // Axis_slave_X->move(); //
   //   //int output1 = 125;
-  //   // BTS_slave_X->Set_R(125);
   //   //Serial.println(encoder_master_X->getPosition());
   // }
 
@@ -186,7 +229,7 @@ void setup() {
   Golgi_bot->go_origin(true, true);
 
 
-  Serial.println("STAND-BY");
+  //Serial.println("STAND-BY");
 
 }
 
@@ -197,31 +240,52 @@ void loop() {
       delay(3000);
         // Recive Set point
         read_setpoint();
+        initial_time = millis();
+        Serial.println(initial_time);
         return;
       case GOING :
         //Moves Controller
-        Golgi_bot->move();
-        Axis_slave_X->setGoal(Axis_master_X->position());
+        // Golgi_bot->move();
+        Axis_master_X->move();        
+        // Axis_slave_X->setGoal(Axis_master_X->position());
+        // delay(2);
 
-        //   if (currentMillis1 - previousMillis1 >= interval1) {
-        //   previousMillis1 = currentMillis1;
+        Axis_slave_X->move();
+        // Axis_z->move();
+        if (Axis_master_X->getOutput() <= 40 && !insideError) {     
+          primeira_chegada = millis();
+          // Serial.println("entrou");
+          // Serial.println(primeira_chegada);
+          insideError = true;
+        }
 
-        //   Serial.println(Axis_z->getOutput());
+          if (currentMillis1 - previousMillis1 >= interval1) {
+          previousMillis1 = currentMillis1;
+
+        //   // Serial.println(Axis_z->getOutput());
         //   // Serial.print(setPoint_X);
         //   // Serial.print(" , ");
-        //   //Serial.print(Axis_master_X->position());
-        //   //Serial.print(" , ");
-        //   //Serial.println(Axis_slave_X->position()); // Plotts the PID response
-        // }
+        //   //Serial.println(Axis_master_X->getOutput() );
+          Serial.print(Axis_master_X->position());
+          Serial.print(", ");
+          Serial.print(Axis_slave_X->position()); // Plotts the PID response
+        //   // Serial.print(SMC_master_X->getVelocity(), 3);
+          Serial.print(", ");
+          Serial.println(millis());
+        //   // Serial.println(SMC_slave_X->getVelocity(), 3); // Plotts the output response
+        }
 
-        //Code does not work without this delay (?)
-        delay(2);
         check_position();
         return;
       case GETING_MEDICINE :
         Golgi_bot->get_medicine(DELAY_EXTEND,DELAY_CONTRACT);
+        Serial.print(Axis_master_X->position());
+        Serial.print(" , ");
+        Serial.print(Axis_slave_X->position()); 
+        Serial.print(", ");
+        Serial.println(millis());
         STATE=DROPING_MEDICINE;
-        Serial.println("DROPING_MEDICINE");
+        // Serial.println("DROPING_MEDICINE");
         return;
       case DROPING_MEDICINE :
         Golgi_bot->drop_medicine();
@@ -239,7 +303,7 @@ char* string_to_char(std::string str) {
 
 void read_setpoint(){
   STATE=GOING;
-  Serial.println("GOING");  
+  // Serial.println("GOING");  
   // Versão com posições sequenciais
 
   if (counter_Z == 3 && counter_X == 4) {
@@ -254,16 +318,16 @@ void read_setpoint(){
 
   Z_pos=pos_z[counter_Z];
   X_pos=pos_x[counter_X++];
-  Serial.print("counter_Z: ");
-  Serial.println(counter_Z);
-  Serial.print("counter_X: ");
-  Serial.println(counter_X);
+  // Serial.print("counter_Z: ");
+  // Serial.println(counter_Z);
+  // Serial.print("counter_X: ");
+  // Serial.println(counter_X);
   //Serial.print("X goal:");
   //Serial.println(X_pos);      
   //Serial.print("Z goal:");
   //Serial.println(Z_pos);
-  //X_pos = 382;                   //382
-  //Z_pos = 365;                   //365
+  // X_pos = 382;                   //382
+  // Z_pos = 100;                   //365
   Golgi_bot->setGoal(X_pos, X_pos, Z_pos);
 
 
@@ -290,14 +354,28 @@ void read_setpoint(){
 }
 
 void check_position(){
-  if(Golgi_bot->onGoal()){
+  if(Axis_master_X->onGoal() && Axis_slave_X->onGoal()){                      // Golgi_bot->onGoal()
     STATE=GETING_MEDICINE;
-    Serial.println("GETING_MEDICINE");
-    //Serial.print(Golgi_bot->positionPoint()[0]);
-    //Serial.print(",");
-    //Serial.println(Golgi_bot->positionPoint()[1]);
-    //Serial.print(",");
-    //Serial.println(Golgi_bot->positionPoint()[2]);
+    // // Serial.println("GETING_MEDICINE");
+    // Serial.print(Axis_master_X->position());
+    // Serial.print(" , ");
+    // Serial.println(Axis_slave_X->position()); 
+    // double error = 0;
+    // error = X_pos - Golgi_bot->positionPoint()[0];
+    // Serial.print(error);
+    // Serial.print(", ");
+    // error = X_pos - Golgi_bot->positionPoint()[1];
+    // Serial.print(error);
+    // // Serial.print(",");
+    // // // error = Z_pos - Golgi_bot->positionPoint()[2];
+    // // // Serial.println(error);
+    // unsigned long tempo_atual = millis();
+    // // // Serial.print("atual: ");
+    // // // Serial.println(tempo_atual);
+    // unsigned long duracao = (tempo_atual - primeira_chegada);
+    // Serial.print(", ");
+    // Serial.println(duracao);
+    // insideError = false;
     Golgi_bot->stop(true,true,true);
   }
 }
