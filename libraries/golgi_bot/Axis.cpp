@@ -71,7 +71,7 @@ void Axis::move(){
 
   // if (current_millis - previous_millis >= interval) {
   //   previous_millis = current_millis;
-  //   Serial.println(this->Max_pos);
+  //   Serial.println(this->output);
   // }
 
   if (this->debug)
@@ -111,20 +111,6 @@ void Axis::move(){
     
     return;
   }
-}
-
-void Axis::move_acompanhado(double output) {
-    if (output < 0) {
-
-      this->output = -output;
-      this->BTS->Set_R(output);
-
-      return;
-  } else {
-      this->BTS->Set_L(output);
-    
-      return;
-}
 }
 
 void Axis::go_origin(){

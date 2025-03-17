@@ -49,7 +49,7 @@ void Controller::get_medicine(int DELAY_EX, int DELAY_CON){
 }
 
 void Controller::drop_medicine(){
-  this->go_origin(true,true);
+  this->go_origin(true, true);
   delay(1000);
   this->Bomba_Y->turn_off();
   this->reset_PID();
@@ -108,6 +108,31 @@ void Controller::go_origin(bool axis1,bool axis2){
     }
   }
   //Serial.println("going origin no more");
+}
+
+void Controller::go_origin_suavizado(){
+  this->Axis_1->setPoint(-30);
+  this->Axis_2->setPoint(-30);
+  this->Axis_3->setPoint(-30);
+
+  while (!(this->Axis_1->onGoal() && this->Axis_2->onGoal() && this->Axis_3->onGoal())) {
+    if (this->Axis_1->onGoal() && this->Axis_2->onGoal()) {
+      this->Axis_1->stop();
+      this->Axis_2->stop();
+      this->Axis_1->resetOrigin();
+      this->Axis_2->resetOrigin();
+    } else {
+      this->Axis_1->move();
+      this->Axis_2->move();
+    } 
+    
+    if (this->Axis_3->onGoal()) {
+      this->Axis_3->stop();
+      this->Axis_3->resetOrigin();
+    } else {
+      this->Axis_3->move();
+    }
+  }
 }
 
 void Controller::go_max(bool axis1,bool axis2, bool axis3){

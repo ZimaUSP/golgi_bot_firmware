@@ -15,14 +15,24 @@
 
 #include <Arduino.h>
 #include <Fuzzy.h>
+#include <array>
 
 class Fuzzy_controller {
     protected:
         double sample_time;               // Sampling time
         double prev_time;
+        double prev_time2;
         double prev_error;
         double prev_out;
 
+        // Member Functions Values
+        std::array<double, 4> error_NH;
+        std::array<double, 4> error_N;
+        std::array<double, 4> error_Z;
+        std::array<double, 4> error_P;
+        std::array<double, 4> error_PH;
+
+        // Main controller
         Fuzzy *fuzzy;
 
         // Fuzzy Inputs: Error
@@ -125,8 +135,9 @@ class Fuzzy_controller {
          * @brief Default constructor of a Fuzzy_controler base class
          * 
          * @param sample_time time between executions
+         * @param correction_coeficient constant to match the master and slave motors
          */
-        Fuzzy_controller(double sample_time);
+        Fuzzy_controller(double sample_time, std::array<double, 4> error_NH, std::array<double, 4> error_N, std::array<double, 4> error_Z, std::array<double, 4> error_P, std::array<double, 4> error_PH);
 
         /**
          * @brief Computes output value
@@ -135,6 +146,11 @@ class Fuzzy_controller {
          * @param setpoint desired position
          */
         double CalculateOutput(double pos, double setpoint);
+
+        /** 
+        * @brief Resets param
+        */
+       void ResetFuzzy();
 
 };
 

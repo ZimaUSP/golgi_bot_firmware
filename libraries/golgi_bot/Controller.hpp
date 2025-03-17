@@ -100,6 +100,8 @@ class Controller {
          */
         void go_origin(bool axis1,bool axis2);
 
+        void go_origin_suavizado();
+
         /**
          * @brief go to max on true axis
          * 

@@ -60,8 +60,6 @@ class Axis {
          */
         void move();
 
-        void move_acompanhado(double output);
-
         /**
          * @brief stop Motors
          * 

@@ -1,6 +1,8 @@
 #ifndef __CONFIG_HPP__
 #define __CONFIG_HPP__
 
+#include <array>
+
 // Comum used
 #define Nominal_pulses 360
 #define pitch_pulley_master 44
@@ -103,7 +105,7 @@
 #define Z_MAX_VEL 0.5
 #define Z_MAX_VEL 0.5
 #define Z_size 963
-#define Z_tolerance 10
+#define Z_tolerance 2
 #define Z_max_index 3
 
 // Z Encoder 
@@ -158,6 +160,8 @@
 #define radius_param 0.011
 #define Motor_resistance 8.9
 #define sampling_time_param 0.01
+
+// Fuzzy controller parameters
 
 
 #endif  // __CONFIG_HPP__
