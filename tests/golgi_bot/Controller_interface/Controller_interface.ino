@@ -260,7 +260,7 @@ void loop() {
   unsigned long currentMillis1 = millis();
   switch(STATE) {
       case STAND_BY :
-        delay(3000);
+        delay(100);
         // Recive Set point
         Serial.println("STAND-BY");
         read_setpoint();
