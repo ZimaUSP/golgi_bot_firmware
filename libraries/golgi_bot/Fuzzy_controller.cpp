@@ -1,5 +1,5 @@
 /**
- * @file  Controle_Fuzzy.cpp
+ * @file  Fuzzy_controller.cpp
  *
  * @brief Fuzzy logic controler class
  *
@@ -17,42 +17,39 @@
  * Class Methods Bodies Definitions
  *****************************************/
 
-Fuzzy_controller::Fuzzy_controller(double sample_time, std::array<double, 4> error_NH, std::array<double, 4> error_N, std::array<double, 4> error_Z, std::array<double, 4> error_P, std::array<double, 4> error_PH) {
+Fuzzy_controller::Fuzzy_controller(double sample_time,  Fuzzy_member_param member_function_param) {
     this->sample_time = sample_time;
     this->prev_time = 0;
     this->prev_time2 = 0;
-    this->prev_error = 0;
-    this->error_NH = error_NH;
-    this->error_N = error_N;
-    this->error_Z = error_Z;
-    this->error_P = error_P;
-    this->error_PH = error_PH;
+    this->prev_error = {0};
+    this->error_vel = 0;
+    this->member_function_param = member_function_param;
 
     this->fuzzy = new Fuzzy();
 
     // Fuzzy Inputs
-    this->error_negative_high = new FuzzySet(error_NH[0], error_NH[1], error_NH[2], error_NH[3]); // -600, -600, -300, -150
-    this->error_negative      = new FuzzySet(error_N[0], error_N[1], error_N[2], error_N[3]);     // -200, -45, -45, 0       
-    this->error_zero          = new FuzzySet(error_Z[0], error_Z[1], error_Z[2], error_Z[3]);     // -50, 0, 0, 50           
-    this->error_positive      = new FuzzySet(error_P[0], error_P[1], error_P[2], error_P[3]);     // 0, 45, 45, 200            
-    this->error_positive_high = new FuzzySet(error_PH[0], error_PH[1], error_PH[2], error_PH[3]); // 150, 300, 600, 600           
+    this->error_negative_high = new FuzzySet(member_function_param.error_NH[0], member_function_param.error_NH[1], member_function_param.error_NH[2], member_function_param.error_NH[3]); // -600, -600, -300, -150
+    this->error_negative      = new FuzzySet(member_function_param.error_N[0], member_function_param.error_N[1], member_function_param.error_N[2], member_function_param.error_N[3]);     // -200, -45, -45, 0       
+    this->error_zero          = new FuzzySet(member_function_param.error_Z[0], member_function_param.error_Z[1], member_function_param.error_Z[2], member_function_param.error_Z[3]);     // -50, 0, 0, 50           
+    this->error_positive      = new FuzzySet(member_function_param.error_P[0], member_function_param.error_P[1], member_function_param.error_P[2], member_function_param.error_P[3]);     // 0, 45, 45, 200            
+    this->error_positive_high = new FuzzySet(member_function_param.error_PH[0], member_function_param.error_PH[1], member_function_param.error_PH[2], member_function_param.error_PH[3]); // 150, 300, 600, 600           
 
-    this->velocity_negative_high = new FuzzySet(-60, -60, -35, -20);
-    this->velocity_negative      = new FuzzySet(-40, -20, -20, 0);
-    this->velocity_zero          = new FuzzySet(-20, 0, 0, 20);
-    this->velocity_positive      = new FuzzySet(0, 20, 20, 40);
-    this->velocity_positive_high = new FuzzySet(20, 35, 60, 60);
+    this->velocity_negative_high = new FuzzySet(member_function_param.error_vel_NH[0], member_function_param.error_vel_NH[1], member_function_param.error_vel_NH[2], member_function_param.error_vel_NH[3]); 
+    this->velocity_negative      = new FuzzySet(member_function_param.error_vel_N[0], member_function_param.error_vel_N[1], member_function_param.error_vel_N[2], member_function_param.error_vel_N[3]);   
+    this->velocity_zero          = new FuzzySet(member_function_param.error_vel_Z[0], member_function_param.error_vel_Z[1], member_function_param.error_vel_Z[2], member_function_param.error_vel_Z[3]);      
+    this->velocity_positive      = new FuzzySet(member_function_param.error_vel_P[0], member_function_param.error_vel_P[1], member_function_param.error_vel_P[2], member_function_param.error_vel_P[3]);       
+    this->velocity_positive_high = new FuzzySet(member_function_param.error_vel_PH[0], member_function_param.error_vel_PH[1], member_function_param.error_vel_PH[2], member_function_param.error_vel_PH[3]);       
 
     // Fuzzy Outputs
-    this->PWM_NVH = new FuzzySet(-200, -200, -200, -194); 
-    this->PWM_NH  = new FuzzySet(-200, -194, -194, -116);  
-    this->PWM_NM  = new FuzzySet(-194, -116, -116, -10);   
-    this->PWM_NS  = new FuzzySet(-116, -40, -40, 0);          
-    this->PWM_Z   = new FuzzySet(-100, 0, 0, 100);           
-    this->PWM_PS  = new FuzzySet(0, 40, 40, 116);        
-    this->PWM_PM  = new FuzzySet(10, 116, 116, 194);         
-    this->PWM_PH  = new FuzzySet(116, 194, 194, 200);      
-    this->PWM_PVH = new FuzzySet(194, 200, 200, 200); 
+    this->PWM_NVH = new FuzzySet(member_function_param.PWM_NVH[0], member_function_param.PWM_NH[1], member_function_param.PWM_NH[2], member_function_param.PWM_NH[3]); 
+    this->PWM_NH  = new FuzzySet(member_function_param.PWM_NH[0], member_function_param.PWM_NH[1], member_function_param.PWM_NH[2], member_function_param.PWM_NH[3]);  
+    this->PWM_NM  = new FuzzySet(member_function_param.PWM_NM[0], member_function_param.PWM_NM[1], member_function_param.PWM_NM[2], member_function_param.PWM_NM[3]);  
+    this->PWM_NS  = new FuzzySet(member_function_param.PWM_NS[0], member_function_param.PWM_NS[1], member_function_param.PWM_NS[2], member_function_param.PWM_NS[3]);     
+    this->PWM_Z   = new FuzzySet(member_function_param.PWM_Z[0], member_function_param.PWM_Z[1], member_function_param.PWM_Z[2], member_function_param.PWM_Z[3]);    
+    this->PWM_PS  = new FuzzySet(member_function_param.PWM_PS[0], member_function_param.PWM_PS[1], member_function_param.PWM_PS[2], member_function_param.PWM_PS[3]);   
+    this->PWM_PM  = new FuzzySet(member_function_param.PWM_PM[0], member_function_param.PWM_PM[1], member_function_param.PWM_PM[2], member_function_param.PWM_PM[3]);     
+    this->PWM_PH  = new FuzzySet(member_function_param.PWM_PH[0], member_function_param.PWM_PH[1], member_function_param.PWM_PH[2], member_function_param.PWM_PH[3]);   
+    this->PWM_PVH = new FuzzySet(member_function_param.PWM_PVH[0], member_function_param.PWM_PVH[1], member_function_param.PWM_PVH[2], member_function_param.PWM_PVH[3]);     
 
     // Fuzzy Inputs
     this->distance = new FuzzyInput(1);
@@ -157,28 +154,28 @@ Fuzzy_controller::Fuzzy_controller(double sample_time, std::array<double, 4> err
     this->thenRisPWM_PH->addOutput(this->PWM_PH);
     this->thenRisPWM_PVH->addOutput(this->PWM_PVH);
 
-    this->fuzzyRule1  = new FuzzyRule(1, ifErrorNegativeHighAndVelocityNegativeHigh, thenRisPWM_NVH);  
-    this->fuzzyRule2  = new FuzzyRule(2, ifErrorNegativeHighAndVelocityNegative, thenRisPWM_NVH);
-    this->fuzzyRule3  = new FuzzyRule(3, ifErrorNegativeHighAndVelocityZero, thenRisPWM_NVH);
-    this->fuzzyRule4  = new FuzzyRule(4, ifErrorNegativeHighAndVelocityPositive, thenRisPWM_NH);
-    this->fuzzyRule5  = new FuzzyRule(5, ifErrorNegativeHighAndVelocityPositiveHigh, thenRisPWM_NM);
-    this->fuzzyRule6  = new FuzzyRule(6, ifErrorNegativeAndVelocityNegativeHigh, thenRisPWM_NVH);
-    this->fuzzyRule7  = new FuzzyRule(7, ifErrorNegativeAndVelocityNegative, thenRisPWM_NVH);
-    this->fuzzyRule8  = new FuzzyRule(8, ifErrorNegativeAndVelocityZero, thenRisPWM_NH);
-    this->fuzzyRule9  = new FuzzyRule(9, ifErrorNegativeAndVelocityPositive, thenRisPWM_NM);
-    this->fuzzyRule10 = new FuzzyRule(10, ifErrorNegativeAndVelocityPositiveHigh, thenRisPWM_NS);
-    this->fuzzyRule11 = new FuzzyRule(11, ifErrorZeroAndVelocityNegativeHigh, thenRisPWM_NM);
-    this->fuzzyRule12 = new FuzzyRule(12, ifErrorZeroAndVelocityNegative, thenRisPWM_NS);
+    this->fuzzyRule1  = new FuzzyRule(1,  ifErrorNegativeHighAndVelocityNegativeHigh, thenRisPWM_NVH);
+    this->fuzzyRule2  = new FuzzyRule(2,  ifErrorNegativeHighAndVelocityNegative, thenRisPWM_NVH);
+    this->fuzzyRule3  = new FuzzyRule(3,  ifErrorNegativeHighAndVelocityZero, thenRisPWM_NVH);
+    this->fuzzyRule4  = new FuzzyRule(4,  ifErrorNegativeHighAndVelocityPositive, thenRisPWM_NH);      
+    this->fuzzyRule5  = new FuzzyRule(5,  ifErrorNegativeHighAndVelocityPositiveHigh, thenRisPWM_NH); 
+    this->fuzzyRule6  = new FuzzyRule(6,  ifErrorNegativeAndVelocityNegativeHigh, thenRisPWM_NVH); 
+    this->fuzzyRule7  = new FuzzyRule(7,  ifErrorNegativeAndVelocityNegative, thenRisPWM_NVH);    
+    this->fuzzyRule8  = new FuzzyRule(8,  ifErrorNegativeAndVelocityZero, thenRisPWM_NH);      
+    this->fuzzyRule9  = new FuzzyRule(9,  ifErrorNegativeAndVelocityPositive, thenRisPWM_NM);  
+    this->fuzzyRule10 = new FuzzyRule(10, ifErrorNegativeAndVelocityPositiveHigh, thenRisPWM_NS);    
+    this->fuzzyRule11 = new FuzzyRule(11, ifErrorZeroAndVelocityNegativeHigh, thenRisPWM_NS);    
+    this->fuzzyRule12 = new FuzzyRule(12, ifErrorZeroAndVelocityNegative, thenRisPWM_NM);        
     this->fuzzyRule13 = new FuzzyRule(13, ifErrorZeroAndVelocityZero, thenRisPWM_Z);
-    this->fuzzyRule14 = new FuzzyRule(14, ifErrorZeroAndVelocityPositive, thenRisPWM_PS);
-    this->fuzzyRule15 = new FuzzyRule(15, ifErrorZeroAndVelocityPositiveHigh, thenRisPWM_PM);
+    this->fuzzyRule14 = new FuzzyRule(14, ifErrorZeroAndVelocityPositive, thenRisPWM_PM);        
+    this->fuzzyRule15 = new FuzzyRule(15, ifErrorZeroAndVelocityPositiveHigh, thenRisPWM_PS);      
     this->fuzzyRule16 = new FuzzyRule(16, ifErrorPositiveAndVelocityNegativeHigh, thenRisPWM_PS);
-    this->fuzzyRule17 = new FuzzyRule(17, ifErrorPositiveAndVelocityNegative, thenRisPWM_PM);
-    this->fuzzyRule18 = new FuzzyRule(18, ifErrorPositiveAndVelocityZero, thenRisPWM_PH);
-    this->fuzzyRule19 = new FuzzyRule(19, ifErrorPositiveAndVelocityPositive, thenRisPWM_PVH);
+    this->fuzzyRule17 = new FuzzyRule(17, ifErrorPositiveAndVelocityNegative, thenRisPWM_PM);    
+    this->fuzzyRule18 = new FuzzyRule(18, ifErrorPositiveAndVelocityZero, thenRisPWM_PM);        
+    this->fuzzyRule19 = new FuzzyRule(19, ifErrorPositiveAndVelocityPositive, thenRisPWM_PH);
     this->fuzzyRule20 = new FuzzyRule(20, ifErrorPositiveAndVelocityPositiveHigh, thenRisPWM_PVH);
-    this->fuzzyRule21 = new FuzzyRule(21, ifErrorPositiveHighAndVelocityNegativeHigh, thenRisPWM_PM);
-    this->fuzzyRule22 = new FuzzyRule(22, ifErrorPositiveHighAndVelocityNegative, thenRisPWM_PH);
+    this->fuzzyRule21 = new FuzzyRule(21, ifErrorPositiveHighAndVelocityNegativeHigh, thenRisPWM_PH);
+    this->fuzzyRule22 = new FuzzyRule(22, ifErrorPositiveHighAndVelocityNegative, thenRisPWM_PH);    
     this->fuzzyRule23 = new FuzzyRule(23, ifErrorPositiveHighAndVelocityZero, thenRisPWM_PVH);
     this->fuzzyRule24 = new FuzzyRule(24, ifErrorPositiveHighAndVelocityPositive, thenRisPWM_PVH);
     this->fuzzyRule25 = new FuzzyRule(25, ifErrorPositiveHighAndVelocityPositiveHigh, thenRisPWM_PVH);
@@ -214,7 +211,8 @@ double Fuzzy_controller::CalculateOutput(double pos, double setpoint) {
     double current_time = millis();
     if (current_time - this->prev_time >= this->sample_time * 1000) {    // * 1000 to turn from s to ms
         double error = setpoint - pos;
-        double error_velocity = (error - this->prev_error) / (current_time - this->prev_time);
+        double time = (current_time - this->prev_time) / 1000;           // error is mm and velocity is mm/s
+        double error_velocity = (error - this->prev_error[4]) / (5 * time);
 
         this->fuzzy->setInput(1, error);
         this->fuzzy->setInput(2, error_velocity);
@@ -224,20 +222,34 @@ double Fuzzy_controller::CalculateOutput(double pos, double setpoint) {
         double output = fuzzy->defuzzify(1);
         output = output;
 
-        // if (current_time - this->prev_time2 >= 40) {    // * 1000 to turn from s to ms
-        //     Serial.println(error_velocity);
+        // if (current_time - this->prev_time2 >= 40) {  
+        //     Serial.println(output);
         // }
 
         this->prev_time = current_time;
         this->prev_out = output;
+        this->prev_error[0] = error;
+
+        for (int i = 0; i < 4; i++) {
+            this->prev_error[i+1] = this->prev_error[i];
+        }
+
+        this->error_vel = error_velocity;
         return output;
     }
     return this->prev_out;
 }
 
 void Fuzzy_controller::ResetFuzzy() {
-    this->prev_error = 0;
+    this->prev_error = {0};
     this->prev_time = 0;
     this->prev_out = 0;
 }
 
+double Fuzzy_controller::getErrorVelocity() {
+    return this->error_vel;
+}
+
+double Fuzzy_controller::getOutput() {
+    return this->prev_out;
+}

@@ -13,6 +13,7 @@
 #define __SLIDING_CONTROLLER_HPP__
 
 #include "Arduino.h"
+#include <array>
 
 class Sliding_controller {
     private:
@@ -29,35 +30,15 @@ class Sliding_controller {
         double sampling_time;
         double Teq;
 
-        double prev_position;  
-        double prev_position1;
-        double prev_position2;   
-        double prev_position3;   
-        double prev_position4;           
+        std::array<double, 5> prev_position;
+        std::array<double, 5> prev_sigma;
+        std::array<double, 5> prev_w;
+        std::array<double, 5> prev_wder1;        
+        std::array<double, 5> prev_vel;        
         double prev_time;
         double prev_time2;
-        double prev_sigma;
-        double prev_sigma1;
-        double prev_sigma2;
-        double prev_sigma3;
-        double prev_sigma4;
         double prev_Dsigma;
-        double prev_w;
-        double prev_w1;
-        double prev_w2;
-        double prev_w3;
-        double prev_w4;
-        double prev_wder1;
-        double prev_wder1_1;
-        double prev_wder1_2;
-        double prev_wder1_3;
-        double prev_wder1_4;
         double prev_output;
-        double prev_vel;
-        double prev_vel1;
-        double prev_vel2;
-        double prev_vel3;
-        double prev_vel4;
         double prev_acel;
         double prev_teq;
 

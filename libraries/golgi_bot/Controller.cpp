@@ -49,7 +49,7 @@ void Controller::get_medicine(int DELAY_EX, int DELAY_CON){
 }
 
 void Controller::drop_medicine(){
-  this->go_origin(true, true);
+  this->go_origin_suavizado();          // may not reach endstop
   delay(1000);
   this->Bomba_Y->turn_off();
   this->reset_PID();
@@ -57,21 +57,18 @@ void Controller::drop_medicine(){
 
 void Controller::go_origin(bool axis1,bool axis2){
   bool going = true;
-  bool axis1OnOrigin = false; //caso axis1 seja false axis1OnMax fica true como padrão 
+  bool axis1OnOrigin = false; 
   bool axis2OnOrigin = false;
   bool axis3OnOrigin = false;
 
   bool xOnOrigin = false;
   bool zOnOrigin = false;
-  //Serial.println("going origin");
 
   while (going) {
 
     axis1OnOrigin = this->Axis_1->onOrigin();
     axis2OnOrigin = this->Axis_2->onOrigin();
     axis3OnOrigin = this->Axis_3->onOrigin();
-
-    //Serial.println(this->Axis_2->onGoal())
 
     if (axis1OnOrigin && axis2OnOrigin && (!xOnOrigin)) {  
       //Serial.println("ENTROU X");
@@ -86,12 +83,9 @@ void Controller::go_origin(bool axis1,bool axis2){
       xOnOrigin = true;
     } else if (xOnOrigin == false) {
       this->Axis_1->go_R();
-      // this->Axis_2->setPoint((this->Axis_1->position()));
-      // //delay(2);
-      // this->Axis_2->move();
       this->Axis_2->go_R();
     } else {
-      delay(1);                           // só para pegar possíveis excessões
+      delay(1);                           // get possible exceptions
     }
 
     if (axis3OnOrigin && (!zOnOrigin)) {
@@ -110,42 +104,44 @@ void Controller::go_origin(bool axis1,bool axis2){
   //Serial.println("going origin no more");
 }
 
-void Controller::go_origin_suavizado(){
-  this->Axis_1->setPoint(-30);
-  this->Axis_2->setPoint(-30);
-  this->Axis_3->setPoint(-30);
+void Controller::go_origin_suavizado(){  // doesn't reset origin
+  this->Axis_1->setPoint(0);
+  this->Axis_2->setPoint(0);
+  bool zOnMax = false;
 
-  while (!(this->Axis_1->onGoal() && this->Axis_2->onGoal() && this->Axis_3->onGoal())) {
-    if (this->Axis_1->onGoal() && this->Axis_2->onGoal()) {
+  while (!((this->Axis_1->onGoal() && this->Axis_2->onGoal()) || (this->Axis_1->onOrigin() || this->Axis_2->onOrigin()) && this->Axis_3->onOrigin())) {
+    bool axis3OnMax = this->Axis_3->onOrigin();
+
+    if ((this->Axis_1->onGoal() && this->Axis_2->onGoal()) || (this->Axis_1->onOrigin() || this->Axis_2->onOrigin())) {
       this->Axis_1->stop();
       this->Axis_2->stop();
-      this->Axis_1->resetOrigin();
-      this->Axis_2->resetOrigin();
     } else {
       this->Axis_1->move();
       this->Axis_2->move();
     } 
     
-    if (this->Axis_3->onGoal()) {
+    if (axis3OnMax && (!zOnMax)) {
       this->Axis_3->stop();
-      this->Axis_3->resetOrigin();
-    } else {
-      this->Axis_3->move();
+      zOnMax = true;
+      delay(10);
+    } else if (zOnMax == false) {
+      this->Axis_3->go_R();
     }
   }
+  this->Axis_1->stop();
+  this->Axis_2->stop();
+  this->Axis_3->stop();
 }
 
 void Controller::go_max(bool axis1,bool axis2, bool axis3){
   bool going = true;
-  bool axis1OnMax = false; //caso axis1 seja false axis1OnMax fica true como padrão 
+  bool axis1OnMax = false; 
   bool axis2OnMax = false;
   bool axis3OnMax = false;
   //Serial.println("going max");
 
   bool xOnMax = false;
   bool zOnMax = false;
-
-
 
   while (going) {
     //Serial.println("going max");
@@ -168,7 +164,7 @@ if (axis1OnMax && axis2OnMax && (!xOnMax)) {
 
       xOnMax = true;
     } else {
-      // this->Axis_2->move();
+      //this->Axis_2->move();
       //delay(2);
       this->Axis_2->go_L();
     }

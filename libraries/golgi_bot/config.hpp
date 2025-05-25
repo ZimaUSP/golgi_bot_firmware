@@ -86,19 +86,32 @@
 
 
 // X PID Master
-#define kp_master_x  8.4         
+#define kp_master_x  14.4         
 #define ki_master_x  0.05           
-#define kd_master_x  60            
+#define kd_master_x  100            
 #define i_saturation_master_x 1000
 
 
 // X PID Slave 
 // aumentar kp para diminuir o tempo de resposta
-#define kp_slave_x 13.8            
-#define ki_slave_x 0.05            
-#define kd_slave_x 60
+#define kp_slave_x 16.8            
+#define ki_slave_x 0.05           
+#define kd_slave_x 100
 #define i_saturation_slave_x 1000 // Diminuir saturação para ser mais sensivel ao erro
 
+// X PID_incremental Master
+#define N_inc_master_x  80
+#define kp_inc_master_x 3.2         
+#define ti_inc_master_x 20           
+#define td_inc_master_x 0.001           
+#define ts_inc_master_x 0.01
+
+// X PID_incremental Slave
+#define N_inc_slave_x  80
+#define kp_inc_slave_x 16.2    
+#define ti_inc_slave_x 1          
+#define td_inc_slave_x 0.001           
+#define ts_inc_slave_x 0.01
 
 /// Z axis ///
 
@@ -126,10 +139,17 @@
 #define chave_channel_L_Z 4
 
 // Z PID 
-#define kp_z 1.2
+#define kp_z 2.2
 #define ki_z 0.005
-#define kd_z 0.01
+#define kd_z 60
 #define i_saturation_z 1000
+
+// Z PID_incremental
+#define N_z  80
+#define kp_inc_z 2.3    
+#define ti_inc_z 10   
+#define td_inc_z 0.001           
+#define ts_inc_z 0.01
 
 
 /// Y axis ///
@@ -148,21 +168,21 @@
 // Sliding mode controller parameters
 #define Elast_coef_param 2.5   
 #define Torque_coef_param 0.27301136
-#define Load_mass_param_master 3.2
-#define Load_mass_param_slave 5.3
-#define Load_inercia_param_master 0.0003872
-#define Load_inercia_param_slave 0.0006413
-#define Velocity_param_master 0.6
-#define Velocity_param_slave 0.5
+#define Load_mass_param_master 3.6
+#define Load_mass_param_slave 5.0
+#define Load_inercia_param_master 0.0004356
+#define Load_inercia_param_slave 0.000605
+#define Velocity_param_master 0.4
+#define Velocity_param_slave 0.3
 #define Position_param 1
+#define Resistence_master 15.9
+#define Resistence_slave 15.7
+#define Resistence_z 10.9
 #define gama_param 0.00012098536077
 #define alpha_param 0.1
 #define radius_param 0.011
 #define Motor_resistance 8.9
 #define sampling_time_param 0.01
-
-// Fuzzy controller parameters
-
 
 #endif  // __CONFIG_HPP__
 

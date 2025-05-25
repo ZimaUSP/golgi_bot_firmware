@@ -33,27 +33,14 @@ double PID_incremental::computePID_incremental(double input, float setpoint, dou
 
   this->current_time = millis();    
 
-  if (this->current_time - this->previous_time >= this->T_s * 1000) {      // * 1000 to turn from s to ms                            
+  if (this->current_time - this->previous_time >= this->T_s * 1000) {       // * 1000 to turn from s to ms                            
     this->delta_time = (double)(this->current_time - this->previous_time);  // depois testar, essa linha n serve de nada  
 
     this->error = setpoint - input;                                     
 
     delta_up = this->K_P * (this->error - this->previous_error1);
-
     delta_ui = ((this->K_P * this->T_s) / (2 * this->T_I)) * (this->error + this->previous_error1);
-    // Serial.print("delta_ui: ");
-    // Serial.println(delta_ui);
-
     delta_ud = ((this->T_D / (this->T_D + (this->N * this->T_s))) * this->previous_delta_ud) - (((this->K_P * this->N * this->T_D) / (this->T_D + (this->N * this->T_s))) * (this->error - 2 * this->previous_error1 + this->previous_error2));
-    // Serial.print("delta_ud: ");
-    // Serial.println(delta_ud);
-
-    // Serial.print("delta_up: ");
-    // Serial.println(delta_up);
-    // Serial.print("delta_ui: ");
-    // Serial.println(delta_ui);
-    // Serial.print("delta_ud: ");
-    // Serial.println(delta_ud);
 
     if (error >= 320) {
       delta_u = delta_up + delta_ud;
