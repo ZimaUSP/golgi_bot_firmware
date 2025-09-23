@@ -28,16 +28,15 @@ void NewCommunication::read_setpoint(String received) {
     Serial.println(received);
     mode = received.substring(0, received.indexOf(':'));
     if(mode == "id") {
-        id_remedio = received.indexOf(':') + 1;
+        id_remedio = received.substring(received.indexOf(':') + 1);
         id_remedio.trim();
         go_remedio(id_remedio); //ainda nao implementado
     }
     else if (mode == "coord") {
         String strX, strZ;
-        float* posicoes;
-        coordinates = received.indexOf(':') + 1;
+        coordinates = received.substring(received.indexOf(':') + 1);
         strX = coordinates.substring(0, coordinates.indexOf(','));
-        strX = coordinates.substring(coordinates.indexOf(',') + 1);
+        strZ = coordinates.substring(coordinates.indexOf(',') + 1);
         double x_pos = strX.toFloat();
         double z_pos = strZ.toFloat();
         go_position(x_pos, z_pos); 
