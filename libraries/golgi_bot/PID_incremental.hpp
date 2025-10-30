@@ -62,6 +62,18 @@ class PID_incremental {
          */
         void reset_incremental();
 
+        /**
+         * @brief Set the controller parameters
+         * 
+         */
+        void setSystemParameters(double k_p, double t_i, double t_d);
+
+        /**
+         * @brief Returns the controller parameters
+         * 
+         */
+        std::array<double, 3> getSystemParameters();
+
 
 };
 

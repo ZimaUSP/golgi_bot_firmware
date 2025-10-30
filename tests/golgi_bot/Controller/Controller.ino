@@ -106,7 +106,7 @@ SerialCommunication* comu;
 #include <string>
 #include <cstring>
 int pos_x[X_max_index]={100,200,400,600};
-int pos_z[Z_max_index]={55,180,355};
+int pos_z[Z_max_index]={55,55,55};
 double X_pos;
 double Z_pos;
 int counter = 0;
@@ -211,10 +211,10 @@ void setup() {
   SMC_Z = new Sliding_controller(Elast_coef_param, Torque_coef_param, Load_mass_param_master, Load_inercia_param_master, Velocity_param_master, Position_param, gama_param, alpha_param, radius_param, Resistence_z, sampling_time_param);
 
   //Creating Axis
-  Axis_master_X = new Axis(encoder_master_X, BTS_master_X, endstop_master_R_X, endstop_master_L_X, SMC_master_X, X_master_MAX_VEL, PWM_resolution_channel, 1.5, pwm_master_cte, false);
-  Axis_slave_X = new Axis(encoder_slave_X, BTS_slave_X, endstop_slave_R_X, endstop_slave_L_X, SMC_slave_X, X_slave_MAX_VEL, PWM_resolution_channel, 1.5, pwm_slave_cte, false);
+  Axis_master_X = new Axis(encoder_master_X, BTS_master_X, endstop_master_R_X, endstop_master_L_X, PIDinc_master_X, X_master_MAX_VEL, PWM_resolution_channel, 1.5, pwm_master_cte, false);
+  Axis_slave_X = new Axis(encoder_slave_X, BTS_slave_X, endstop_slave_R_X, endstop_slave_L_X, PIDinc_slave_X, X_slave_MAX_VEL, PWM_resolution_channel, 1.2, pwm_slave_cte, false);
   
-  Axis_z= new Axis(encoder_Z, BTS_Z, endstop_R_Z, endstop_L_Z, SMC_Z, Z_MAX_VEL, PWM_resolution_channel, 20, pwm_cte_Z, false);
+  Axis_z= new Axis(encoder_Z, BTS_Z, endstop_R_Z, endstop_L_Z, PIDinc_Z, Z_MAX_VEL, PWM_resolution_channel, 20, pwm_cte_Z, false);
 
   //Creating Controller
   Golgi_bot = new Controller(Axis_master_X, Axis_slave_X, Axis_z, Bomba_Y, Atuador_Y);
@@ -247,7 +247,7 @@ void setup() {
   Golgi_bot->go_max(true, true, true);   
   Golgi_bot->go_origin(true, true);
 
-
+  Golgi_bot->autoTunning();
   //Serial.println("STAND-BY");
 
 }
@@ -256,11 +256,11 @@ void loop() {
   unsigned long currentMillis1 = millis();
   switch(STATE) {
       case STAND_BY :
-      delay(3000);
+      delay(1000);
         // Recive Set point
         read_setpoint();
         initial_time = millis();
-        Serial.println(initial_time);
+        // Serial.println(initial_time);
         return;
       case GOING :
         //Moves Controller
@@ -269,17 +269,17 @@ void loop() {
         // Used for PID control
         // Axis_master_X->move();        
         // Axis_slave_X->setGoal(Axis_master_X->position()); 
-        // delay(2);
+        // // delay(2);
         // Axis_slave_X->move();
         // Axis_z->move();
 
         // For tests
-        if (Axis_master_X->getOutput() <= 60 && !insideError) {     
-          primeira_chegada = millis();
-          // Serial.println("entrou");
-          // Serial.println(primeira_chegada);
-          insideError = true;
-        }
+        // if (Axis_master_X->getOutput() <= 60 && !insideError) {     
+        //   primeira_chegada = millis();
+        //   // Serial.println("entrou");
+        //   // Serial.println(primeira_chegada);
+        //   insideError = true;
+        // }
 
         // Prints controller response (For tests)
         //   if (currentMillis1 - previousMillis1 >= interval1) {
@@ -302,12 +302,14 @@ void loop() {
       case GETING_MEDICINE : {
         Golgi_bot->get_medicine(DELAY_EXTEND,DELAY_CONTRACT);
 
-        // For tests
-        Serial.print(Axis_master_X->position());
-        Serial.print(" , ");
-        Serial.print(Axis_slave_X->position()); 
-        Serial.print(", ");
-        Serial.println(millis());
+        // double time = millis() - initial_time;
+        // // For tests
+        // delay(1500);
+        // Serial.print(Axis_master_X->position());
+        // Serial.print(", ");
+        // Serial.print(Axis_slave_X->position()); 
+        // Serial.print(", ");
+        // Serial.println(time);
         // Serial.println("GETING_MEDICINE");
         // double error = 0;
         // error = X_pos - Golgi_bot->positionPoint()[0];
@@ -328,7 +330,7 @@ void loop() {
       case DROPING_MEDICINE :
         Golgi_bot->drop_medicine();
         STATE=STAND_BY;
-        Serial.println("STAND-BY");
+        // Serial.println("STAND-BY");
         return;
    }  
 }
@@ -356,14 +358,14 @@ void read_setpoint(){
 
   // Z_pos=pos_z[counter_Z];
   // X_pos=pos_x[counter_X++];
-  // // Serial.print("counter_Z: ");
-  // // Serial.println(counter_Z);
-  // // Serial.print("counter_X: ");
-  // // Serial.println(counter_X);
-  // //Serial.print("X goal:");
-  // //Serial.println(X_pos);      
-  // //Serial.print("Z goal:");
-  // //Serial.println(Z_pos);
+  // Serial.print("counter_Z: ");
+  // Serial.println(counter_Z);
+  // Serial.print("counter_X: ");
+  // Serial.println(counter_X);
+  //Serial.print("X goal:");
+  //Serial.println(X_pos);      
+  //Serial.print("Z goal:");
+  //Serial.println(Z_pos);
 
   // Just two positions
   which_med = which_med % 2;

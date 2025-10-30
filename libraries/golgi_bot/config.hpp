@@ -101,15 +101,15 @@
 
 // X PID_incremental Master
 #define N_inc_master_x  80
-#define kp_inc_master_x 3.2         
-#define ti_inc_master_x 20           
-#define td_inc_master_x 0.001           
+#define kp_inc_master_x 1.8
+#define ti_inc_master_x 1
+#define td_inc_master_x 0.001
 #define ts_inc_master_x 0.01
 
 // X PID_incremental Slave
 #define N_inc_slave_x  80
-#define kp_inc_slave_x 16.2    
-#define ti_inc_slave_x 1          
+#define kp_inc_slave_x 16.2
+#define ti_inc_slave_x 1
 #define td_inc_slave_x 0.001           
 #define ts_inc_slave_x 0.01
 
@@ -168,9 +168,9 @@
 // Sliding mode controller parameters
 #define Elast_coef_param 2.5   
 #define Torque_coef_param 0.27301136
-#define Load_mass_param_master 3.6
+#define Load_mass_param_master 3.8
 #define Load_mass_param_slave 5.0
-#define Load_inercia_param_master 0.0004356
+#define Load_inercia_param_master 0.0004598
 #define Load_inercia_param_slave 0.000605
 #define Velocity_param_master 0.4
 #define Velocity_param_slave 0.3

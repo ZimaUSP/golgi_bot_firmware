@@ -11,6 +11,7 @@
  */
 
 #include "PID_incremental.hpp"
+#include <array>
 
 /*****************************************
  * Class Methods Bodies Definitions
@@ -42,7 +43,7 @@ double PID_incremental::computePID_incremental(double input, float setpoint, dou
     delta_ui = ((this->K_P * this->T_s) / (2 * this->T_I)) * (this->error + this->previous_error1);
     delta_ud = ((this->T_D / (this->T_D + (this->N * this->T_s))) * this->previous_delta_ud) - (((this->K_P * this->N * this->T_D) / (this->T_D + (this->N * this->T_s))) * (this->error - 2 * this->previous_error1 + this->previous_error2));
 
-    if (error >= 320) {
+    if (error >= 120) {
       delta_u = delta_up + delta_ud;
     } else {
       delta_u = delta_up + delta_ui + delta_ud;
@@ -69,4 +70,14 @@ void PID_incremental::reset_incremental() {
     this->previous_u = 0;
     this->previous_delta_ud = 0;
     this->previous_time = millis();
+}
+
+void PID_incremental::setSystemParameters(double k_p, double t_i, double t_d) {
+  this->K_P = k_p;
+  this->T_I = t_i;
+  this->T_D = t_d; 
+}
+
+std::array<double, 3> PID_incremental::getSystemParameters() {
+    return {this->K_P, this->T_I, this->T_D};
 }

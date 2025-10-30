@@ -11,6 +11,7 @@
  */
 
 #include "Controller.hpp"
+#include <chrono>
 
 
 /***************
@@ -49,7 +50,7 @@ void Controller::get_medicine(int DELAY_EX, int DELAY_CON){
 }
 
 void Controller::drop_medicine(){
-  this->go_origin_suavizado();          // may not reach endstop
+  this->go_origin(true, true);          // may not reach endstop
   delay(1000);
   this->Bomba_Y->turn_off();
   this->reset_PID();
@@ -233,5 +234,58 @@ bool Controller::onGoal(){
   }else{
     return false;
   }
-  
 }
+
+void Controller::autoTunning() {
+  const int numTests = 5;
+  const double timeout = 1000.0; // milisegundos
+  const double tolerancia = 4.0;
+
+  for (int i = 1; i <= numTests; ++i) {
+      this->setGoal(100*i, 100*i, 40*i);
+      auto startTime = millis();
+
+      double maxX1 = 0, maxX2 = 0, maxZ = 0;
+      while ((this->Axis_1->onGoal() && this->Axis_2->onGoal()) || ((millis() - startTime) < timeout)) {
+          this->move();
+          if (maxX1 < this->Axis_1->position()) maxX1 = this->Axis_1->position();
+          if (maxX2 < this->Axis_2->position()) maxX2 = this->Axis_2->position();
+          // if (maxZ < Axis_3->position()) maxZ = Axis_3->position();   testar sem o z primeiro
+      }
+
+      double settleTime = millis() - startTime;  // talvez seja melhor calibrar o Z separadamente
+      double goalX = 100*i;
+      double goalZ = 40*i;
+
+      double overshootX1 = ((maxX1 - goalX) / goalX) * 100.0;
+      double overshootX2 = ((maxX2 - goalX) / goalX) * 100.0;
+      double overshootZ  = ((maxZ  - goalZ) / goalZ) * 100.0;
+
+      double erroX1 = fabs(goalX - Axis_1->position());
+      double erroX2 = fabs(goalX - Axis_2->position());
+      double erroZ  = fabs(goalZ - Axis_3->position());
+    
+      Serial.print("Test "); Serial.println(i);
+
+      // --- Ajuste por eixo ---
+      auto tuneAxis = [&](Axis* axis, double overshoot, double erro) {
+          auto params = axis->getSystemParameters();
+          double Kp = params[0], Ki = params[1], Kd = params[2];
+
+          if (overshoot > 10.0) { Kp *= 0.9; Kd *= 1.1; }
+          else if (overshoot < 2.0 && erro > tolerancia) { Ki *= 1.1; }
+          else if (overshoot < 2.0 && erro <= tolerancia) { /* mantém */ }
+          else if ((millis() - startTime) >= timeout) { Kp *= 1.3; }
+
+          axis->setSystemParameters(Kp, Ki, Kd);
+      };
+
+      Serial.print("Test ");
+
+      tuneAxis(this->Axis_1, overshootX1, erroX1);
+      tuneAxis(this->Axis_2, overshootX2, erroX2);
+      tuneAxis(this->Axis_3, overshootZ,  erroZ);
+  }
+}
+
+// double* Controller::getControllerParameters

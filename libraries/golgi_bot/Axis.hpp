@@ -32,7 +32,7 @@ class Axis {
         H_bridge_controller *PWM_constant;
         Chave_fim_de_curso *Chave_R;
         Chave_fim_de_curso *Chave_L;
-        Sliding_controller *SMC;
+        PID_incremental *PID_inc;
         int PWM_RESOLUTION;
         double output;
         double setpoint;
@@ -52,7 +52,7 @@ class Axis {
          * @param k_i Integrative constant 
          * @param k_d Derivative constant 
          */
-        Axis(Encoder *encoder, H_bridge_controller *BTS, Chave_fim_de_curso *Chave_R, Chave_fim_de_curso *Chave_L,Sliding_controller *SMC, float max_vel,int PWM_RESOLUTION,float tolerance, float pwm_cte, bool debug);
+        Axis(Encoder *encoder, H_bridge_controller *BTS, Chave_fim_de_curso *Chave_R, Chave_fim_de_curso *Chave_L,PID_incremental *PID_inc, float max_vel,int PWM_RESOLUTION,float tolerance, float pwm_cte, bool debug);
 
         /**
          * @brief moves axis with PID control, input position from enconder(mm)
@@ -158,6 +158,18 @@ class Axis {
          * 
          */
         void go_max();
+
+        /**
+         * @brief Returns the controller parameters
+         * 
+         */
+        std::array<double, 3> getSystemParameters();
+
+        /**
+         * @brief Set the controller parameters
+         * 
+         */
+        void setSystemParameters(double k_p, double t_i, double t_d);
         
         
 
