@@ -108,11 +108,11 @@ class Controller {
          */
         void go_max(bool axis1,bool axis2, bool axis3);
 
-        /**
-         * @brief autoTunne the systems parameters
-         * 
-         */
-        void autoTunning();
+        // /**
+        //  * @brief autoTunne the systems parameters
+        //  * 
+        //  */
+        // void autoTunning();
 
         // /**
         //  * @brief Returns the controller parameters
