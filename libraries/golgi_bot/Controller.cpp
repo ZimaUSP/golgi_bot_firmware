@@ -70,7 +70,7 @@ void Controller::go_origin(bool axis1,bool axis2){
     axis2OnOrigin = this->Axis_2->onOrigin();
     axis3OnOrigin = this->Axis_3->onOrigin();
 
-    if (axis1OnOrigin && axis2OnOrigin && (!xOnOrigin)) {  
+    if (axis1OnOrigin || axis2OnOrigin && (!xOnOrigin)) {  
       //Serial.println("ENTROU X");
       this->Axis_1->resetOrigin();
       this->Axis_1->stop();
@@ -152,7 +152,7 @@ void Controller::go_max(bool axis1,bool axis2, bool axis3){
     this->Axis_1->go_L();
     // this->Axis_2->setPoint(this->Axis_1->position());
 
-if (axis1OnMax && axis2OnMax && (!xOnMax)) {  
+if (axis1OnMax || axis2OnMax && (!xOnMax)) {  
       //Serial.println("ENTROU X");
       this->Axis_1->resetMax();
       this->Axis_1->stop();

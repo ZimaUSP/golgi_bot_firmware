@@ -47,8 +47,8 @@ PID *PID_slave_X;
 PID_incremental *PIDinc_master_X;
 PID_incremental *PIDinc_slave_X;
 
-Fuzzy_controller *Fuzzy_master_X;
-Fuzzy_controller *Fuzzy_slave_X;
+//Fuzzy_controller *//Fuzzy_master_X;
+//Fuzzy_controller *//Fuzzy_slave_X;
 
 Sliding_controller *SMC_master_X;
 Sliding_controller *SMC_slave_X;
@@ -72,7 +72,7 @@ PID *PID_Z;
 
 PID_incremental *PIDinc_Z;
 
-Fuzzy_controller *Fuzzy_Z;
+//Fuzzy_controller *//Fuzzy_Z;
 
 NewCommunication *Communication;
 
@@ -157,10 +157,10 @@ void setup() {
 
   // BTS
 
-  BTS_master_X = new H_bridge_controller(L_pin_master_X, R_pin_master_X, PWM_frequency_channel, PWM_resolution_channel, R_channel_master_X, L_channel_master_X);
+  BTS_master_X = new H_bridge_controller(R_pin_master_X, L_pin_master_X, PWM_frequency_channel, PWM_resolution_channel, R_channel_master_X, L_channel_master_X);
   BTS_master_X->init();
   
-  BTS_slave_X = new H_bridge_controller(L_pin_slave_X, R_pin_slave_X, PWM_frequency_channel, PWM_resolution_channel, R_channel_slave_X, L_channel_slave_X);
+  BTS_slave_X = new H_bridge_controller(R_pin_slave_X, L_pin_slave_X, PWM_frequency_channel, PWM_resolution_channel, R_channel_slave_X, L_channel_slave_X);
   BTS_slave_X->init();
 
   BTS_Z= new H_bridge_controller(R_pin_Z, L_pin_Z, PWM_frequency_channel, PWM_resolution_channel, R_channel_Z, L_channel_Z);      //esses canais talvez deem problema
@@ -201,10 +201,10 @@ void setup() {
 
   PIDinc_Z = new PID_incremental(80, 1.3, 100, 0.001, 0.01);
 
-  // Fuzzy control
-  Fuzzy_master_X = new Fuzzy_controller(0.01, error_NH_master, error_N_master, error_Z_master, error_P_master, error_PH_master);
-  Fuzzy_slave_X = new Fuzzy_controller(0.01, error_NH_slave, error_N_slave, error_Z_slave, error_P_slave, error_PH_slave);
-  Fuzzy_Z = new Fuzzy_controller(0.01, error_NH_Z, error_N_Z, error_Z_Z, error_P_Z, error_PH_Z);
+  // //Fuzzy control
+  //Fuzzy_master_X = new //Fuzzy_controller(0.01, error_NH_master, error_N_master, error_Z_master, error_P_master, error_PH_master);
+  //Fuzzy_slave_X = new //Fuzzy_controller(0.01, error_NH_slave, error_N_slave, error_Z_slave, error_P_slave, error_PH_slave);
+  //Fuzzy_Z = new //Fuzzy_controller(0.01, error_NH_Z, error_N_Z, error_Z_Z, error_P_Z, error_PH_Z);
 
   // Sliding mode control
 
@@ -227,27 +227,27 @@ void setup() {
 
   // int sempre = 1;
   // while (sempre = 1) {
-  //   Golgi_bot->go_origin(true, true);
-  //   delay(3000);
-  //   Golgi_bot->go_max(true, true, true);
-  //   delay(3000);
-  //   //Serial.println(encoder_master_X->getPosition());
-  //   // BTS_master_X->Set_R(127); 
-  //   // Serial.println("AAAAAAAAAAAAAA");
-  //   // Axis_z->move()
-  //   // Golgi_bot->go_origin(true, true);
-  //   // delay(2000);
-  //   // Golgi_bot->go_max(true, true, true);      // test if it needs to go max, or if going once to orign works
-  //   // delay(2000);
-  //   // Golgi_bot->go_origin(true, true);
-  //   // delay(2000);
-  //   // BTS_slave_X->Set_R(127);
-  //   // Axis_slave_X->setPoint(Axis_master_X->position());
-  //   //Serial.println(Axis_slave_X->getOutput());
-  //   // Serial.println(Axis_master_X->position()); //
-  //   // Axis_slave_X->move(); //
-  //   //int output1 = 125;
-  //   //Serial.println(encoder_master_X->getPosition());
+  // //   Golgi_bot->go_origin(true, true);
+  // //   delay(3000);
+  // //   Golgi_bot->go_max(true, true, true);
+  // //   delay(3000);
+  // //   //Serial.println(encoder_master_X->getPosition());
+  // BTS_master_X->Set_R(200); 
+  // //   // Serial.println("AAAAAAAAAAAAAA");
+  // //   // Axis_z->move()
+  // //   // Golgi_bot->go_origin(true, true);
+  // //   // delay(2000);
+  // //   // Golgi_bot->go_max(true, true, true);      // test if it needs to go max, or if going once to orign works
+  // //   // delay(2000);
+  // //   // Golgi_bot->go_origin(true, true);
+  // //   // delay(2000);
+  // BTS_slave_X->Set_R(200);
+  // //   // Axis_slave_X->setPoint(Axis_master_X->position());
+  // //   //Serial.println(Axis_slave_X->getOutput());
+  // //   // Serial.println(Axis_master_X->position()); //
+  // //   // Axis_slave_X->move(); //
+  // //   //int output1 = 125;
+  // //   //Serial.println(encoder_master_X->getPosition());
   // }
 
 
@@ -395,7 +395,7 @@ void read_setpoint(){
 }
 
 void check_position(){
-  if(Axis_master_X->onGoal() && Axis_slave_X->onGoal()){                      // Golgi_bot->onGoal()
+  if(Golgi_bot->onGoal()){                      // Golgi_bot->onGoal()
     STATE=GETING_MEDICINE;
     // // Serial.println("GETING_MEDICINE");
     // Serial.print(Axis_master_X->position());
