@@ -65,13 +65,13 @@
 #define L_pin_master_X 26 // R Bts
 #define R_channel_master_X 10
 #define L_channel_master_X 11
-#define pwm_master_cte 0.5 // fraction of pwm velocity
+#define pwm_master_cte 0.8 // fraction of pwm velocity
 
 #define R_pin_slave_X 12 // pin
 #define L_pin_slave_X 16 // pin
 #define R_channel_slave_X 14                              
 #define L_channel_slave_X 15
-#define pwm_slave_cte 0.5          
+#define pwm_slave_cte 0.8          
 
 // X CHAVE
 #define chave_master_R_X 36
@@ -130,11 +130,11 @@
 #define L_pin_Z 17 // L bts
 #define R_channel_Z 7
 #define L_channel_Z 6
-#define pwm_cte_Z 0.5 // fraction of pwm velocity
+#define pwm_cte_Z 0.8 // fraction of pwm velocity
 
 // Z Chave
-#define chave_L_Z 35
-#define chave_R_Z 34
+#define chave_L_Z 34
+#define chave_R_Z 35
 #define chave_channel_R_Z 5
 #define chave_channel_L_Z 4
 

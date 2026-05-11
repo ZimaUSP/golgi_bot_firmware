@@ -62,4 +62,4 @@ void loop() {
   {
     Serial.println("Batente L Z");
   }
-  }
+}

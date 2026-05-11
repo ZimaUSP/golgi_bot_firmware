@@ -177,7 +177,7 @@ if (axis1OnMax || axis2OnMax && (!xOnMax)) {
       delay(10);
     }
     else if (zOnMax == false) {
-      this->Axis_3->go_L();
+      this->Axis_3->go_L(100);
     }
 
     if (xOnMax && zOnMax) {

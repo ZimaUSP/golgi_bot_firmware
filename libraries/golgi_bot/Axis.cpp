@@ -19,12 +19,12 @@ const long interval = 25;
  * Class Methods Bodies Definitions
  *****************************************/
 
-Axis::Axis(Encoder *encoder, H_bridge_controller *BTS, Chave_fim_de_curso *Chave_R, Chave_fim_de_curso *Chave_L,Sliding_controller *SMC, float max_vel,int PWM_RESOLUTION,float tolerance, float pwm_cte, bool debug) {
+Axis::Axis(Encoder *encoder, H_bridge_controller *BTS, Chave_fim_de_curso *Chave_R, Chave_fim_de_curso *Chave_L,PID *pid, float max_vel,int PWM_RESOLUTION,float tolerance, float pwm_cte, bool debug) {
     this->encoder = encoder;
     this->BTS= BTS;
     this->Chave_R= Chave_R;
     this->Chave_L= Chave_L;
-    this->SMC = SMC;
+    this->pid = pid;
     for(int i=0;i<PWM_RESOLUTION;i++){
       MAX_PWM=MAX_PWM*2;
     }
@@ -66,7 +66,7 @@ void Axis::move(){
     //Serial.println(this->output);
 
   //delay(2);
-  this->output=(this->SMC->Compute_PWM_Output(this->encoder->getPosition(), this->setpoint));
+  this->output=(this->pid->computePID(this->encoder->getPosition(), this->setpoint, this->tolerance));
   unsigned long current_millis = millis();
 
   // if (current_millis - previous_millis >= interval) {
@@ -153,7 +153,7 @@ void Axis::stop(){
 }
 
 void Axis::reset(){
-   this->SMC->reset_SMC_controller();
+   this->pid->reset();
 }
 
 float Axis::position(){
@@ -198,6 +198,10 @@ void Axis::go_R() {
 
 void Axis::go_L() {
   this->BTS->Set_L((this->MAX_PWM)*this->pwm_cte);
+}
+
+void Axis::go_L(int pwm) {
+  this->BTS->Set_L(pwm);
 }
 
 double Axis::getOutput() {
