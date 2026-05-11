@@ -76,24 +76,6 @@ Fuzzy_controller *Fuzzy_Z;
 
 NewCommunication *Communication;
 
-const std::array<double, 4> error_NH_master = {-600, -600, -300, -100};
-const std::array<double, 4> error_N_master  = {-200, -33, -33, 0};
-const std::array<double, 4> error_Z_master  = {-50, 0, 0, 50};
-const std::array<double, 4> error_P_master  = {0, 33, 33, 200};
-const std::array<double, 4> error_PH_master = {100, 300, 600, 600};
-
-const std::array<double, 4> error_NH_slave = {-800, -800, -300, -80};
-const std::array<double, 4> error_N_slave  = {-200, -44, -44, 0};
-const std::array<double, 4> error_Z_slave  = {-18, 0, 0, 18};
-const std::array<double, 4> error_P_slave  = {0, 44, 44, 200};
-const std::array<double, 4> error_PH_slave = {80, 300, 800, 800};
-
-const std::array<double, 4> error_NH_Z = {-600, -600, -300, -150};
-const std::array<double, 4> error_N_Z  = {-200, -45, -45, 0};
-const std::array<double, 4> error_Z_Z  = {-50, 0, 0, 50};
-const std::array<double, 4> error_P_Z  = {0, 45, 45, 200};
-const std::array<double, 4> error_PH_Z = {150, 300, 600, 600};
-
 Sliding_controller *SMC_Z;
 
 // EIXO Y 
@@ -177,14 +159,14 @@ void setup() {
   encoder_Z =new Encoder(A_pin_Z,B_pin_Z,2,600,40,4);
   encoder_Z->init();
 
-   // Atuador
+  // Atuador
   Atuador_Y= new Atuador(Extend_pin,Contract_pin);
   Atuador_Y->init();
   Atuador_Y->Contract();
   delay(DELAY_EXTEND);
   Atuador_Y->Stop();
 
-   // Bomba
+  // Bomba
   Bomba_Y= new Bomba(bomba_pin);
   Bomba_Y->init();
 
@@ -194,20 +176,30 @@ void setup() {
   
   PID_Z = new PID(kp_z,ki_z,kd_z,i_saturation_z);
 
-  // PID incremental       teste
-
+  // PID incremental
   PIDinc_master_X = new PID_incremental(80, 3.2, 10, 0.001, 0.01);
   PIDinc_slave_X = new PID_incremental(80, 18.2, 2, 0.001, 0.01);         //0.001  
 
   PIDinc_Z = new PID_incremental(80, 1.3, 100, 0.001, 0.01);
 
   // Fuzzy control
-  Fuzzy_master_X = new Fuzzy_controller(0.01, error_NH_master, error_N_master, error_Z_master, error_P_master, error_PH_master);
-  Fuzzy_slave_X = new Fuzzy_controller(0.01, error_NH_slave, error_N_slave, error_Z_slave, error_P_slave, error_PH_slave);
-  Fuzzy_Z = new Fuzzy_controller(0.01, error_NH_Z, error_N_Z, error_Z_Z, error_P_Z, error_PH_Z);
+  Fuzzy_member_param master_fuzzy_member = Fuzzy_member_param({-250, -250, -200, -40}, {-50, -25, -25, 0}, {-2, 0, 0, 2}, {0, 25, 25, 50}, {40, 200, 250, 250},
+                                                              {-60, -60, -55, -25}, {-40, -15, -15, -10}, {-10, 0, 0, 10}, {10, 15, 15, 40}, {25, 55, 60, 60}, 
+                                                              {-275, -275, -160, -120}, {-160, -110, -110, -70}, {-120, -90, -90, -60}, {-110, -75, -75, -40}, {-55, 0, 0, 55}, {40, 75, 75, 110}, {60, 90, 90, 120}, {70, 110, 110, 160}, {120, 160, 275, 275});
+
+  Fuzzy_member_param slave_fuzzy_member = Fuzzy_member_param({-250, -250, -200, -40}, {-50, -25, -25, 0}, {-2, 0, 0, 2}, {0, 25, 25, 50}, {40, 200, 250, 250},
+                                                             {-60, -60, -55, -25}, {-40, -15, -15, -10}, {-10, 0, 0, 10}, {10, 15, 15, 40}, {25, 55, 60, 60}, 
+                                                             {-275, -275, -160, -120}, {-160, -110, -110, -80}, {-110, -90, -90, -70}, {-110, -75, -75, -30}, {-35, 0, 0, 35}, {30, 75, 75, 110}, {70, 90, 90, 110}, {80, 110, 110, 160}, {120, 160, 275, 275});
+
+  Fuzzy_member_param z_fuzzy_member = Fuzzy_member_param({-250, -250, -200, -40}, {-50, -25, -25, 0}, {-2, 0, 0, 2}, {0, 25, 25, 50}, {40, 200, 250, 250},
+                                                         {-60, -60, -55, -25}, {-40, -15, -15, -10}, {-10, 0, 0, 10}, {10, 15, 15, 40}, {25, 55, 60, 60}, 
+                                                         {-275, -275, -160, -120}, {-160, -110, -110, -70}, {-120, -90, -90, -60}, {-110, -75, -75, -40}, {-80, 0, 0, 80}, {40, 75, 75, 110}, {60, 90, 90, 120}, {70, 110, 110, 160}, {120, 160, 275, 275});
+
+  Fuzzy_master_X = new Fuzzy_controller(0.01, master_fuzzy_member);
+  Fuzzy_slave_X = new Fuzzy_controller(0.01, slave_fuzzy_member);
+  Fuzzy_Z = new Fuzzy_controller(0.01, z_fuzzy_member);
 
   // Sliding mode control
-
   SMC_master_X = new Sliding_controller(Elast_coef_param, Torque_coef_param, Load_mass_param_master, Load_inercia_param_master, Velocity_param_master, 1, gama_param, alpha_param, radius_param, 15.9, sampling_time_param);
   SMC_slave_X = new Sliding_controller(Elast_coef_param, Torque_coef_param, Load_mass_param_slave, Load_inercia_param_slave, Velocity_param_slave, 1, gama_param, 0.1, radius_param, 15.7, sampling_time_param);
   SMC_Z = new Sliding_controller(Elast_coef_param, Torque_coef_param, Load_mass_param_master, Load_inercia_param_master, Velocity_param_master, 1, gama_param, alpha_param, radius_param, 8.9, sampling_time_param);
