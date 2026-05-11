@@ -13,6 +13,8 @@ int which_med = 0;
 
 //#include "Controller.hpp"
 #include "Controller.hpp"
+
+#include "new_communication.hpp"
 // EIXO X
 
 // Encoder X axis 
@@ -71,6 +73,8 @@ PID *PID_Z;
 PID_incremental *PIDinc_Z;
 
 Fuzzy_controller *Fuzzy_Z;
+
+NewCommunication *Communication;
 
 const std::array<double, 4> error_NH_master = {-600, -600, -300, -100};
 const std::array<double, 4> error_N_master  = {-200, -33, -33, 0};
@@ -251,6 +255,7 @@ void setup() {
   Golgi_bot->go_max(true, true, true);      // test if it needs to go max, or if going once to orign works
   Golgi_bot->go_origin(true, true);
 
+  Communication = new NewCommunication(Golgi_bot);
 
   Serial.println("STAND-BY");
 
@@ -261,7 +266,7 @@ void loop() {
   switch(STATE) {
       case STAND_BY :
         delay(100);
-        // Recive Set point
+       // Recive Set point
         Serial.println("STAND-BY");
         read_setpoint();
         //initial_time = millis();
@@ -327,7 +332,7 @@ char* string_to_char(std::string str) {
 }
 
 void read_setpoint(){
-  String id_remedio;
+  String received;
   if(Serial.available()) {
       STATE=GOING;
       Serial.println("GOING");
@@ -336,28 +341,9 @@ void read_setpoint(){
       //char* received = string_to_char(comu->get_received_data());
       //int id_remedio = atoi(received);
       //int setPoint_z = 0;
-      id_remedio = Serial.readString();
-      id_remedio.trim();
-      //Serial.println(mensagem);
-      if(id_remedio.equals("17424")){ 
-        //digitalWrite(led, HIGH);
-        //delay(2000);
-        //digitalWrite(led, LOW);
-        X_pos = 400;                   
-        Z_pos = 355;
-      }
-      else if(id_remedio.equals("17292")){
-        X_pos = 645;
-        Z_pos = 345;
-      }
-      
-      /*
-      else if(id_remedio.equals("27198")){
-        setPoint_z = 200;
-      }
-      */
-
-      Golgi_bot->setGoal(X_pos, X_pos, Z_pos);
+      received = Serial.readString();
+      received.trim();
+      Communication->read_setpoint(received);
   }
 
 
