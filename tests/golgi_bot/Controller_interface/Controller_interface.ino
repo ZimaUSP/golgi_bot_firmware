@@ -171,7 +171,7 @@ void setup() {
   encoder_master_X =new Encoder(A_pin_master_X ,B_pin_master_X , 0, Nominal_pulses, pitch_pulley_master, 4);
   encoder_master_X->init();
   
-  encoder_slave_X = new Encoder(B_pin_slave_X, A_pin_slave_X, 1, Nominal_pulses, pitch_pulley_slave, 4);
+  encoder_slave_X = new Encoder(A_pin_slave_X, B_pin_slave_X, 1, Nominal_pulses, pitch_pulley_slave, 4);
   encoder_slave_X->init();
 
   encoder_Z =new Encoder(A_pin_Z,B_pin_Z,2,600,40,4);
@@ -233,7 +233,7 @@ void setup() {
   // //   delay(3000);
   // // Golgi_bot->reset_Y(DELAY_CONTRACT);
   // //   //Serial.println(encoder_master_X->getPosition());
-  // // BTS_master_X->Set_L(200); 
+  // BTS_master_X->Set_L(200); 
   // BTS_Z->Set_L(100); 
   // //   // Serial.println("AAAAAAAAAAAAAA");
   // //   // Axis_z->move()
@@ -243,7 +243,7 @@ void setup() {
   // //   // delay(2000);
   // //   // Golgi_bot->go_origin(true, true);
   // //   // delay(2000);
-  // // BTS_slave_X->Set_L(200);
+  // BTS_slave_X->Set_L(200);
   // //   // Axis_slave_X->setPoint(Axis_master_X->position());
   // //   //Serial.println(Axis_slave_X->getOutput());
   // //   // Serial.println(Axis_master_X->position()); //
@@ -276,13 +276,13 @@ void loop() {
         return;
       case GOING :
         //Moves Controller
-        Golgi_bot->move();
+        // Golgi_bot->move();
         // Serial.println("BRUHHH");
-        // Axis_master_X->move();        
-        // Axis_slave_X->setGoal(Axis_master_X->position());
-        // delay(2);
+        Axis_master_X->move();        
+        Axis_slave_X->setGoal(Axis_master_X->position());
+        delay(2);
 
-        // Axis_slave_X->move();
+        Axis_slave_X->move();
         // Axis_z->move();
         if (Axis_master_X->getOutput() <= 40 && !insideError) {     
           primeira_chegada = millis();
@@ -294,17 +294,18 @@ void loop() {
           if (currentMillis1 - previousMillis1 >= interval1) {
           previousMillis1 = currentMillis1;
 
-        //   // Serial.println(Axis_z->getOutput());
-        //   // Serial.print(setPoint_X);
-        //   // Serial.print(" , ");
-        //   //Serial.println(Axis_master_X->getOutput() );
-          // Serial.print(Axis_master_X->position());
+          // Serial.println(Axis_z->getOutput());
+          // Serial.println(Axis_z->position());
+          // Serial.print(setPoint_X);
+          // Serial.print(" , ");
+          //Serial.println(Axis_master_X->getOutput() );
+          Serial.print(Axis_master_X->position());
+          Serial.print(", ");
+          Serial.println(Axis_slave_X->position()); // Plotts the PID response
+        //   // Serial.print(SMC_master_X->getVelocity(), 3);
           // Serial.print(", ");
-          // Serial.println(Axis_slave_X->position()); // Plotts the PID response
-        // //   // Serial.print(SMC_master_X->getVelocity(), 3);
-        //   Serial.print(", ");
-        //   Serial.println(millis());
-        //   // Serial.println(SMC_slave_X->getVelocity(), 3); // Plotts the output response
+          // Serial.println(millis());
+          // Serial.println(SMC_slave_X->getVelocity(), 3); // Plotts the output response
         }
 
         check_position();
@@ -397,7 +398,7 @@ void read_setpoint(){
 }
 
 void check_position(){
-  if(Golgi_bot->onGoal()){                      // Golgi_bot->onGoal()
+  if(Axis_master_X->onGoal() && Axis_slave_X->onGoal()) {                      // Golgi_bot->onGoal()
     STATE=GETING_MEDICINE;
     // // Serial.println("GETING_MEDICINE");
     // Serial.print(Axis_master_X->position());

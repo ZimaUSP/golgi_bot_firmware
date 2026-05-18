@@ -44,6 +44,7 @@ class Chave_fim_de_curso {
         static Chave_fim_de_curso* instance5_;
 
         void handleInterrupt();
+        void handleInterruptGrosso();
         //
 
     public:
@@ -60,6 +61,11 @@ class Chave_fim_de_curso {
          * @brief Triggered by falling sign, demarks endstop in a bool variable
          */
         void batente_trigger();
+
+        /**
+         * @brief Triggered by falling sign, demarks endstop in a bool variable
+         */
+        void batente_trigger_grosso();
         
         /**
          * @brief get the pin number

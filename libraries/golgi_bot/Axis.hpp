@@ -115,6 +115,12 @@ class Axis {
         bool onMax();
 
         /**
+         * @brief Get wether the axis is on Max or not for new endstop
+         * 
+         */
+        bool onMaxGrosso();
+
+        /**
          * @brief Set the current position as the Origin
          * 
          */

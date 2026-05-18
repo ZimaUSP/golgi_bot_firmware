@@ -49,7 +49,7 @@ void Controller::get_medicine(int DELAY_EX, int DELAY_CON){
 }
 
 void Controller::drop_medicine(){
-  this->go_origin_suavizado();          // may not reach endstop
+  this->go_origin(false, false);          // may not reach endstop
   delay(1000);
   this->Bomba_Y->turn_off();
   this->reset_PID();
@@ -147,12 +147,12 @@ void Controller::go_max(bool axis1,bool axis2, bool axis3){
     //Serial.println("going max");
     axis1OnMax = this->Axis_1->onMax();
     axis2OnMax = this->Axis_2->onMax();
-    axis3OnMax = this->Axis_3->onMax();
+    axis3OnMax = this->Axis_3->onMaxGrosso();
 
     this->Axis_1->go_L();
     // this->Axis_2->setPoint(this->Axis_1->position());
 
-if (axis1OnMax || axis2OnMax && (!xOnMax)) {  
+    if (axis1OnMax || axis2OnMax && (!xOnMax)) {  
       //Serial.println("ENTROU X");
       this->Axis_1->resetMax();
       this->Axis_1->stop();
@@ -170,7 +170,7 @@ if (axis1OnMax || axis2OnMax && (!xOnMax)) {
     }
 
     if (axis3OnMax && (!zOnMax)) {
-      // Serial.println("ENTROU Z");
+      Serial.println("ENTROU Z");
       this->Axis_3->resetMax();
       this->Axis_3->stop();
       zOnMax = true;

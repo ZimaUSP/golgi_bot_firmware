@@ -23,6 +23,13 @@ Chave_fim_de_curso::Chave_fim_de_curso(int pin, byte which):whichISR_(which) {
     //attachInterrupt(this->A_pin, this->A_trigger, RISING);
     //attachInterrupt(this->B_pin, this->B_trigger, RISING);
 }
+void Chave_fim_de_curso::batente_trigger_grosso() {
+  if (digitalRead(this->pin)==HIGH){
+    this->batente=true;
+  }else{
+    this->batente=false;
+  }
+}
 void Chave_fim_de_curso::batente_trigger() {
   if (digitalRead(this->pin)==LOW){
     this->batente=true;
@@ -60,7 +67,7 @@ void Chave_fim_de_curso::init() {
       case 4: 
         attachInterrupt (this->pin, isr4, CHANGE); 
         instance4_ = this;
-        this->batente_trigger();
+        this->batente_trigger_grosso();
         break;
 
       case 5: 
@@ -104,7 +111,7 @@ void Chave_fim_de_curso::isr3 (){
 }
 
 void Chave_fim_de_curso::isr4 (){
-  instance4_->handleInterrupt();  
+  instance4_->handleInterruptGrosso();  
 }
 
 void Chave_fim_de_curso::isr5 (){
@@ -113,4 +120,7 @@ void Chave_fim_de_curso::isr5 (){
 
 void Chave_fim_de_curso::handleInterrupt(){
     this->batente_trigger();
+}
+void Chave_fim_de_curso::handleInterruptGrosso(){
+    this->batente_trigger_grosso();
 }

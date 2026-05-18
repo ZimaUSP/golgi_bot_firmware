@@ -181,6 +181,10 @@ bool Axis::onMax() {
   return digitalRead(Chave_L->getPin()) == LOW;
 }
 
+bool Axis::onMaxGrosso() {
+  return digitalRead(Chave_L->getPin()) == HIGH;
+}
+
 void Axis::resetOrigin() {
   this->encoder->setPulses(0);
 }
