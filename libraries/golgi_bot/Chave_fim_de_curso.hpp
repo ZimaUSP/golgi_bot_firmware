@@ -20,31 +20,13 @@ class Chave_fim_de_curso {
         int pin;
 
         bool batente;
-        
-        //nickgammon ideia
-        const byte whichISR_;
 
-        static void isr0();
+        bool GROSSO;
 
-        static void isr1();
-   
-        static void isr2();
-
-        static void isr3();
-
-        static void isr4();
-
-        static void isr5();
-     
-        static Chave_fim_de_curso* instance0_;
-        static Chave_fim_de_curso* instance1_;
-        static Chave_fim_de_curso* instance2_;
-        static Chave_fim_de_curso* instance3_;
-        static Chave_fim_de_curso* instance4_;
-        static Chave_fim_de_curso* instance5_;
+        //bernardo ideia kk
+        static void isr(void* arg);
 
         void handleInterrupt();
-        void handleInterruptGrosso();
         //
 
     public:
@@ -53,7 +35,7 @@ class Chave_fim_de_curso {
          * 
          * @param pin chave pin 
          */
-        Chave_fim_de_curso(int pin, const byte which);
+        Chave_fim_de_curso(int pin, bool GROSSO);
 
         void init();
     
@@ -61,11 +43,6 @@ class Chave_fim_de_curso {
          * @brief Triggered by falling sign, demarks endstop in a bool variable
          */
         void batente_trigger();
-
-        /**
-         * @brief Triggered by falling sign, demarks endstop in a bool variable
-         */
-        void batente_trigger_grosso();
         
         /**
          * @brief get the pin number
