@@ -24,18 +24,22 @@ class Encoder {
         int pulses=0;
         int mode;
         //nickgammon ideia
-        const byte whichISR_;
+        // const byte whichISR_;
 
-        static void isr0A();
-        static void isr0B();
-        static void isr1A();
-        static void isr1B();
-        static void isr2A();
-        static void isr2B();
+        // static void isr0A();
+        // static void isr0B();
+        // static void isr1A();
+        // static void isr1B();
+        // static void isr2A();
+        // static void isr2B();
 
-        static Encoder* instance0_;
-        static Encoder* instance1_;
-        static Encoder* instance2_;
+        // static Encoder* instance0_;
+        // static Encoder* instance1_;
+        // static Encoder* instance2_;
+
+        // Semelhante ao chave_fim_de_curso, mas o enconder precisa diferenciar os dois canais:
+        static void isrA(void* arg);
+        static void isrB(void* arg);
 
         void handleInterrupt(char sel);
         //
@@ -47,7 +51,9 @@ class Encoder {
          * @param A_pin A phase pin 
          * @param B_pin B phase pin 
          */
-        Encoder(int A_pin,int B_pin, const byte which,int PulsesPerRev,int PitchPerRev,int mode);
+        // Encoder(int A_pin,int B_pin, const byte which,int PulsesPerRev,int PitchPerRev,int mode);
+        // which não é mais necessário
+        Encoder(int A_pin,int B_pin,int PulsesPerRev,int PitchPerRev,int mode);
 
         void init();
     
