@@ -25,9 +25,7 @@ Chave_fim_de_curso::Chave_fim_de_curso(int pin, bool inverso) {
 }
 
 void Chave_fim_de_curso::batente_trigger() {
-<<<<<<< HEAD
   if (this->inverso ){
-=======
 
     this->batente = (digitalRead(this->pin)==HIGH);
   }else{
@@ -49,12 +47,6 @@ bool Chave_fim_de_curso::getBatente() {
 }
 
 void Chave_fim_de_curso::isr(void* arg) {
-<<<<<<< HEAD
-  Chave_fim_de_curso* instance = (Chave_fim_de_curso*) arg;
-  instance->getBatente();
-}
-=======
   Chave_fim_de_curso* instance_ = (Chave_fim_de_curso*) arg;
   instance_->getBatente();
 }
->>>>>>> 3f93c4dd6bab6841d46775004aafe10cb1047e45
