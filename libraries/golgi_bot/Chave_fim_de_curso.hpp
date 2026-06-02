@@ -26,10 +26,6 @@ class Chave_fim_de_curso {
         //bernardo ideia kk
         static void isr(void* arg);
 
-        //tirar isso, não?
-        void handleInterrupt();
-        //
-
     public:
         /**
          * @brief Default constructor of a Chave_fim_de_curso base class
