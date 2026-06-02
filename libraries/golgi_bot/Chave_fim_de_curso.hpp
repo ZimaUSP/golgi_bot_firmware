@@ -21,11 +21,12 @@ class Chave_fim_de_curso {
 
         bool batente;
 
-        bool GROSSO;
+        bool inverse;
 
         //bernardo ideia kk
         static void isr(void* arg);
 
+        //tirar isso, não?
         void handleInterrupt();
         //
 
@@ -35,7 +36,7 @@ class Chave_fim_de_curso {
          * 
          * @param pin chave pin 
          */
-        Chave_fim_de_curso(int pin, bool GROSSO);
+        Chave_fim_de_curso(int pin, bool inverse);
 
         void init();
     

@@ -84,7 +84,8 @@ void Encoder::B_trigger() {
  } 
 }
 
-// Dos modes agora só o mode == 4 é útil, logo posso resumir apenas a ele. Fiz similar ao chave, já que é o mesmo princípio.
+// Dos modes agora só o mode == 4 aparece, logo posso resumir apenas a ele. Fiz similar ao chave, já que é o mesmo princípio.
+// Talvez deixar de alguma forma para se necessário usar outro "mode", o que acha? 
 void Encoder::init() {
   if (this->mode == 4) {
     attachInterruptArg (this->A_pin, isrA, this, CHANGE);
@@ -185,6 +186,8 @@ void Encoder::isrB(void* arg) {
   instance_->B_trigger();
 }
 //Será que fazemos o static cast??
+
+// Sefor tirar o handleInterrupt, tem que tirar do .hpp
 
 // Manter esse já que tem que diferenciar os canais, ou puxar logo A_trigger?
 // void Encoder::handleInterrupt(char sel){

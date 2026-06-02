@@ -41,6 +41,7 @@ class Encoder {
         static void isrA(void* arg);
         static void isrB(void* arg);
 
+        // ver se deleta isso
         void handleInterrupt(char sel);
         //
 

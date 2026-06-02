@@ -16,16 +16,16 @@
 /*****************************************
  * Class Methods Bodies Definitions
  *****************************************/
-Chave_fim_de_curso::Chave_fim_de_curso(int pin, bool GROSSO) {
+Chave_fim_de_curso::Chave_fim_de_curso(int pin, bool inverse) {
     this-> pin = pin;
-    this-> GROSSO = GROSSO;
+    this-> inverse = inverse;
     pinMode(this->pin,INPUT_PULLDOWN);
     //attachInterrupt(this->A_pin, this->A_trigger, RISING);
     //attachInterrupt(this->B_pin, this->B_trigger, RISING);
 }
 
 void Chave_fim_de_curso::batente_trigger() {
-  if (this->GROSSO ){
+  if (this->inverse ){
     this->batente = (digitalRead(this->pin)==HIGH);
   }else{
     this->batente = (digitalRead(this->pin)==LOW);
