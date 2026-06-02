@@ -34,8 +34,7 @@ void Chave_fim_de_curso::batente_trigger() {
 <<<<<<< HEAD
   if (this->inverso ){
 =======
-  if (this->GROSSO ){
->>>>>>> 3f93c4dd6bab6841d46775004aafe10cb1047e45
+
     this->batente = (digitalRead(this->pin)==HIGH);
   }else{
     this->batente = (digitalRead(this->pin)==LOW);
