@@ -8,9 +8,9 @@ Encoder *encoder_slave;
 
 void setup() {            
   Serial.begin (9600);
-  encoder_mas = new Encoder(A_pin_master_X, B_pin_master_X, 0, Nominal_pulses, pitch_pulley_master, 4); 
-  encoder_z = new Encoder(A_pin_Z,B_pin_Z,2,600,40,4);
-  encoder_slave = new Encoder(A_pin_slave_X, B_pin_slave_X, 1, Nominal_pulses, pitch_pulley_slave, 4);
+  encoder_mas = new Encoder(A_pin_master_X, B_pin_master_X, Nominal_pulses, pitch_pulley_master, 4); 
+  encoder_z = new Encoder(A_pin_Z,B_pin_Z,600,40,4);
+  encoder_slave = new Encoder(A_pin_slave_X, B_pin_slave_X, Nominal_pulses, pitch_pulley_slave, 4);
   encoder_mas->init();
   encoder_slave->init();
   encoder_z->init();
