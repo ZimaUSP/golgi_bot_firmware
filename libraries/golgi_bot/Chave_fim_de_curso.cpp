@@ -16,15 +16,9 @@
 /*****************************************
  * Class Methods Bodies Definitions
  *****************************************/
-<<<<<<< HEAD
 Chave_fim_de_curso::Chave_fim_de_curso(int pin, bool inverso) {
     this-> pin = pin;
     this-> inverso = inverso;
-=======
-Chave_fim_de_curso::Chave_fim_de_curso(int pin, bool GROSSO) {
-    this-> pin = pin;
-    this-> GROSSO = GROSSO;
->>>>>>> 3f93c4dd6bab6841d46775004aafe10cb1047e45
     pinMode(this->pin,INPUT_PULLDOWN);
     //attachInterrupt(this->A_pin, this->A_trigger, RISING);
     //attachInterrupt(this->B_pin, this->B_trigger, RISING);
