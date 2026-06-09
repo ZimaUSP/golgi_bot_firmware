@@ -94,7 +94,7 @@ void Controller::go_origin(bool axis1,bool axis2){
       this->Axis_3->stop();
       zOnOrigin = true;
     } else if (zOnOrigin == false){
-      this->Axis_3->go_R();
+      this->Axis_3->go_R(150);
     }
 
     if (xOnOrigin && zOnOrigin) {
@@ -125,7 +125,7 @@ void Controller::go_origin_suavizado(){  // doesn't reset origin
       zOnMax = true;
       delay(10);
     } else if (zOnMax == false) {
-      this->Axis_3->go_R();
+      this->Axis_3->go_R(150);
     }
   }
   this->Axis_1->stop();
@@ -152,7 +152,7 @@ void Controller::go_max(bool axis1,bool axis2, bool axis3){
     this->Axis_1->go_L();
     // this->Axis_2->setPoint(this->Axis_1->position());
 
-    if (axis1OnMax || axis2OnMax && (!xOnMax)) {  
+    if (axis2OnMax && (!xOnMax)) {  // axis1OnMax ||
       //Serial.println("ENTROU X");
       this->Axis_1->resetMax();
       this->Axis_1->stop();

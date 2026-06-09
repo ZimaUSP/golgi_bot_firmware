@@ -71,7 +71,7 @@
 #define L_pin_slave_X 16 // pin
 #define R_channel_slave_X 14                              
 #define L_channel_slave_X 15
-#define pwm_slave_cte 1          
+#define pwm_slave_cte 0.8 // fraction of pwm velocity          
 
 // X CHAVE
 #define chave_master_R_X 36
@@ -88,15 +88,15 @@
 // X PID Master
 #define kp_master_x  10 //14.4         
 #define ki_master_x  0.05           
-#define kd_master_x  0 //100            
+#define kd_master_x  0//100            
 #define i_saturation_master_x 1000
 
 
 // X PID Slave 
 // aumentar kp para diminuir o tempo de resposta
-#define kp_slave_x 20 //16.8            
-#define ki_slave_x 0.05           
-#define kd_slave_x 0 //100
+#define kp_slave_x 12 //16.8            
+#define ki_slave_x 0.05    
+#define kd_slave_x 0//100
 #define i_saturation_slave_x 1000 // Diminuir saturação para ser mais sensivel ao erro
 
 // X PID_incremental Master
@@ -122,15 +122,15 @@
 #define Z_max_index 3
 
 // Z Encoder 
-#define A_pin_Z 21 // Green cable
-#define B_pin_Z 19 // white cable
+#define A_pin_Z 19 // Green cable
+#define B_pin_Z 21 // white cable
 
 // Z BTS 
-#define R_pin_Z 18 // R bts
-#define L_pin_Z 17 // L bts
+#define R_pin_Z 17 // R bts
+#define L_pin_Z 18 // L bts
 #define R_channel_Z 7
 #define L_channel_Z 6
-#define pwm_cte_Z 0.8 // fraction of pwm velocity
+#define pwm_cte_Z 0.6 // fraction of pwm velocity
 
 // Z Chave
 #define chave_L_Z 34
@@ -139,9 +139,9 @@
 #define chave_channel_L_Z 4
 
 // Z PID 
-#define kp_z 2
-#define ki_z 0 //0.005
-#define kd_z 0 //60
+#define kp_z 5.2
+#define ki_z 0.05
+#define kd_z 10
 #define i_saturation_z 1000
 
 // Z PID_incremental

@@ -56,6 +56,10 @@ void Axis::setPoint(double setpoint) {
   this->setpoint = setpoint;
 }
 
+double Axis::getSetPoint() {
+  return this->setpoint;
+}
+
 void Axis::move(){
   
     //Serial.print("encoder position");
@@ -198,6 +202,10 @@ void Axis::setMax(int max){
 
 void Axis::go_R() {
     this->BTS->Set_R((this->MAX_PWM)*this->pwm_cte);
+}
+
+void Axis::go_R(int pwm) {
+    this->BTS->Set_R(pwm);
 }
 
 void Axis::go_L() {

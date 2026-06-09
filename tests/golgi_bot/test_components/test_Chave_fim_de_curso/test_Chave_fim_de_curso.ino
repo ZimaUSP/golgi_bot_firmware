@@ -39,7 +39,6 @@ void setup() {
 
   endstop_L_Z = new Chave_fim_de_curso(chave_L_Z,chave_channel_L_Z);
   endstop_L_Z->init(); 
-
   }
    
 void loop() {

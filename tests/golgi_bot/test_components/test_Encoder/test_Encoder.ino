@@ -9,7 +9,7 @@ Encoder *encoder_slave;
 void setup() {            
   Serial.begin (9600);
   encoder_mas = new Encoder(A_pin_master_X, B_pin_master_X, 0, Nominal_pulses, pitch_pulley_master, 4); 
-  encoder_z = new Encoder(A_pin_Z,B_pin_Z,2,600,40,4);
+  encoder_z = new Encoder(A_pin_Z,B_pin_Z,2,600,40,2);
   encoder_slave = new Encoder(A_pin_slave_X, B_pin_slave_X, 1, Nominal_pulses, pitch_pulley_slave, 4);
   encoder_mas->init();
   encoder_slave->init();
@@ -25,3 +25,16 @@ void loop() {
   
   //Serial.println(encoder->getPulses());
   }
+
+// void loop() {
+//     Serial.print("A=");
+//     Serial.print(digitalRead(A_pin_Z));
+
+//     Serial.print(" B=");
+//     Serial.print(digitalRead(B_pin_Z));
+
+//     Serial.print(" Pulses=");
+//     Serial.println(encoder_z->getPulses());
+
+//     delay(20);
+// }

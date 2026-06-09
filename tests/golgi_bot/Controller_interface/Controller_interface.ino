@@ -1,5 +1,5 @@
 unsigned long previousMillis1 = 0;
-const long interval1 = 25;
+const long interval1 = 35;
 bool insideError = false;
 unsigned long primeira_chegada = 0;
 double initial_time = 0;
@@ -134,6 +134,7 @@ void setup() {
   //Serial Comunication
   Serial.begin(SERIAL_VEL);
   delay(100);
+  Serial.println("NOVO CODIGO");
 
   //Chave fim de curso
 
@@ -225,32 +226,32 @@ void setup() {
   Golgi_bot->reset_Y(DELAY_CONTRACT);
 
 
-  // int sempre = 1;
-  // while (sempre = 1) {
-  // //   Golgi_bot->go_origin(true, true);
-  // //   delay(3000);
-  // //   Golgi_bot->go_max(true, true, true);
-  // //   delay(3000);
-  // // Golgi_bot->reset_Y(DELAY_CONTRACT);
-  // //   //Serial.println(encoder_master_X->getPosition());
-  // BTS_master_X->Set_L(200); 
+  int sempre = 1;
+  while (sempre = 1) {
+  //   Golgi_bot->go_origin(true, true);
+  //   delay(3000);
+  //   Golgi_bot->go_max(true, true, true);
+  //   delay(3000);
+  // Golgi_bot->reset_Y(DELAY_CONTRACT);
+  //   //Serial.println(encoder_master_X->getPosition());
+  BTS_master_X->Set_R(200); 
   // BTS_Z->Set_L(100); 
-  // //   // Serial.println("AAAAAAAAAAAAAA");
-  // //   // Axis_z->move()
-  // //   // Golgi_bot->go_origin(true, true);
-  // //   // delay(2000);
-  // //   // Golgi_bot->go_max(true, true, true);      // test if it needs to go max, or if going once to orign works
-  // //   // delay(2000);
-  // //   // Golgi_bot->go_origin(true, true);
-  // //   // delay(2000);
+    // Serial.println("AAAAAAAAAAAAAA");
+  //   // Axis_z->move()
+  //   // Golgi_bot->go_origin(true, true);
+  //   // delay(2000);
+  //   // Golgi_bot->go_max(true, true, true);      // test if it needs to go max, or if going once to orign works
+  //   // delay(2000);
+  //   // Golgi_bot->go_origin(true, true);
+  //   // delay(2000);
   // BTS_slave_X->Set_L(200);
-  // //   // Axis_slave_X->setPoint(Axis_master_X->position());
-  // //   //Serial.println(Axis_slave_X->getOutput());
-  // //   // Serial.println(Axis_master_X->position()); //
-  // //   // Axis_slave_X->move(); //
-  // //   //int output1 = 125;
-  // //   //Serial.println(encoder_master_X->getPosition());
-  // }
+  //   // Axis_slave_X->setPoint(Axis_master_X->position());
+  //   //Serial.println(Axis_slave_X->getOutput());
+  //   // Serial.println(Axis_master_X->position()); //
+  //   // Axis_slave_X->move(); //
+  //   //int output1 = 125;
+  //   //Serial.println(encoder_master_X->getPosition());
+  }
 
 
   Golgi_bot->go_origin(true, true);
@@ -278,7 +279,7 @@ void loop() {
         //Moves Controller
         // Golgi_bot->move();
         // Serial.println("BRUHHH");
-        Axis_master_X->move();        
+        Axis_master_X->move();
         Axis_slave_X->setGoal(Axis_master_X->position());
         delay(2);
 
@@ -297,11 +298,14 @@ void loop() {
           // Serial.println(Axis_z->getOutput());
           // Serial.println(Axis_z->position());
           // Serial.print(setPoint_X);
+          // Serial.print(Axis_master_X->getOutput() );
           // Serial.print(" , ");
-          //Serial.println(Axis_master_X->getOutput() );
+          // Serial.println(Axis_slave_X->getOutput() );
           Serial.print(Axis_master_X->position());
           Serial.print(", ");
-          Serial.println(Axis_slave_X->position()); // Plotts the PID response
+          Serial.print(Axis_slave_X->position()); // Plotts the PID response
+          Serial.print(", ");
+          Serial.println(Axis_z->position());
         //   // Serial.print(SMC_master_X->getVelocity(), 3);
           // Serial.print(", ");
           // Serial.println(millis());
@@ -347,7 +351,7 @@ void read_setpoint(){
       received = Serial.readString();
       received.trim();
       Communication->read_setpoint(received);
-  }
+    }
 
 
 
@@ -398,7 +402,7 @@ void read_setpoint(){
 }
 
 void check_position(){
-  if(Axis_master_X->onGoal() && Axis_slave_X->onGoal()) {                      // Golgi_bot->onGoal()
+  if(Axis_master_X->onGoal() && Axis_slave_X->onGoal()) { //Golgi_bot->onGoal()
     STATE=GETING_MEDICINE;
     // // Serial.println("GETING_MEDICINE");
     // Serial.print(Axis_master_X->position());

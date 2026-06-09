@@ -85,6 +85,12 @@ class Axis {
         void setPoint(double setpoint);
 
         /**
+         * @brief get setpoint
+         * 
+         */
+        double getSetPoint();
+
+        /**
          * @brief set tolerance from edges
          * 
          */
@@ -139,6 +145,12 @@ class Axis {
          * 
          */
         void go_R();
+
+        /**
+         * @brief Start moving to the right with a specific PWM
+         * 
+         */ 
+        void go_R(int pwm);
 
         /**
          * @brief Start moving to the left
