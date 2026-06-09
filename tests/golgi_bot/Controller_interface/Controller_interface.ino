@@ -13,6 +13,8 @@ int which_med = 0;
 
 //#include "Controller.hpp"
 #include "Controller.hpp"
+
+#include "new_communication.hpp"
 // EIXO X
 
 // Encoder X axis 
@@ -72,23 +74,7 @@ PID_incremental *PIDinc_Z;
 
 Fuzzy_controller *Fuzzy_Z;
 
-const std::array<double, 4> error_NH_master = {-600, -600, -300, -100};
-const std::array<double, 4> error_N_master  = {-200, -33, -33, 0};
-const std::array<double, 4> error_Z_master  = {-50, 0, 0, 50};
-const std::array<double, 4> error_P_master  = {0, 33, 33, 200};
-const std::array<double, 4> error_PH_master = {100, 300, 600, 600};
-
-const std::array<double, 4> error_NH_slave = {-800, -800, -300, -80};
-const std::array<double, 4> error_N_slave  = {-200, -44, -44, 0};
-const std::array<double, 4> error_Z_slave  = {-18, 0, 0, 18};
-const std::array<double, 4> error_P_slave  = {0, 44, 44, 200};
-const std::array<double, 4> error_PH_slave = {80, 300, 800, 800};
-
-const std::array<double, 4> error_NH_Z = {-600, -600, -300, -150};
-const std::array<double, 4> error_N_Z  = {-200, -45, -45, 0};
-const std::array<double, 4> error_Z_Z  = {-50, 0, 0, 50};
-const std::array<double, 4> error_P_Z  = {0, 45, 45, 200};
-const std::array<double, 4> error_PH_Z = {150, 300, 600, 600};
+NewCommunication *Communication;
 
 Sliding_controller *SMC_Z;
 
@@ -173,14 +159,14 @@ void setup() {
   encoder_Z =new Encoder(A_pin_Z,B_pin_Z,2,600,40,4);
   encoder_Z->init();
 
-   // Atuador
+  // Atuador
   Atuador_Y= new Atuador(Extend_pin,Contract_pin);
   Atuador_Y->init();
   Atuador_Y->Contract();
   delay(DELAY_EXTEND);
   Atuador_Y->Stop();
 
-   // Bomba
+  // Bomba
   Bomba_Y= new Bomba(bomba_pin);
   Bomba_Y->init();
 
@@ -190,20 +176,36 @@ void setup() {
   
   PID_Z = new PID(kp_z,ki_z,kd_z,i_saturation_z);
 
-  // PID incremental       teste
-
+  // PID incremental
   PIDinc_master_X = new PID_incremental(80, 3.2, 10, 0.001, 0.01);
   PIDinc_slave_X = new PID_incremental(80, 18.2, 2, 0.001, 0.01);         //0.001  
 
   PIDinc_Z = new PID_incremental(80, 1.3, 100, 0.001, 0.01);
 
   // Fuzzy control
+<<<<<<< HEAD
   // Fuzzy_master_X = new Fuzzy_controller(0.01, error_NH_master, error_N_master, error_Z_master, error_P_master, error_PH_master);
   // Fuzzy_slave_X = new Fuzzy_controller(0.01, error_NH_slave, error_N_slave, error_Z_slave, error_P_slave, error_PH_slave);
   // Fuzzy_Z = new Fuzzy_controller(0.01, error_NH_Z, error_N_Z, error_Z_Z, error_P_Z, error_PH_Z);
+=======
+  Fuzzy_member_param master_fuzzy_member = Fuzzy_member_param({-250, -250, -200, -40}, {-50, -25, -25, 0}, {-2, 0, 0, 2}, {0, 25, 25, 50}, {40, 200, 250, 250},
+                                                              {-60, -60, -55, -25}, {-40, -15, -15, -10}, {-10, 0, 0, 10}, {10, 15, 15, 40}, {25, 55, 60, 60}, 
+                                                              {-275, -275, -160, -120}, {-160, -110, -110, -70}, {-120, -90, -90, -60}, {-110, -75, -75, -40}, {-55, 0, 0, 55}, {40, 75, 75, 110}, {60, 90, 90, 120}, {70, 110, 110, 160}, {120, 160, 275, 275});
+
+  Fuzzy_member_param slave_fuzzy_member = Fuzzy_member_param({-250, -250, -200, -40}, {-50, -25, -25, 0}, {-2, 0, 0, 2}, {0, 25, 25, 50}, {40, 200, 250, 250},
+                                                             {-60, -60, -55, -25}, {-40, -15, -15, -10}, {-10, 0, 0, 10}, {10, 15, 15, 40}, {25, 55, 60, 60}, 
+                                                             {-275, -275, -160, -120}, {-160, -110, -110, -80}, {-110, -90, -90, -70}, {-110, -75, -75, -30}, {-35, 0, 0, 35}, {30, 75, 75, 110}, {70, 90, 90, 110}, {80, 110, 110, 160}, {120, 160, 275, 275});
+
+  Fuzzy_member_param z_fuzzy_member = Fuzzy_member_param({-250, -250, -200, -40}, {-50, -25, -25, 0}, {-2, 0, 0, 2}, {0, 25, 25, 50}, {40, 200, 250, 250},
+                                                         {-60, -60, -55, -25}, {-40, -15, -15, -10}, {-10, 0, 0, 10}, {10, 15, 15, 40}, {25, 55, 60, 60}, 
+                                                         {-275, -275, -160, -120}, {-160, -110, -110, -70}, {-120, -90, -90, -60}, {-110, -75, -75, -40}, {-80, 0, 0, 80}, {40, 75, 75, 110}, {60, 90, 90, 120}, {70, 110, 110, 160}, {120, 160, 275, 275});
+
+  Fuzzy_master_X = new Fuzzy_controller(0.01, master_fuzzy_member);
+  Fuzzy_slave_X = new Fuzzy_controller(0.01, slave_fuzzy_member);
+  Fuzzy_Z = new Fuzzy_controller(0.01, z_fuzzy_member);
+>>>>>>> dae1bbdd27ac0a421822638bfb01e8dc177cad24
 
   // Sliding mode control
-
   SMC_master_X = new Sliding_controller(Elast_coef_param, Torque_coef_param, Load_mass_param_master, Load_inercia_param_master, Velocity_param_master, 1, gama_param, alpha_param, radius_param, 15.9, sampling_time_param);
   SMC_slave_X = new Sliding_controller(Elast_coef_param, Torque_coef_param, Load_mass_param_slave, Load_inercia_param_slave, Velocity_param_slave, 1, gama_param, 0.1, radius_param, 15.7, sampling_time_param);
   SMC_Z = new Sliding_controller(Elast_coef_param, Torque_coef_param, Load_mass_param_master, Load_inercia_param_master, Velocity_param_master, 1, gama_param, alpha_param, radius_param, 8.9, sampling_time_param);
@@ -251,6 +253,7 @@ void setup() {
   Golgi_bot->go_max(true, true, true);      // test if it needs to go max, or if going once to orign works
   Golgi_bot->go_origin(true, true);
 
+  Communication = new NewCommunication(Golgi_bot);
 
   Serial.println("STAND-BY");
 
@@ -261,7 +264,7 @@ void loop() {
   switch(STATE) {
       case STAND_BY :
         delay(100);
-        // Recive Set point
+       // Recive Set point
         Serial.println("STAND-BY");
         read_setpoint();
         //initial_time = millis();
@@ -327,7 +330,7 @@ char* string_to_char(std::string str) {
 }
 
 void read_setpoint(){
-  String id_remedio;
+  String received;
   if(Serial.available()) {
       STATE=GOING;
       Serial.println("GOING");
@@ -336,28 +339,9 @@ void read_setpoint(){
       //char* received = string_to_char(comu->get_received_data());
       //int id_remedio = atoi(received);
       //int setPoint_z = 0;
-      id_remedio = Serial.readString();
-      id_remedio.trim();
-      //Serial.println(mensagem);
-      if(id_remedio.equals("17424")){ 
-        //digitalWrite(led, HIGH);
-        //delay(2000);
-        //digitalWrite(led, LOW);
-        X_pos = 400;                   
-        Z_pos = 355;
-      }
-      else if(id_remedio.equals("17292")){
-        X_pos = 645;
-        Z_pos = 345;
-      }
-      
-      /*
-      else if(id_remedio.equals("27198")){
-        setPoint_z = 200;
-      }
-      */
-
-      Golgi_bot->setGoal(X_pos, X_pos, Z_pos);
+      received = Serial.readString();
+      received.trim();
+      Communication->read_setpoint(received);
   }
 
 
