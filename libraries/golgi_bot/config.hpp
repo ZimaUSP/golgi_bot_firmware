@@ -86,17 +86,17 @@
 
 
 // X PID Master
-#define kp_master_x  14.4         
-#define ki_master_x  0.05           
-#define kd_master_x  100            
+#define kp_master_x  10         
+#define ki_master_x  0           
+#define kd_master_x  0            
 #define i_saturation_master_x 1000
 
 
 // X PID Slave 
 // aumentar kp para diminuir o tempo de resposta
-#define kp_slave_x 16.8            
-#define ki_slave_x 0.05           
-#define kd_slave_x 100
+#define kp_slave_x 10         
+#define ki_slave_x 0           
+#define kd_slave_x 0
 #define i_saturation_slave_x 1000 // Diminuir saturação para ser mais sensivel ao erro
 
 // X PID_incremental Master

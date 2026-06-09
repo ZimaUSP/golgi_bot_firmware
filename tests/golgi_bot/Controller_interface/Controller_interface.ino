@@ -198,9 +198,9 @@ void setup() {
   PIDinc_Z = new PID_incremental(80, 1.3, 100, 0.001, 0.01);
 
   // Fuzzy control
-  Fuzzy_master_X = new Fuzzy_controller(0.01, error_NH_master, error_N_master, error_Z_master, error_P_master, error_PH_master);
-  Fuzzy_slave_X = new Fuzzy_controller(0.01, error_NH_slave, error_N_slave, error_Z_slave, error_P_slave, error_PH_slave);
-  Fuzzy_Z = new Fuzzy_controller(0.01, error_NH_Z, error_N_Z, error_Z_Z, error_P_Z, error_PH_Z);
+  // Fuzzy_master_X = new Fuzzy_controller(0.01, error_NH_master, error_N_master, error_Z_master, error_P_master, error_PH_master);
+  // Fuzzy_slave_X = new Fuzzy_controller(0.01, error_NH_slave, error_N_slave, error_Z_slave, error_P_slave, error_PH_slave);
+  // Fuzzy_Z = new Fuzzy_controller(0.01, error_NH_Z, error_N_Z, error_Z_Z, error_P_Z, error_PH_Z);
 
   // Sliding mode control
 
@@ -209,10 +209,10 @@ void setup() {
   SMC_Z = new Sliding_controller(Elast_coef_param, Torque_coef_param, Load_mass_param_master, Load_inercia_param_master, Velocity_param_master, 1, gama_param, alpha_param, radius_param, 8.9, sampling_time_param);
 
   //Creating Axis
-  Axis_master_X = new Axis(encoder_master_X, BTS_master_X, endstop_master_R_X, endstop_master_L_X, SMC_master_X, X_master_MAX_VEL, PWM_resolution_channel, 1.5, pwm_master_cte, false);
-  Axis_slave_X = new Axis(encoder_slave_X, BTS_slave_X, endstop_slave_R_X, endstop_slave_L_X, SMC_slave_X, X_slave_MAX_VEL, PWM_resolution_channel, 1.5, pwm_slave_cte, false);
+  Axis_master_X = new Axis(encoder_master_X, BTS_master_X, endstop_master_R_X, endstop_master_L_X, PID_master_X, X_master_MAX_VEL, PWM_resolution_channel, 1.5, pwm_master_cte, false);
+  Axis_slave_X = new Axis(encoder_slave_X, BTS_slave_X, endstop_slave_R_X, endstop_slave_L_X, PID_slave_X, X_slave_MAX_VEL, PWM_resolution_channel, 1.5, pwm_slave_cte, false);
   
-  Axis_z= new Axis(encoder_Z, BTS_Z, endstop_R_Z, endstop_L_Z, SMC_Z, Z_MAX_VEL, PWM_resolution_channel, Z_tolerance, pwm_cte_Z, false);
+  Axis_z= new Axis(encoder_Z, BTS_Z, endstop_R_Z, endstop_L_Z, PID_Z, Z_MAX_VEL, PWM_resolution_channel, Z_tolerance, pwm_cte_Z, false);
 
   //Creating Controller
   Golgi_bot = new Controller(Axis_master_X, Axis_slave_X, Axis_z, Bomba_Y, Atuador_Y);
@@ -269,13 +269,13 @@ void loop() {
         return;
       case GOING :
         //Moves Controller
-        Golgi_bot->move();
+        // Golgi_bot->move();
         // Serial.println("BRUHHH");
-        // Axis_master_X->move();        
-        // Axis_slave_X->setGoal(Axis_master_X->position());
-        // delay(2);
+        Axis_master_X->move();        
+        Axis_slave_X->setGoal(Axis_master_X->position());
+        delay(2);
 
-        // Axis_slave_X->move();
+        Axis_slave_X->move();
         // Axis_z->move();
         if (Axis_master_X->getOutput() <= 40 && !insideError) {     
           primeira_chegada = millis();
@@ -287,17 +287,17 @@ void loop() {
           if (currentMillis1 - previousMillis1 >= interval1) {
           previousMillis1 = currentMillis1;
 
-        //   // Serial.println(Axis_z->getOutput());
-        //   // Serial.print(setPoint_X);
-        //   // Serial.print(" , ");
-        //   //Serial.println(Axis_master_X->getOutput() );
-          // Serial.print(Axis_master_X->position());
+          // Serial.println(Axis_z->getOutput());
+          // Serial.print(setPoint_X);
+          // Serial.print(" , ");
+          //Serial.println(Axis_master_X->getOutput() );
+          Serial.print(Axis_master_X->position());
+          Serial.print(", ");
+          Serial.println(Axis_slave_X->position()); // Plotts the PID response
+        //   // Serial.print(SMC_master_X->getVelocity(), 3);
           // Serial.print(", ");
-          // Serial.println(Axis_slave_X->position()); // Plotts the PID response
-        // //   // Serial.print(SMC_master_X->getVelocity(), 3);
-        //   Serial.print(", ");
-        //   Serial.println(millis());
-        //   // Serial.println(SMC_slave_X->getVelocity(), 3); // Plotts the output response
+          // Serial.println(millis());
+          // Serial.println(SMC_slave_X->getVelocity(), 3); // Plotts the output response
         }
 
         check_position();

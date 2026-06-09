@@ -33,6 +33,7 @@ class Axis {
         Chave_fim_de_curso *Chave_R;
         Chave_fim_de_curso *Chave_L;
         Sliding_controller *SMC;
+        PID *pid;
         int PWM_RESOLUTION;
         double output;
         double setpoint;
@@ -52,7 +53,7 @@ class Axis {
          * @param k_i Integrative constant 
          * @param k_d Derivative constant 
          */
-        Axis(Encoder *encoder, H_bridge_controller *BTS, Chave_fim_de_curso *Chave_R, Chave_fim_de_curso *Chave_L,Sliding_controller *SMC, float max_vel,int PWM_RESOLUTION,float tolerance, float pwm_cte, bool debug);
+        Axis(Encoder *encoder, H_bridge_controller *BTS, Chave_fim_de_curso *Chave_R, Chave_fim_de_curso *Chave_L,PID *pid, float max_vel,int PWM_RESOLUTION,float tolerance, float pwm_cte, bool debug);
 
         /**
          * @brief moves axis with PID control, input position from enconder(mm)

@@ -269,7 +269,7 @@ void loop() {
         // Used for PID control
         // Axis_master_X->move();        
         // Axis_slave_X->setGoal(Axis_master_X->position()); 
-        // // delay(2);
+        delay(2);
         // Axis_slave_X->move();
         // Axis_z->move();
 
