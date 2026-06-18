@@ -26,7 +26,6 @@ Chave_fim_de_curso::Chave_fim_de_curso(int pin, bool inverso) {
 
 void Chave_fim_de_curso::batente_trigger() {
   if (this->inverso ){
-
     this->batente = (digitalRead(this->pin)==HIGH);
   }else{
     this->batente = (digitalRead(this->pin)==LOW);

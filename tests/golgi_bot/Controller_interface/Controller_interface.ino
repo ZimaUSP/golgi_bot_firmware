@@ -1,5 +1,5 @@
 unsigned long previousMillis1 = 0;
-const long interval1 = 25;
+const long interval1 = 35;
 bool insideError = false;
 unsigned long primeira_chegada = 0;
 double initial_time = 0;
@@ -196,10 +196,10 @@ void setup() {
 
   // PID incremental       teste
 
-  PIDinc_master_X = new PID_incremental(80, 3.2, 10, 0.001, 0.01);
-  PIDinc_slave_X = new PID_incremental(80, 18.2, 2, 0.001, 0.01);         //0.001  
+  PIDinc_master_X = new PID_incremental(N_inc_master_x, kp_inc_master_x, ti_inc_master_x, td_inc_master_x, ts_inc_master_x);
+  PIDinc_slave_X = new PID_incremental(N_inc_slave_x, kp_inc_slave_x, ti_inc_slave_x, td_inc_slave_x, ts_inc_slave_x);         //0.001  
 
-  PIDinc_Z = new PID_incremental(80, 1.3, 100, 0.001, 0.01);
+  PIDinc_Z = new PID_incremental(N_z, kp_inc_z, ti_inc_z, td_inc_z, ts_inc_z);
 
   // //Fuzzy control
   //Fuzzy_master_X = new //Fuzzy_controller(0.01, error_NH_master, error_N_master, error_Z_master, error_P_master, error_PH_master);
@@ -213,10 +213,10 @@ void setup() {
   SMC_Z = new Sliding_controller(Elast_coef_param, Torque_coef_param, Load_mass_param_master, Load_inercia_param_master, Velocity_param_master, 1, gama_param, alpha_param, radius_param, 8.9, sampling_time_param);
 
   //Creating Axis
-  Axis_master_X = new Axis(encoder_master_X, BTS_master_X, endstop_master_R_X, endstop_master_L_X, PID_master_X, X_master_MAX_VEL, PWM_resolution_channel, 1.5, pwm_master_cte, false);
-  Axis_slave_X = new Axis(encoder_slave_X, BTS_slave_X, endstop_slave_R_X, endstop_slave_L_X, PID_slave_X, X_slave_MAX_VEL, PWM_resolution_channel, 1.5, pwm_slave_cte, false);
+  Axis_master_X = new Axis(encoder_master_X, BTS_master_X, endstop_master_R_X, endstop_master_L_X, PIDinc_master_X, X_master_MAX_VEL, PWM_resolution_channel, 1.5, pwm_master_cte, false);
+  Axis_slave_X = new Axis(encoder_slave_X, BTS_slave_X, endstop_slave_R_X, endstop_slave_L_X, PIDinc_slave_X, X_slave_MAX_VEL, PWM_resolution_channel, 1.5, pwm_slave_cte, false);
   
-  Axis_z= new Axis(encoder_Z, BTS_Z, endstop_R_Z, endstop_L_Z, PID_Z, Z_MAX_VEL, PWM_resolution_channel, Z_tolerance, pwm_cte_Z, false);
+  Axis_z= new Axis(encoder_Z, BTS_Z, endstop_R_Z, endstop_L_Z, PIDinc_Z, Z_MAX_VEL, PWM_resolution_channel, Z_tolerance, pwm_cte_Z, false);
 
   //Creating Controller
   Golgi_bot = new Controller(Axis_master_X, Axis_slave_X, Axis_z, Bomba_Y, Atuador_Y);
@@ -233,17 +233,17 @@ void setup() {
   // //   delay(3000);
   // // Golgi_bot->reset_Y(DELAY_CONTRACT);
   // //   //Serial.println(encoder_master_X->getPosition());
-  // BTS_master_X->Set_L(200); 
-  // BTS_Z->Set_L(100); 
-  // //   // Serial.println("AAAAAAAAAAAAAA");
-  // //   // Axis_z->move()
+  // BTS_master_X->Set_R(200); 
+  // // BTS_Z->Set_L(100); 
+  //   // Serial.println("AAAAAAAAAAAAAA");
+  //   // Axis_z->move()
   // //   // Golgi_bot->go_origin(true, true);
   // //   // delay(2000);
-  // //   // Golgi_bot->go_max(true, true, true);      // test if it needs to go max, or if going once to orign works
+  // //   // Golgi_bot->go_max(true, true, true);
   // //   // delay(2000);
   // //   // Golgi_bot->go_origin(true, true);
   // //   // delay(2000);
-  // BTS_slave_X->Set_L(200);
+  // // BTS_slave_X->Set_L(200);
   // //   // Axis_slave_X->setPoint(Axis_master_X->position());
   // //   //Serial.println(Axis_slave_X->getOutput());
   // //   // Serial.println(Axis_master_X->position()); //
@@ -276,13 +276,13 @@ void loop() {
         return;
       case GOING :
         //Moves Controller
-        // Golgi_bot->move();
+        Golgi_bot->move();
         // Serial.println("BRUHHH");
-        Axis_master_X->move();        
-        Axis_slave_X->setGoal(Axis_master_X->position());
-        delay(2);
+        // Axis_master_X->move();
+        // Axis_slave_X->setGoal(Axis_master_X->position());
+        // delay(2);
 
-        Axis_slave_X->move();
+        // Axis_slave_X->move();
         // Axis_z->move();
         if (Axis_master_X->getOutput() <= 40 && !insideError) {     
           primeira_chegada = millis();
@@ -297,11 +297,14 @@ void loop() {
           // Serial.println(Axis_z->getOutput());
           // Serial.println(Axis_z->position());
           // Serial.print(setPoint_X);
+          // Serial.print(Axis_master_X->getOutput() );
           // Serial.print(" , ");
-          //Serial.println(Axis_master_X->getOutput() );
+          // Serial.println(Axis_slave_X->getOutput() );
           Serial.print(Axis_master_X->position());
           Serial.print(", ");
-          Serial.println(Axis_slave_X->position()); // Plotts the PID response
+          Serial.print(Axis_slave_X->position()); // Plotts the PID response
+          Serial.print(", ");
+          Serial.println(Axis_z->position());
         //   // Serial.print(SMC_master_X->getVelocity(), 3);
           // Serial.print(", ");
           // Serial.println(millis());
@@ -347,7 +350,7 @@ void read_setpoint(){
       received = Serial.readString();
       received.trim();
       Communication->read_setpoint(received);
-  }
+    }
 
 
 
@@ -398,7 +401,7 @@ void read_setpoint(){
 }
 
 void check_position(){
-  if(Axis_master_X->onGoal() && Axis_slave_X->onGoal()) {                      // Golgi_bot->onGoal()
+  if(Golgi_bot->onGoal()) {
     STATE=GETING_MEDICINE;
     // // Serial.println("GETING_MEDICINE");
     // Serial.print(Axis_master_X->position());

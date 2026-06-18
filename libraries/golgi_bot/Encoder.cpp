@@ -94,7 +94,7 @@ void Encoder::init() {
         if(this->mode==1){
           attachInterrupt (this-> A_pin, isr2A, RISING); 
         }else if(this->mode==2){
-          attachInterrupt (this-> A_pin, isr1A, CHANGE); 
+          attachInterrupt (this-> A_pin, isr2A, CHANGE); 
         }else if(this->mode==4){
           attachInterrupt (this-> A_pin, isr2A, CHANGE); 
           attachInterrupt (this-> B_pin, isr2B, CHANGE); 
@@ -116,10 +116,9 @@ void Encoder::setPulses(int num) {
  this->pulses= num;
 }
 
-// for use by ISR glue routines
-Encoder * Encoder::instance0_;
-Encoder * Encoder::instance1_;
-Encoder * Encoder::instance2_;
+Encoder* Encoder::instance0_ = nullptr;
+Encoder* Encoder::instance1_ = nullptr;
+Encoder* Encoder::instance2_ = nullptr;
 
 void Encoder::isr0A (){
   instance0_->handleInterrupt('A');

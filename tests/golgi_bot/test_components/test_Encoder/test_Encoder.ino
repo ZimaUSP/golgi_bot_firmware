@@ -25,3 +25,16 @@ void loop() {
   
   //Serial.println(encoder->getPulses());
   }
+
+// void loop() {
+//     Serial.print("A=");
+//     Serial.print(digitalRead(A_pin_Z));
+
+//     Serial.print(" B=");
+//     Serial.print(digitalRead(B_pin_Z));
+
+//     Serial.print(" Pulses=");
+//     Serial.println(encoder_z->getPulses());
+
+//     delay(20);
+// }

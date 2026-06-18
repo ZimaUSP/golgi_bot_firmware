@@ -32,7 +32,7 @@ class Axis {
         H_bridge_controller *PWM_constant;
         Chave_fim_de_curso *Chave_R;
         Chave_fim_de_curso *Chave_L;
-        PID *pid;
+        PID_incremental *pid;
         int PWM_RESOLUTION;
         double output;
         double setpoint;
@@ -52,7 +52,7 @@ class Axis {
          * @param k_i Integrative constant 
          * @param k_d Derivative constant 
          */
-        Axis(Encoder *encoder, H_bridge_controller *BTS, Chave_fim_de_curso *Chave_R, Chave_fim_de_curso *Chave_L,PID *pid, float max_vel,int PWM_RESOLUTION,float tolerance, float pwm_cte, bool debug);
+        Axis(Encoder *encoder, H_bridge_controller *BTS, Chave_fim_de_curso *Chave_R, Chave_fim_de_curso *Chave_L,PID_incremental *pid, float max_vel,int PWM_RESOLUTION,float tolerance, float pwm_cte, bool debug);
 
         /**
          * @brief moves axis with PID control, input position from enconder(mm)
@@ -83,6 +83,12 @@ class Axis {
          * 
          */
         void setPoint(double setpoint);
+
+        /**
+         * @brief get setpoint
+         * 
+         */
+        double getSetPoint();
 
         /**
          * @brief set tolerance from edges
@@ -139,6 +145,12 @@ class Axis {
          * 
          */
         void go_R();
+
+        /**
+         * @brief Start moving to the right with a specific PWM
+         * 
+         */ 
+        void go_R(int pwm);
 
         /**
          * @brief Start moving to the left
