@@ -116,6 +116,10 @@ void Encoder::setPulses(int num) {
  this->pulses= num;
 }
 
+Encoder* Encoder::instance0_ = nullptr;
+Encoder* Encoder::instance1_ = nullptr;
+Encoder* Encoder::instance2_ = nullptr;
+
 void Encoder::isr0A (){
   instance0_->handleInterrupt('A');
 }

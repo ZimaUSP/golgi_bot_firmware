@@ -134,7 +134,6 @@ void setup() {
   //Serial Comunication
   Serial.begin(SERIAL_VEL);
   delay(100);
-  Serial.println("NOVO CODIGO");
 
   //Chave fim de curso
 
@@ -226,32 +225,32 @@ void setup() {
   Golgi_bot->reset_Y(DELAY_CONTRACT);
 
 
-  int sempre = 1;
-  while (sempre = 1) {
-  //   Golgi_bot->go_origin(true, true);
-  //   delay(3000);
-  //   Golgi_bot->go_max(true, true, true);
-  //   delay(3000);
-  // Golgi_bot->reset_Y(DELAY_CONTRACT);
-  //   //Serial.println(encoder_master_X->getPosition());
-  BTS_master_X->Set_R(200); 
-  // BTS_Z->Set_L(100); 
-    // Serial.println("AAAAAAAAAAAAAA");
-  //   // Axis_z->move()
-  //   // Golgi_bot->go_origin(true, true);
-  //   // delay(2000);
-  //   // Golgi_bot->go_max(true, true, true);      // test if it needs to go max, or if going once to orign works
-  //   // delay(2000);
-  //   // Golgi_bot->go_origin(true, true);
-  //   // delay(2000);
-  // BTS_slave_X->Set_L(200);
-  //   // Axis_slave_X->setPoint(Axis_master_X->position());
-  //   //Serial.println(Axis_slave_X->getOutput());
-  //   // Serial.println(Axis_master_X->position()); //
-  //   // Axis_slave_X->move(); //
-  //   //int output1 = 125;
-  //   //Serial.println(encoder_master_X->getPosition());
-  }
+  // int sempre = 1;
+  // while (sempre = 1) {
+  // //   Golgi_bot->go_origin(true, true);
+  // //   delay(3000);
+  // //   Golgi_bot->go_max(true, true, true);
+  // //   delay(3000);
+  // // Golgi_bot->reset_Y(DELAY_CONTRACT);
+  // //   //Serial.println(encoder_master_X->getPosition());
+  // BTS_master_X->Set_R(200); 
+  // // BTS_Z->Set_L(100); 
+  //   // Serial.println("AAAAAAAAAAAAAA");
+  // //   // Axis_z->move()
+  // //   // Golgi_bot->go_origin(true, true);
+  // //   // delay(2000);
+  // //   // Golgi_bot->go_max(true, true, true);
+  // //   // delay(2000);
+  // //   // Golgi_bot->go_origin(true, true);
+  // //   // delay(2000);
+  // // BTS_slave_X->Set_L(200);
+  // //   // Axis_slave_X->setPoint(Axis_master_X->position());
+  // //   //Serial.println(Axis_slave_X->getOutput());
+  // //   // Serial.println(Axis_master_X->position()); //
+  // //   // Axis_slave_X->move(); //
+  // //   //int output1 = 125;
+  // //   //Serial.println(encoder_master_X->getPosition());
+  // }
 
 
   Golgi_bot->go_origin(true, true);
@@ -277,13 +276,13 @@ void loop() {
         return;
       case GOING :
         //Moves Controller
-        // Golgi_bot->move();
+        Golgi_bot->move();
         // Serial.println("BRUHHH");
-        Axis_master_X->move();
-        Axis_slave_X->setGoal(Axis_master_X->position());
+        // Axis_master_X->move();
+        // Axis_slave_X->setGoal(Axis_master_X->position());
         delay(2);
 
-        Axis_slave_X->move();
+        // Axis_slave_X->move();
         // Axis_z->move();
         if (Axis_master_X->getOutput() <= 40 && !insideError) {     
           primeira_chegada = millis();
@@ -402,7 +401,7 @@ void read_setpoint(){
 }
 
 void check_position(){
-  if(Axis_master_X->onGoal() && Axis_slave_X->onGoal()) { //Golgi_bot->onGoal()
+  if(Golgi_bot->onGoal()) {
     STATE=GETING_MEDICINE;
     // // Serial.println("GETING_MEDICINE");
     // Serial.print(Axis_master_X->position());

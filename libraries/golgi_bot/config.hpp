@@ -61,8 +61,8 @@
 #define B_pin_slave_X 22 // White cable
 
 // X BTS
-#define R_pin_master_X 27 // L Bts  
-#define L_pin_master_X 26 // R Bts
+#define R_pin_master_X 26 // L Bts  
+#define L_pin_master_X 27 // R Bts
 #define R_channel_master_X 10
 #define L_channel_master_X 11
 #define pwm_master_cte 1 // fraction of pwm velocity
@@ -88,7 +88,7 @@
 // X PID Master
 #define kp_master_x  10 //14.4         
 #define ki_master_x  0.05           
-#define kd_master_x  0//100            
+#define kd_master_x  10//100            
 #define i_saturation_master_x 1000
 
 
@@ -96,7 +96,7 @@
 // aumentar kp para diminuir o tempo de resposta
 #define kp_slave_x 12 //16.8            
 #define ki_slave_x 0.05    
-#define kd_slave_x 0//100
+#define kd_slave_x 10//100
 #define i_saturation_slave_x 1000 // Diminuir saturação para ser mais sensivel ao erro
 
 // X PID_incremental Master
@@ -140,7 +140,7 @@
 
 // Z PID 
 #define kp_z 5.2
-#define ki_z 0.05
+#define ki_z 0.08
 #define kd_z 10
 #define i_saturation_z 1000
 
