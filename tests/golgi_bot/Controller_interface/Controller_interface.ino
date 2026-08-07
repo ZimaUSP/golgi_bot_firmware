@@ -233,8 +233,8 @@ void setup() {
   // //   delay(3000);
   // // Golgi_bot->reset_Y(DELAY_CONTRACT);
   // //   //Serial.println(encoder_master_X->getPosition());
-  // BTS_master_X->Set_R(200); 
-  // // BTS_Z->Set_L(100); 
+  // // BTS_slave_X->Set_L(200); 
+  // BTS_Z->Set_L(140); 
   //   // Serial.println("AAAAAAAAAAAAAA");
   // //   // Axis_z->move()
   // //   // Golgi_bot->go_origin(true, true);
@@ -243,7 +243,7 @@ void setup() {
   // //   // delay(2000);
   // //   // Golgi_bot->go_origin(true, true);
   // //   // delay(2000);
-  // // BTS_slave_X->Set_L(200);
+  // // BTS_master_X->Set_L(200);
   // //   // Axis_slave_X->setPoint(Axis_master_X->position());
   // //   //Serial.println(Axis_slave_X->getOutput());
   // //   // Serial.println(Axis_master_X->position()); //

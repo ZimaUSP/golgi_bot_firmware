@@ -43,6 +43,9 @@ void Controller::get_medicine(int DELAY_EX, int DELAY_CON){
   delay(DELAY_EX);
   this->Atuador_Y->Stop();
   delay(1000);
+  this->Axis_3->go_R(200);
+  delay(50);
+  this->Axis_3->go_R(0);
   this->Atuador_Y->Contract();
   delay(DELAY_CON);
   this->Atuador_Y->Stop();
@@ -94,7 +97,7 @@ void Controller::go_origin(bool axis1,bool axis2){
       this->Axis_3->stop();
       zOnOrigin = true;
     } else if (zOnOrigin == false){
-      this->Axis_3->go_R(150);
+      this->Axis_3->go_R(180);
     }
 
     if (xOnOrigin && zOnOrigin) {
@@ -177,7 +180,7 @@ void Controller::go_max(bool axis1,bool axis2, bool axis3){
       delay(10);
     }
     else if (zOnMax == false) {
-      this->Axis_3->go_L(100);
+      this->Axis_3->go_L(140);
     }
 
     if (xOnMax && zOnMax) {

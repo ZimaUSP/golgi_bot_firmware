@@ -25,9 +25,25 @@ void setup() {
 }
 
 void loop() { 
-  delay(10);
-  read_command();
-  delay(10);
+  Atuador_Y->Contract();
+  Serial.println("contrac");
+  delay(2000);
+
+  Atuador_Y->Stop(); 
+  Serial.println("stop");
+  delay(2000);
+
+  Atuador_Y->Extend();
+  Serial.println("extend");
+  delay(2000);
+
+  Atuador_Y->Stop(); 
+  Serial.println("stop");
+  delay(2000);
+
+  // delay(10);
+  // read_command();
+  // delay(10);
     }
 
 
