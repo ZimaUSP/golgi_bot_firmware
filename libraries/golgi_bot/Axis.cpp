@@ -19,7 +19,7 @@ const long interval = 25;
  * Class Methods Bodies Definitions
  *****************************************/
 
-Axis::Axis(Encoder *encoder, H_bridge_controller *BTS, Chave_fim_de_curso *Chave_R, Chave_fim_de_curso *Chave_L,PID *pid, float max_vel,int PWM_RESOLUTION,float tolerance, float pwm_cte, bool debug) {
+Axis::Axis(Encoder *encoder, H_bridge_controller *BTS, Chave_fim_de_curso *Chave_R, Chave_fim_de_curso *Chave_L,PID_incremental *pid, float max_vel,int PWM_RESOLUTION,float tolerance, float pwm_cte, bool debug) {
     this->encoder = encoder;
     this->BTS= BTS;
     this->Chave_R= Chave_R;
@@ -70,7 +70,7 @@ void Axis::move(){
     //Serial.println(this->output);
 
   //delay(2);
-  this->output=(this->pid->computePID(this->encoder->getPosition(), this->setpoint, this->tolerance));
+  this->output=(this->pid->computePID_incremental(this->encoder->getPosition(), this->setpoint, this->tolerance));
   unsigned long current_millis = millis();
 
   // if (current_millis - previous_millis >= interval) {
@@ -157,7 +157,7 @@ void Axis::stop(){
 }
 
 void Axis::reset(){
-   this->pid->reset();
+   this->pid->reset_incremental();
 }
 
 float Axis::position(){

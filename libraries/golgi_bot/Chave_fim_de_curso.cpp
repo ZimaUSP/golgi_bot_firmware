@@ -46,6 +46,6 @@ bool Chave_fim_de_curso::getBatente() {
 }
 
 void Chave_fim_de_curso::isr(void* arg) {
-  Chave_fim_de_curso* instance = (Chave_fim_de_curso*) arg;
-  instance->getBatente();
+  Chave_fim_de_curso* instance_ = (Chave_fim_de_curso*) arg;
+  instance_->getBatente();
 }

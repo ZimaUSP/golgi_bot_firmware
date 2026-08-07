@@ -94,22 +94,22 @@
 
 // X PID Slave 
 // aumentar kp para diminuir o tempo de resposta
-#define kp_slave_x 11.5 //16.8            
-#define ki_slave_x 0.08    
-#define kd_slave_x 10//100
+#define kp_slave_x 12//            
+#define ki_slave_x 0.05    
+#define kd_slave_x 0//
 #define i_saturation_slave_x 1000 // Diminuir saturação para ser mais sensivel ao erro
 
 // X PID_incremental Master
 #define N_inc_master_x  80
-#define kp_inc_master_x 3.2         
-#define ti_inc_master_x 20           
+#define kp_inc_master_x 4.5
+#define ti_inc_master_x 20       
 #define td_inc_master_x 0.001           
 #define ts_inc_master_x 0.01
 
 // X PID_incremental Slave
 #define N_inc_slave_x  80
-#define kp_inc_slave_x 16.2    
-#define ti_inc_slave_x 1          
+#define kp_inc_slave_x 6.7
+#define ti_inc_slave_x 10         
 #define td_inc_slave_x 0.001           
 #define ts_inc_slave_x 0.01
 
@@ -146,9 +146,9 @@
 
 // Z PID_incremental
 #define N_z  80
-#define kp_inc_z 2.3    
-#define ti_inc_z 10   
-#define td_inc_z 0.001           
+#define kp_inc_z 3.2
+#define ti_inc_z 15
+#define td_inc_z 0.0001           
 #define ts_inc_z 0.01
 
 
