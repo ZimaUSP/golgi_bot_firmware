@@ -357,26 +357,26 @@ void read_setpoint(){
   // Serial.println("GOING");  
   // Versão com posições sequenciais
 
-  // if (counter_Z == 3 && counter_X == 4) {
-  //   counter_Z = 0;
-  //   counter_X = 0;
-  // }     
+  if (counter_Z == 3 && counter_X == 4) {
+    counter_Z = 0;
+    counter_X = 0;
+  }     
 
-  // if (counter_X == 4) {
-  //   counter_X = 0;
-  //   counter_Z++;
-  // }
+  if (counter_X == 4) {
+    counter_X = 0;
+    counter_Z++;
+  }
 
-  // Z_pos=pos_z[counter_Z];
-  // X_pos=pos_x[counter_X++];
-  // Serial.print("counter_Z: ");
-  // Serial.println(counter_Z);
-  // Serial.print("counter_X: ");
-  // Serial.println(counter_X);
-  //Serial.print("X goal:");
-  //Serial.println(X_pos);      
-  //Serial.print("Z goal:");
-  //Serial.println(Z_pos);
+  Z_pos=pos_z[counter_Z];
+  X_pos=pos_x[counter_X++];
+  Serial.print("counter_Z: ");
+  Serial.println(counter_Z);
+  Serial.print("counter_X: ");
+  Serial.println(counter_X);
+  Serial.print("X goal:");
+  Serial.println(X_pos);      
+  Serial.print("Z goal:");
+  Serial.println(Z_pos);
 
 //  Versão com posições aleatórias
   /*
