@@ -19,7 +19,7 @@ class Chave_fim_de_curso {
     private:
         int pin;
 
-        bool batente;
+        volatile bool batente;
 
         bool inverso;
 

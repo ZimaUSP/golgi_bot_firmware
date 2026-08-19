@@ -19,7 +19,7 @@
 Chave_fim_de_curso::Chave_fim_de_curso(int pin, bool inverso) {
     this-> pin = pin;
     this-> inverso = inverso;
-    pinMode(this->pin,INPUT_PULLDOWN);
+    pinMode(this->pin,INPUT_PULLUP);
     //attachInterrupt(this->A_pin, this->A_trigger, RISING);
     //attachInterrupt(this->B_pin, this->B_trigger, RISING);
 }
@@ -45,7 +45,7 @@ bool Chave_fim_de_curso::getBatente() {
  return this->batente;
 }
 
-void Chave_fim_de_curso::isr(void* arg) {
+void IRAM_ATTR Chave_fim_de_curso::isr(void* arg) {
   Chave_fim_de_curso* instance_ = (Chave_fim_de_curso*) arg;
-  instance_->getBatente();
+  instance_->batente_trigger();
 }
