@@ -25,7 +25,7 @@ void setup() {
   endstop_L_master_X = new Chave_fim_de_curso(chave_master_L_X,false);
   endstop_L_master_X->init();
 
-  // // Batente slave
+  // Batente slave
   endstop_R_slave_X = new Chave_fim_de_curso(chave_slave_R_X,true);
   endstop_R_slave_X->init();
 
@@ -66,4 +66,6 @@ void loop() {
   {
     Serial.println("Batente L Z");
   }
+
+  delay(10);
 }
