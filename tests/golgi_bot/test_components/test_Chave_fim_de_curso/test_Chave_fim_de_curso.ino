@@ -26,10 +26,10 @@ void setup() {
   endstop_L_master_X->init();
 
   // Batente slave
-  endstop_R_slave_X = new Chave_fim_de_curso(chave_slave_R_X,true);
+  endstop_R_slave_X = new Chave_fim_de_curso(chave_slave_R_X,false);
   endstop_R_slave_X->init();
 
-  endstop_L_slave_X = new Chave_fim_de_curso(chave_slave_L_X,true);
+  endstop_L_slave_X = new Chave_fim_de_curso(chave_slave_L_X,false);
   endstop_L_slave_X->init();
 
   // Batente Z

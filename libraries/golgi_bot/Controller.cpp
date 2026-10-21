@@ -73,7 +73,7 @@ void Controller::go_origin(bool axis1,bool axis2){
     axis2OnOrigin = this->Axis_2->onOrigin();
     axis3OnOrigin = this->Axis_3->onOrigin();
 
-    if (axis1OnOrigin || axis2OnOrigin && (!xOnOrigin)) {  
+    if ((axis1OnOrigin || axis2OnOrigin) && (!xOnOrigin)) {  
       //Serial.println("ENTROU X");
       this->Axis_1->resetOrigin();
       this->Axis_1->stop();
@@ -85,6 +85,7 @@ void Controller::go_origin(bool axis1,bool axis2){
 
       xOnOrigin = true;
     } else if (xOnOrigin == false) {
+      //Serial.println(this->Axis_1->encoder->getPosition());
       this->Axis_1->go_R();
       this->Axis_2->go_R();
     } else {
@@ -97,7 +98,7 @@ void Controller::go_origin(bool axis1,bool axis2){
       this->Axis_3->stop();
       zOnOrigin = true;
     } else if (zOnOrigin == false){
-      this->Axis_3->go_R(180);
+      this->Axis_3->go_R(200);
     }
 
     if (xOnOrigin && zOnOrigin) {
@@ -150,12 +151,11 @@ void Controller::go_max(bool axis1,bool axis2, bool axis3){
     //Serial.println("going max");
     axis1OnMax = this->Axis_1->onMax();
     axis2OnMax = this->Axis_2->onMax();
-    axis3OnMax = this->Axis_3->onMaxGrosso();
+    axis3OnMax = this->Axis_3->onMax();
 
-    this->Axis_1->go_L();
     // this->Axis_2->setPoint(this->Axis_1->position());
 
-    if (axis2OnMax && (!xOnMax)) {  // axis1OnMax ||
+    if ((axis1OnMax || axis2OnMax) && (!xOnMax)) {  // axis1OnMax ||
       //Serial.println("ENTROU X");
       this->Axis_1->resetMax();
       this->Axis_1->stop();
@@ -166,10 +166,12 @@ void Controller::go_max(bool axis1,bool axis2, bool axis3){
       axis1OnMax = true;
 
       xOnMax = true;
-    } else {
-      //this->Axis_2->move();
-      //delay(2);
+    } else if (xOnMax == false) {
+      //Serial.println(this->Axis_1->encoder->getPosition());
+      this->Axis_1->go_L();
       this->Axis_2->go_L();
+    } else {
+      delay(1);                           // get possible exceptions
     }
 
     if (axis3OnMax && (!zOnMax)) {
@@ -180,7 +182,7 @@ void Controller::go_max(bool axis1,bool axis2, bool axis3){
       delay(10);
     }
     else if (zOnMax == false) {
-      this->Axis_3->go_L(140);
+      this->Axis_3->go_L(180);
     }
 
     if (xOnMax && zOnMax) {

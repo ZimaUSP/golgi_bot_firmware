@@ -138,21 +138,21 @@ void setup() {
   //Chave fim de curso
 
   // Master X
-  endstop_master_L_X = new Chave_fim_de_curso(chave_master_L_X,chave_channel_master_L_X);
+  endstop_master_L_X = new Chave_fim_de_curso(chave_master_L_X, false);
   endstop_master_L_X->init();
-  endstop_master_R_X = new Chave_fim_de_curso(chave_master_R_X,chave_channel_master_R_X);
+  endstop_master_R_X = new Chave_fim_de_curso(chave_master_R_X, false);
   endstop_master_R_X->init();
     
   // Slave X
-  endstop_slave_L_X = new Chave_fim_de_curso(chave_slave_L_X, chave_channel_slave_L_X);
+  endstop_slave_L_X = new Chave_fim_de_curso(chave_slave_L_X, false);
   endstop_slave_L_X->init();
-  endstop_slave_R_X = new Chave_fim_de_curso(chave_slave_R_X, chave_channel_slave_R_X);
+  endstop_slave_R_X = new Chave_fim_de_curso(chave_slave_R_X, false);
   endstop_slave_R_X->init();
 
   // Z
-  endstop_L_Z = new Chave_fim_de_curso(chave_L_Z, chave_channel_L_Z);
+  endstop_L_Z = new Chave_fim_de_curso(chave_L_Z, false);
   endstop_L_Z->init();
-  endstop_R_Z = new Chave_fim_de_curso(chave_R_Z, chave_channel_R_Z);
+  endstop_R_Z = new Chave_fim_de_curso(chave_R_Z, false);
   endstop_R_Z->init();
 
   // BTS
@@ -213,10 +213,10 @@ void setup() {
   SMC_Z = new Sliding_controller(Elast_coef_param, Torque_coef_param, Load_mass_param_master, Load_inercia_param_master, Velocity_param_master, 1, gama_param, alpha_param, radius_param, 8.9, sampling_time_param);
 
   //Creating Axis
-  Axis_master_X = new Axis(encoder_master_X, BTS_master_X, endstop_master_R_X, endstop_master_L_X, PIDinc_master_X, X_master_MAX_VEL, PWM_resolution_channel, 1.5, pwm_master_cte, false);
-  Axis_slave_X = new Axis(encoder_slave_X, BTS_slave_X, endstop_slave_R_X, endstop_slave_L_X, PIDinc_slave_X, X_slave_MAX_VEL, PWM_resolution_channel, 1.5, pwm_slave_cte, false);
+  Axis_master_X = new Axis(encoder_master_X, BTS_master_X, endstop_master_R_X, endstop_master_L_X, PID_master_X, X_master_MAX_VEL, PWM_resolution_channel, 1.5, pwm_master_cte, false);
+  Axis_slave_X = new Axis(encoder_slave_X, BTS_slave_X, endstop_slave_R_X, endstop_slave_L_X, PID_slave_X, X_slave_MAX_VEL, PWM_resolution_channel, 1.5, pwm_slave_cte, false);
   
-  Axis_z= new Axis(encoder_Z, BTS_Z, endstop_R_Z, endstop_L_Z, PIDinc_Z, Z_MAX_VEL, PWM_resolution_channel, Z_tolerance, pwm_cte_Z, false);
+  Axis_z= new Axis(encoder_Z, BTS_Z, endstop_R_Z, endstop_L_Z, PID_Z, Z_MAX_VEL, PWM_resolution_channel, Z_tolerance, pwm_cte_Z, false);
 
   //Creating Controller
   Golgi_bot = new Controller(Axis_master_X, Axis_slave_X, Axis_z, Bomba_Y, Atuador_Y);
@@ -232,9 +232,9 @@ void setup() {
   // //   Golgi_bot->go_max(true, true, true);
   // //   delay(3000);
   // // Golgi_bot->reset_Y(DELAY_CONTRACT);
-  // //   //Serial.println(encoder_master_X->getPosition());
-  // // BTS_slave_X->Set_L(200); 
-  // BTS_Z->Set_L(140); 
+  // Serial.println(encoder_master_X->getPosition());
+  // BTS_slave_X->Set_L(160); 
+  // // BTS_Z->Set_L(200); 
   //   // Serial.println("AAAAAAAAAAAAAA");
   //   // Axis_z->move()
   // //   // Golgi_bot->go_origin(true, true);
@@ -243,13 +243,32 @@ void setup() {
   // //   // delay(2000);
   // //   // Golgi_bot->go_origin(true, true);
   // //   // delay(2000);
-  // // BTS_master_X->Set_L(200);
+  // BTS_master_X->Set_L(160);
   // //   // Axis_slave_X->setPoint(Axis_master_X->position());
-  // //   //Serial.println(Axis_slave_X->getOutput());
+  // // Serial.println("Esquerda");
+  // // Serial.print("Master funcao Axis: ");
+  // // Serial.println(digitalRead(Axis_master_X->onMax()));
+  // // Serial.print("Master funcao endstop: ");
+  // // Serial.println(digitalRead(endstop_master_L_X->getPin()));
+  // // Serial.print("Esquerda 2");
+  // // Serial.print("Slave funcao Axis: ");
+  // // Serial.println(digitalRead(Axis_slave_X->onMax()));
+  // // Serial.print("Slave funcao endstop: ");
+  // // Serial.println(digitalRead(endstop_slave_L_X->getPin()));
+  // // Serial.println("Direita");
+  // // Serial.print("Master funcao Axis: ");
+  // // Serial.println(digitalRead(Axis_master_X->onOrigin()));
+  // // Serial.print("Master funcao endstop: ");
+  // // Serial.println(digitalRead(endstop_master_R_X->getPin()));
+  // // Serial.println("Direita 2");
+  // // Serial.print("Slave funcao Axis: ");
+  // // Serial.println(digitalRead(Axis_slave_X->onOrigin()));
+  // // Serial.print("Slave funcao endstop: ");
+  // // Serial.println(digitalRead(endstop_slave_R_X->getPin()));
   // //   // Serial.println(Axis_master_X->position()); //
   // //   // Axis_slave_X->move(); //
   // //   //int output1 = 125;
-  // //   //Serial.println(encoder_master_X->getPosition());
+  //   //Serial.println(encoder_master_X->getPosition());
   // }
 
 
@@ -275,43 +294,56 @@ void loop() {
         //Serial.println(initial_time);
         return;
       case GOING :
-        //Moves Controller
-        Golgi_bot->move();
-        // Serial.println("BRUHHH");
-        // Axis_master_X->move();
-        // Axis_slave_X->setGoal(Axis_master_X->position());
-        // delay(2);
+        // //Moves Controller
+        // Golgi_bot->move();
+        // // Serial.println("BRUHHH");
+        // // Axis_master_X->move();
+        // // Axis_slave_X->setGoal(Axis_master_X->position());
+        // // delay(2);
 
-        // Axis_slave_X->move();
-        // Axis_z->move();
-        if (Axis_master_X->getOutput() <= 40 && !insideError) {     
-          primeira_chegada = millis();
-          // Serial.println("entrou");
-          // Serial.println(primeira_chegada);
-          insideError = true;
-        }
+        // // Axis_slave_X->move();
+        // // Axis_z->move();
+        // if (Axis_master_X->getOutput() <= 40 && !insideError) {     
+        //   primeira_chegada = millis();
+        //   // Serial.println("entrou");
+        //   // Serial.println(primeira_chegada);
+        //   insideError = true;
+        // }
 
-          if (currentMillis1 - previousMillis1 >= interval1) {
-          previousMillis1 = currentMillis1;
+        //   if (currentMillis1 - previousMillis1 >= interval1) {
+        //   previousMillis1 = currentMillis1;
 
-          // Serial.println(Axis_z->getOutput());
-          // Serial.println(Axis_z->position());
-          // Serial.print(setPoint_X);
-          // Serial.print(Axis_master_X->getOutput() );
-          // Serial.print(" , ");
-          // Serial.println(Axis_slave_X->getOutput() );
-          Serial.print(Axis_master_X->position());
-          Serial.print(", ");
-          Serial.print(Axis_slave_X->position()); // Plotts the PID response
-          Serial.print(", ");
-          Serial.println(Axis_z->position());
-        //   // Serial.print(SMC_master_X->getVelocity(), 3);
-          // Serial.print(", ");
-          // Serial.println(millis());
-          // Serial.println(SMC_slave_X->getVelocity(), 3); // Plotts the output response
-        }
+        //   // Serial.println(Axis_z->getOutput());
+        //   // Serial.println(Axis_z->position());
+        //   //Serial.print(setPoint_X);
+        //   Serial.print(Axis_master_X->getOutput() );
+        //   Serial.print(" , ");
+        //   Serial.println(Axis_slave_X->getOutput() );
 
-        check_position();
+        //   Serial.print(Axis_master_X->position());
+        //   Serial.print(", ");
+        //   Serial.print(Axis_slave_X->position()); // Plotts the PID response
+        //   Serial.print(", ");
+        //   // Serial.println(Axis_z->position());
+        // //   // Serial.print(SMC_master_X->getVelocity(), 3);
+        //   // Serial.print(", ");
+        //   // Serial.println(millis());
+        //   // Serial.println(SMC_slave_X->getVelocity(), 3); // Plotts the output response
+        // }
+
+        // check_position();
+        BTS_slave_X->Set_L(160); 
+        BTS_master_X->Set_L(160); 
+        BTS_Z->Set_L(160);
+        delay(3000);
+        BTS_slave_X->Set_L(160);
+        BTS_master_X->Set_L(160); 
+        BTS_Z->Set_L(0); 
+        delay(2000);
+        BTS_slave_X->Set_L(0);
+        BTS_master_X->Set_L(0); 
+        BTS_Z->Set_L(0); 
+        STATE=GETING_MEDICINE;
         return;
       case GETING_MEDICINE :
         Golgi_bot->get_medicine(DELAY_EXTEND,DELAY_CONTRACT);
