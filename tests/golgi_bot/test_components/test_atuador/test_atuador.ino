@@ -35,7 +35,7 @@ void loop() {
 
   Atuador_Y->Extend();
   Serial.println("extend");
-  delay(2000);
+  delay(1000);
 
   Atuador_Y->Stop(); 
   Serial.println("stop");

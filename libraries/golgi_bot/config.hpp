@@ -65,7 +65,7 @@
 #define L_pin_master_X 26 // R Bts
 #define R_channel_master_X 11
 #define L_channel_master_X 10
-#define pwm_master_cte 0.7 // fraction of pwm velocity
+#define pwm_master_cte 0.72 // fraction of pwm velocity
 
 #define R_pin_slave_X 16 // pin
 #define L_pin_slave_X 12 // pin

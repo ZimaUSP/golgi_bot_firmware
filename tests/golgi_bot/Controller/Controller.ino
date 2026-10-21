@@ -211,46 +211,43 @@ void setup() {
   SMC_Z = new Sliding_controller(Elast_coef_param, Torque_coef_param, Load_mass_param_master, Load_inercia_param_master, Velocity_param_master, Position_param, gama_param, alpha_param, radius_param, Resistence_z, sampling_time_param);
 
   //Creating Axis
-  Axis_master_X = new Axis(encoder_master_X, BTS_master_X, endstop_master_R_X, endstop_master_L_X, PID_master_X, X_master_MAX_VEL, PWM_resolution_channel, 1.5, pwm_master_cte, false);
-  Axis_slave_X = new Axis(encoder_slave_X, BTS_slave_X, endstop_slave_R_X, endstop_slave_L_X, PID_slave_X, X_slave_MAX_VEL, PWM_resolution_channel, 1.5, pwm_slave_cte, false);
-  
-  Axis_z= new Axis(encoder_Z, BTS_Z, endstop_R_Z, endstop_L_Z, PID_Z, Z_MAX_VEL, PWM_resolution_channel, 2, pwm_cte_Z, false);
+  Axis_master_X = new Axis(encoder_master_X, BTS_master_X, endstop_master_R_X, endstop_master_L_X, PIDinc_master_X, X_master_MAX_VEL, PWM_resolution_channel, 1.5, pwm_master_cte, false);
 
+  Axis_slave_X = new Axis(encoder_slave_X, BTS_slave_X, endstop_slave_R_X, endstop_slave_L_X, PIDinc_slave_X, X_slave_MAX_VEL, PWM_resolution_channel, 1.5, pwm_slave_cte, false);
+
+  Axis_z = new Axis(encoder_Z, BTS_Z, endstop_R_Z, endstop_L_Z, PIDinc_Z, Z_MAX_VEL, PWM_resolution_channel, 2, pwm_cte_Z, false);
   //Creating Controller
   Golgi_bot = new Controller(Axis_master_X, Axis_slave_X, Axis_z, Bomba_Y, Atuador_Y);
 
   //Setting up the right inicital state
-  Golgi_bot->reset_Y(DELAY_CONTRACT);
-
-
   // Test BTS and motor
-  // while (true) {
+  //while (true) {
   //   // Golgi_bot->go_origin(true, true);
   //   // delay(3000);
   //   // Golgi_bot->go_max(true, true, true);
   //   // delay(3000);
   //   // Serial.println(encoder_master_X->getPosition());
-  //   // BTS_master_X->Set_L(127); 
+    //BTS_master_X->Set_L(127); 
   //   // Serial.println("AAAAAAAAAAAAAA");
   //   // Axis_z->move()
   //   BTS_Z->Set_R(180);
-  //   // BTS_slave_X->Set_L(127);
+    //BTS_slave_X->Set_L(127);
   //   // Axis_slave_X->setPoint(Axis_master_X->position());
   //   // Serial.println(Axis_slave_X->getOutput());
   //   // Serial.println(Axis_master_X->position()); //
   //   // Axis_slave_X->move(); //
   //   // int output1 = 125;
   //   Serial.println(encoder_Z->getPosition());
-  // }
+}
 
   // Sets origin and max position
-  Golgi_bot->go_origin(true, true);
-  Golgi_bot->go_max(true, true, true);   
-  Golgi_bot->go_origin(true, true);
+  //Golgi_bot->go_origin(true, true);
+  //Golgi_bot->go_max(true, true, true);   
+  //Golgi_bot->go_origin(true, true);
 
 
   //Serial.println("STAND-BY");
-}
+
 
 void loop() {
   unsigned long currentMillis1 = millis();

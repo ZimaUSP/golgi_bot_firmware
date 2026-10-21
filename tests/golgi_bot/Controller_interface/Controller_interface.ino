@@ -298,7 +298,7 @@ void loop() {
         // Golgi_bot->move();
         // // Serial.println("BRUHHH");
         // // Axis_master_X->move();
-        // // Axis_slave_X->setGoal(Axis_master_X->position());
+        // Axis_slave_X->setGoal(Axis_master_X->position());
         // // delay(2);
 
         // // Axis_slave_X->move();
@@ -332,14 +332,14 @@ void loop() {
         // }
 
         // check_position();
-        BTS_slave_X->Set_L(160); 
-        BTS_master_X->Set_L(160); 
+        BTS_slave_X->Set_L(200); 
+        BTS_master_X->Set_L(200); 
         BTS_Z->Set_L(160);
-        delay(3000);
-        BTS_slave_X->Set_L(160);
-        BTS_master_X->Set_L(160); 
+        delay(2700);
+        BTS_slave_X->Set_L(200);
+        BTS_master_X->Set_L(200); 
         BTS_Z->Set_L(0); 
-        delay(2000);
+        delay(1900);
         BTS_slave_X->Set_L(0);
         BTS_master_X->Set_L(0); 
         BTS_Z->Set_L(0); 
@@ -355,9 +355,15 @@ void loop() {
         STATE=DROPING_MEDICINE;
         // Serial.println("DROPING_MEDICINE");
         return;
-      case DROPING_MEDICINE :
+      case DROPING_MEDICINE:
         Golgi_bot->drop_medicine();
         STATE=STAND_BY;
+        Atuador_Y->Extend();
+        delay(1900);
+        Atuador_Y->Stop();
+        delay(5000);
+        Atuador_Y->Contract();
+        delay(2000);
         Serial.println("STAND-BY");
         return;
    }  
@@ -372,6 +378,7 @@ char* string_to_char(std::string str) {
 void read_setpoint(){
   String received;
   if(Serial.available()) {
+
       STATE=GOING;
       Serial.println("GOING");
       //delay(1000);
