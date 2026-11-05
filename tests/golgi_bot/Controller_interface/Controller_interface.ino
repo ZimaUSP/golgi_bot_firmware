@@ -296,54 +296,54 @@ void loop() {
       case GOING :
         // //Moves Controller
         // Golgi_bot->move();
-        // // Serial.println("BRUHHH");
-        // // Axis_master_X->move();
-        // Axis_slave_X->setGoal(Axis_master_X->position());
-        // // delay(2);
+        // Serial.println("BRUHHH");
+        Axis_master_X->move();
+        Axis_slave_X->setGoal(Axis_master_X->position());
+        delay(2);
 
-        // // Axis_slave_X->move();
-        // // Axis_z->move();
-        // if (Axis_master_X->getOutput() <= 40 && !insideError) {     
-        //   primeira_chegada = millis();
-        //   // Serial.println("entrou");
-        //   // Serial.println(primeira_chegada);
-        //   insideError = true;
-        // }
+        Axis_slave_X->move();
+        Axis_z->move();
+        if (Axis_master_X->getOutput() <= 40 && !insideError) {     
+          primeira_chegada = millis();
+          // Serial.println("entrou");
+          // Serial.println(primeira_chegada);
+          insideError = true;
+        }
 
-        //   if (currentMillis1 - previousMillis1 >= interval1) {
-        //   previousMillis1 = currentMillis1;
+          if (currentMillis1 - previousMillis1 >= interval1) {
+          previousMillis1 = currentMillis1;
 
-        //   // Serial.println(Axis_z->getOutput());
-        //   // Serial.println(Axis_z->position());
-        //   //Serial.print(setPoint_X);
-        //   Serial.print(Axis_master_X->getOutput() );
-        //   Serial.print(" , ");
-        //   Serial.println(Axis_slave_X->getOutput() );
+          // Serial.println(Axis_z->getOutput());
+          // Serial.println(Axis_z->position());
+          //Serial.print(setPoint_X);
+          Serial.print(Axis_master_X->getOutput() );
+          Serial.print(" , ");
+          Serial.println(Axis_slave_X->getOutput() );
 
-        //   Serial.print(Axis_master_X->position());
-        //   Serial.print(", ");
-        //   Serial.print(Axis_slave_X->position()); // Plotts the PID response
-        //   Serial.print(", ");
-        //   // Serial.println(Axis_z->position());
-        // //   // Serial.print(SMC_master_X->getVelocity(), 3);
-        //   // Serial.print(", ");
-        //   // Serial.println(millis());
-        //   // Serial.println(SMC_slave_X->getVelocity(), 3); // Plotts the output response
-        // }
+          Serial.print(Axis_master_X->position());
+          Serial.print(", ");
+          Serial.print(Axis_slave_X->position()); // Plotts the PID response
+          Serial.print(", ");
+          // Serial.println(Axis_z->position());
+        //   // Serial.print(SMC_master_X->getVelocity(), 3);
+          // Serial.print(", ");
+          // Serial.println(millis());
+          // Serial.println(SMC_slave_X->getVelocity(), 3); // Plotts the output response
+        }
 
-        // check_position();
-        BTS_slave_X->Set_L(200); 
-        BTS_master_X->Set_L(200); 
-        BTS_Z->Set_L(160);
-        delay(2700);
-        BTS_slave_X->Set_L(200);
-        BTS_master_X->Set_L(200); 
-        BTS_Z->Set_L(0); 
-        delay(1900);
-        BTS_slave_X->Set_L(0);
-        BTS_master_X->Set_L(0); 
-        BTS_Z->Set_L(0); 
-        STATE=GETING_MEDICINE;
+        check_position();
+        // BTS_slave_X->Set_L(200); 
+        // BTS_master_X->Set_L(200); 
+        // BTS_Z->Set_L(160);
+        // delay(2700);
+        // BTS_slave_X->Set_L(200);
+        // BTS_master_X->Set_L(200); 
+        // BTS_Z->Set_L(0); 
+        // delay(1900);
+        // BTS_slave_X->Set_L(0);
+        // BTS_master_X->Set_L(0); 
+        // BTS_Z->Set_L(0); 
+        // STATE=GETING_MEDICINE;
         return;
       case GETING_MEDICINE :
         Golgi_bot->get_medicine(DELAY_EXTEND,DELAY_CONTRACT);

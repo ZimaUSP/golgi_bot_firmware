@@ -54,11 +54,11 @@
 #define X_max_index 4
 
 //  X Encoder
-#define A_pin_master_X 13 // Green cable
-#define B_pin_master_X 15 // White cable
+#define A_pin_master_X 15 // Green cable
+#define B_pin_master_X 13 // White cable
 
-#define A_pin_slave_X 22 // Green cable
-#define B_pin_slave_X 23 // White cable
+#define A_pin_slave_X 23 // Green cable
+#define B_pin_slave_X 22 // White cable
 
 // X BTS
 #define R_pin_master_X 27 // L Bts  
@@ -122,8 +122,8 @@
 #define Z_max_index 3
 
 // Z Encoder 
-#define A_pin_Z 21 // Green cable
-#define B_pin_Z 19 // white cable
+#define A_pin_Z 19 // Green cable
+#define B_pin_Z 21 // white cable
 
 // Z BTS 
 #define R_pin_Z 18 // R bts
