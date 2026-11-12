@@ -98,7 +98,7 @@ class Controller {
          * @brief Go to origin on true axis
          * 
          */
-        void go_origin(bool axis1,bool axis2);
+        void go_origin(bool axis1,bool axis2, bool z_after_x = false);
 
         void go_origin_suavizado();
 

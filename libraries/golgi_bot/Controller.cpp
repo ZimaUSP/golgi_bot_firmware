@@ -52,13 +52,13 @@ void Controller::get_medicine(int DELAY_EX, int DELAY_CON){
 }
 
 void Controller::drop_medicine(){
-  this->go_origin(false, false);          // may not reach endstop
+  this->go_origin(false, false, true);          // may not reach endstop
   delay(1000);
   this->Bomba_Y->turn_off();
   this->reset_PID();
 }
 
-void Controller::go_origin(bool axis1,bool axis2){
+void Controller::go_origin(bool axis1,bool axis2, bool z_after_x){
   bool going = true;
   bool axis1OnOrigin = false; 
   bool axis2OnOrigin = false;
@@ -73,21 +73,27 @@ void Controller::go_origin(bool axis1,bool axis2){
     axis2OnOrigin = this->Axis_2->onOrigin();
     axis3OnOrigin = this->Axis_3->onOrigin();
 
-    if ((axis1OnOrigin && axis2OnOrigin) && (!xOnOrigin)) {  
+    if ((axis1OnOrigin) && (!xOnOrigin)) {  
       //Serial.println("ENTROU X");
       this->Axis_1->resetOrigin();
       this->Axis_1->stop();
-      axis2OnOrigin = true;
-    
+      axis1OnOrigin = true;
+    }
+    if ((axis2OnOrigin) && (!xOnOrigin)) {  
+      //Serial.println("ENTROU X");
       this->Axis_2->resetOrigin();
       this->Axis_2->stop();
-      axis1OnOrigin = true;
-
+      axis2OnOrigin = true;
+    }
+    if((axis1OnOrigin && axis2OnOrigin) && (!xOnOrigin)) {
       xOnOrigin = true;
-    } else if (xOnOrigin == false) {
+    }
+    else if (xOnOrigin == false) {
       //Serial.println(this->Axis_1->encoder->getPosition());
-      this->Axis_1->go_R();
-      this->Axis_2->go_R();
+      if(!axis1OnOrigin)
+        this->Axis_1->go_R();
+      if(!axis2OnOrigin)
+        this->Axis_2->go_R();
     } else {
       delay(1);                           // get possible exceptions
     }
@@ -97,7 +103,7 @@ void Controller::go_origin(bool axis1,bool axis2){
       this->Axis_3->resetOrigin();
       this->Axis_3->stop();
       zOnOrigin = true;
-    } else if (zOnOrigin == false){
+    } else if (zOnOrigin == false && ((z_after_x && xOnOrigin) || !z_after_x) /*xOnOrigin aqui para garantir voltagem necessária para subir*/){
       this->Axis_3->go_R(200);
     }
 
@@ -154,23 +160,29 @@ void Controller::go_max(bool axis1,bool axis2, bool axis3){
     axis3OnMax = this->Axis_3->onMax();
 
     // this->Axis_2->setPoint(this->Axis_1->position());
-
-    if ((axis1OnMax && axis2OnMax) && (!xOnMax)) {  // axis1OnMax ||
+    if ((axis1OnMax) && (!xOnMax)) {  
       //Serial.println("ENTROU X");
       this->Axis_1->resetMax();
       this->Axis_1->stop();
-      axis2OnMax= true;
-    
+      axis1OnMax = true;
+    }
+    if ((axis2OnMax) && (!xOnMax)) {  
+      //Serial.println("ENTROU X");
       this->Axis_2->resetMax();
       this->Axis_2->stop();
-      axis1OnMax = true;
-
+      axis2OnMax = true;
+    }
+    if((axis1OnMax && axis2OnMax) && (!xOnMax)) {
       xOnMax = true;
-    } else if (xOnMax == false) {
+    }
+    else if (xOnMax == false) {
       //Serial.println(this->Axis_1->encoder->getPosition());
-      this->Axis_1->go_L();
-      this->Axis_2->go_L();
-    } else {
+      if(!axis1OnMax)
+        this->Axis_1->go_L();
+      if(!axis2OnMax)
+        this->Axis_2->go_L();
+    }
+     else {
       delay(1);                           // get possible exceptions
     }
 

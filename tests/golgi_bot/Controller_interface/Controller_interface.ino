@@ -298,9 +298,8 @@ void loop() {
         // Golgi_bot->move();
         // Serial.println("BRUHHH");
         Axis_master_X->move();
-        Axis_slave_X->setGoal(Axis_master_X->position());
         delay(2);
-
+        Axis_slave_X->setGoal(Axis_master_X->position());
         Axis_slave_X->move();
         Axis_z->move();
         if (Axis_master_X->getOutput() <= 40 && !insideError) {     
@@ -316,19 +315,25 @@ void loop() {
           // Serial.println(Axis_z->getOutput());
           // Serial.println(Axis_z->position());
           //Serial.print(setPoint_X);
-          Serial.print(Axis_master_X->getOutput() );
-          Serial.print(" , ");
-          Serial.println(Axis_slave_X->getOutput() );
+          // Serial.print(Axis_master_X->getOutput() );
+          // Serial.print(" , ");
+          // Serial.println(Axis_slave_X->getOutput() );
 
           Serial.print(Axis_master_X->position());
           Serial.print(", ");
           Serial.print(Axis_slave_X->position()); // Plotts the PID response
           Serial.print(", ");
-          // Serial.println(Axis_z->position());
+          Serial.println(Axis_z->position());
         //   // Serial.print(SMC_master_X->getVelocity(), 3);
           // Serial.print(", ");
           // Serial.println(millis());
           // Serial.println(SMC_slave_X->getVelocity(), 3); // Plotts the output response
+          
+          // Serial.print(Axis_master_X->onGoal() ? "True" : "False");
+          // Serial.print(" , ");
+          // Serial.print(Axis_slave_X->onGoal() ? "True" : "False");
+          // Serial.print(" , ");
+          // Serial.println(Axis_z->onGoal() ? "True" : "False");
         }
 
         check_position();
@@ -364,7 +369,7 @@ void loop() {
         delay(5000);
         Atuador_Y->Contract();
         delay(2000);
-        Serial.println("STAND-BY");
+        Serial.println("COLLECTED");
         return;
    }  
 }

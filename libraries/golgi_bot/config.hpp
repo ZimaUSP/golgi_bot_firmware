@@ -49,8 +49,8 @@
 
 #define X_master_MAX_VEL 0.5
 #define X_slave_MAX_VEL 0.5
-#define X_master_tolerance 2
-#define X_slave_tolerance 2
+#define X_master_tolerance 5
+#define X_slave_tolerance 5
 #define X_max_index 4
 
 //  X Encoder
@@ -71,7 +71,7 @@
 #define L_pin_slave_X 12 // pin
 #define R_channel_slave_X 15                              
 #define L_channel_slave_X 14
-#define pwm_slave_cte 0.685 // fraction of pwm velocity          
+#define pwm_slave_cte 0.670 // fraction of pwm velocity          
 
 // X CHAVE
 #define chave_master_R_X 36
