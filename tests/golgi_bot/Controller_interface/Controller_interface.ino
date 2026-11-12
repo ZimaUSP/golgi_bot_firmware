@@ -153,7 +153,7 @@ void setup() {
   encoder_master_X =new Encoder(A_pin_master_X ,B_pin_master_X , 0, Nominal_pulses, pitch_pulley_master, 4);
   encoder_master_X->init();
   
-  encoder_slave_X = new Encoder(B_pin_slave_X, A_pin_slave_X, 1, Nominal_pulses, pitch_pulley_slave, 4);
+  encoder_slave_X = new Encoder(A_pin_slave_X, B_pin_slave_X, 1, Nominal_pulses, pitch_pulley_slave, 4);
   encoder_slave_X->init();
 
   encoder_Z =new Encoder(A_pin_Z,B_pin_Z,2,600,40,4);
@@ -183,11 +183,6 @@ void setup() {
   PIDinc_Z = new PID_incremental(80, 1.3, 100, 0.001, 0.01);
 
   // Fuzzy control
-<<<<<<< HEAD
-  // Fuzzy_master_X = new Fuzzy_controller(0.01, error_NH_master, error_N_master, error_Z_master, error_P_master, error_PH_master);
-  // Fuzzy_slave_X = new Fuzzy_controller(0.01, error_NH_slave, error_N_slave, error_Z_slave, error_P_slave, error_PH_slave);
-  // Fuzzy_Z = new Fuzzy_controller(0.01, error_NH_Z, error_N_Z, error_Z_Z, error_P_Z, error_PH_Z);
-=======
   Fuzzy_member_param master_fuzzy_member = Fuzzy_member_param({-250, -250, -200, -40}, {-50, -25, -25, 0}, {-2, 0, 0, 2}, {0, 25, 25, 50}, {40, 200, 250, 250},
                                                               {-60, -60, -55, -25}, {-40, -15, -15, -10}, {-10, 0, 0, 10}, {10, 15, 15, 40}, {25, 55, 60, 60}, 
                                                               {-275, -275, -160, -120}, {-160, -110, -110, -70}, {-120, -90, -90, -60}, {-110, -75, -75, -40}, {-55, 0, 0, 55}, {40, 75, 75, 110}, {60, 90, 90, 120}, {70, 110, 110, 160}, {120, 160, 275, 275});
@@ -203,7 +198,6 @@ void setup() {
   Fuzzy_master_X = new Fuzzy_controller(0.01, master_fuzzy_member);
   Fuzzy_slave_X = new Fuzzy_controller(0.01, slave_fuzzy_member);
   Fuzzy_Z = new Fuzzy_controller(0.01, z_fuzzy_member);
->>>>>>> dae1bbdd27ac0a421822638bfb01e8dc177cad24
 
   // Sliding mode control
   SMC_master_X = new Sliding_controller(Elast_coef_param, Torque_coef_param, Load_mass_param_master, Load_inercia_param_master, Velocity_param_master, 1, gama_param, alpha_param, radius_param, 15.9, sampling_time_param);
@@ -279,7 +273,7 @@ void loop() {
         delay(2);
 
         Axis_slave_X->move();
-        // Axis_z->move();
+        Axis_z->move();
         if (Axis_master_X->getOutput() <= 40 && !insideError) {     
           primeira_chegada = millis();
           // Serial.println("entrou");
